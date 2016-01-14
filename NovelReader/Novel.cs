@@ -11,7 +11,7 @@ namespace NovelReader
     public class Novel : INotifyPropertyChanged
     {
         public enum NovelState : int { Active = 0, Inactive = 1, Completed = 2, Dropped = 3 };
-        public enum UpdateState { Default, Waiting, Checking, Fetching, UpToDate, Inactive, Completed, Dropped };
+        public enum UpdateState { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped };
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -142,6 +142,9 @@ namespace NovelReader
             Source.Source s = SourceManager.GetSource(_novelTitle, 22590, SourceManager.Sources.web69);
             Tuple<string, string>[] menuItems = s.GetMenuURLs();
             int newlyAddedChapter = 0;
+
+
+
             
             for (int i = _chapters.Count; i < menuItems.Length; i++)
             {
@@ -250,8 +253,15 @@ namespace NovelReader
                     message = "Fetching Updates: " + updatedItemCount + " / " + totalUpdateItemCount;
                     break;
                 case UpdateState.UpToDate:
+                    if (_state == NovelState.Active)
+                        message = "Novel Up To Date";
+                    else if(_state == NovelState.Completed)
+                        message = "Complted Novel Up To Date";
+                    else if (_state == NovelState.Inactive)
+                        message = "Inactive Novel Up To Date";
+                    else if (_state == NovelState.Dropped)
+                        message = "Dropped Novel Up To Date";
                     progress = 100;
-                    message = "Novel Up To Date";
                     break;
                 case UpdateState.Completed:
                     progress = 100;
