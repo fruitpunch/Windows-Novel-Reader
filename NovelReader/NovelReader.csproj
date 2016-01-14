@@ -106,6 +106,8 @@
     <Compile Include="TTSController.Designer.cs">
       <DependentUpon>TTSController.cs</DependentUpon>
     </Compile>
+    <Compile Include="TTSProgress.cs" />
+    <Compile Include="UpdateProgress.cs" />
     <Compile Include="Util.cs" />
     <EmbeddedResource Include="AddNovelForm.resx">
       <DependentUpon>AddNovelForm.cs</DependentUpon>

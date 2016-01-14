@@ -11,13 +11,25 @@ namespace NovelReader
     public class Novel : INotifyPropertyChanged
     {
         public enum NovelState : int { Active = 0, Inactive = 1, Completed = 2, Dropped = 3 };
+
+        /*              Check Update    Download Update     Make Audio
+         * Active       O               O                   D
+         * Inactive     O               X                   D
+         * Complete     X               X                   D
+         * Dropped      X               X                   X
+         * 
+         * 
+         *              X = No          O = Yes             D = If specified
+         */
+
+
         public enum UpdateState { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped };
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _novelTitle { get; set; }
         private NovelState _state { get; set; }
-        private int _newChapterCount { get; set; }
+        private int _newChaptersNotReadCount { get; set; }
         private int _rank { get; set; }
         private int _lastPlayedChapterID { get; set; }
         private bool _makeAudio { get; set; }
@@ -25,8 +37,9 @@ namespace NovelReader
         private Tuple<int, string> _updateProgress { get; set; }
         private BindingList<Chapter> _chapters;
 
-        private HashSet<int> validURLID;
-        private HashSet<int> invalidURLID;
+        private HashSet<int> validUrlIdSet;
+        private HashSet<int> invalidUrlIdSet;
+        private List<Tuple<string, string>> updateUrlList;
 
         /*============Properties============*/
 
@@ -53,13 +66,13 @@ namespace NovelReader
             get { return _chapters.Count; }
         }
 
-        public int NewChapterCount
+        public int NewChaptersNotReadCount
         {
-            get { return this._newChapterCount; }
+            get { return this._newChaptersNotReadCount; }
             set
             {
-                this._newChapterCount = value;
-                NotifyPropertyChanged("NewChapterCount");
+                this._newChaptersNotReadCount = value;
+                NotifyPropertyChanged("NewChaptersNotReadCount");
             }
         }
 
@@ -105,6 +118,11 @@ namespace NovelReader
             }
         }
 
+        public int NewChapterCount
+        {
+            get { return this.updateUrlList.Count; }
+        }
+
         /*============Constructor===========*/
 
         public Novel(string novelTitle, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
@@ -112,12 +130,13 @@ namespace NovelReader
             this._novelTitle = novelTitle;
             this._state = state;
             this._rank = rank;
-            this._newChapterCount = 0;
+            this._newChaptersNotReadCount = 0;
             this._isReading = isReading;
 
             this._chapters = new BindingList<Chapter>();
-            this.validURLID = new HashSet<int>();
-            this.validURLID = new HashSet<int>();
+            this.validUrlIdSet = new HashSet<int>();
+            this.invalidUrlIdSet = new HashSet<int>();
+            this.updateUrlList = new List<Tuple<string, string>>();
             SetUpdateProgress();
         }
 
@@ -141,35 +160,53 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public void Update()
+        //Check and see if there is new chapter available for download.
+        public bool CheckForUpdate()
         {
             SetUpdateProgress(0, 0, UpdateState.Checking);
+            updateUrlList.Clear();
             Source.Source s = SourceManager.GetSource(_novelTitle, 22590, SourceManager.Sources.web69);
             Tuple<string, string>[] menuItems = s.GetMenuURLs();
-            int newlyAddedChapter = 0;
-
-            //Do state checking
-
-            
-            for (int i = _chapters.Count; i < menuItems.Length; i++)
+            foreach (Tuple<string, string> kvp in menuItems)
             {
-                string chapterTitle = menuItems[i].Item1;
-                string url = menuItems[i].Item2;
+                int urlHash = kvp.Item2.GetHashCode();
+                if (!validUrlIdSet.Contains(urlHash) && !invalidUrlIdSet.Contains(urlHash))
+                    updateUrlList.Add(kvp);
+            }
+            SetUpdateProgress(updateUrlList.Count, 0, UpdateState.UpdateAvailable);
+            return updateUrlList.Count > 0;
+        }
 
-                Chapter newChapter = new Chapter(chapterTitle, _novelTitle, false, i);
+        //Download the new chapters.
+        public void DownloadUpdate()
+        {
+            Source.Source s = SourceManager.GetSource(_novelTitle, 22590, SourceManager.Sources.web69);
+            
+            int newlyAddedChapter = 0;
+            int index = _chapters.Count;
+
+            for (int i = 0; i < updateUrlList.Count; i++)
+            {
+                string chapterTitle = updateUrlList[i].Item1;
+                string url = updateUrlList[i].Item2;
+
+                Chapter newChapter = new Chapter(chapterTitle, _novelTitle, false, index + i);
                 AppendNewChapter(newChapter);
+                validUrlIdSet.Add(url.GetHashCode());
                 newlyAddedChapter++;
-                SetUpdateProgress(i, menuItems.Length, UpdateState.Fetching);
+                SetUpdateProgress(i, updateUrlList.Count, UpdateState.Fetching);
                 string[] novelContent = s.GetChapterContent(chapterTitle, url);
                 string chapterLocation = newChapter.GetTextFileLocation();
                 System.IO.File.WriteAllLines(chapterLocation, novelContent);
+                
             }
+            updateUrlList.Clear();
             SetUpdateProgress(0, 0, UpdateState.UpToDate);
             if (BackgroundService.Instance.novelListController.InvokeRequired)
             {
                 BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
-                    NewChapterCount = _newChapterCount + newlyAddedChapter;
+                    NewChaptersNotReadCount = _newChaptersNotReadCount + newlyAddedChapter;
                     NotifyPropertyChanged("ChapterCount");
                 }));
             }
@@ -180,6 +217,7 @@ namespace NovelReader
             
         }
 
+        //Change the index of the chapter and change the file name of the text and audio file.
         public void ChangeIndex(int oldIndex, int newIndex)
         {
             if (oldIndex == newIndex)
@@ -199,16 +237,21 @@ namespace NovelReader
                 _chapters[i].ChangeIndex(i);
         }
 
-        /*============Private Function======*/
+        
 
+        /*============Private Function======*/
+        //Add a new chapter to the end of chapter list.
         private void AppendNewChapter(Chapter chapter)
         {
             if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
             {
+                System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false);
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
                     _chapters.Add(chapter);
+                    mre.Set();
                 }));
+                mre.WaitOne(-1);
             }
             else
             {
@@ -216,6 +259,7 @@ namespace NovelReader
             }
         }
 
+        //Set the progress to be displayed in NovelListControl.
         private void SetUpdateProgress(int updatedItemCount = 0, int totalUpdateItemCount = 0, UpdateState updateState = UpdateState.Default)
         {
             int progress = 0;
@@ -254,6 +298,13 @@ namespace NovelReader
                     progress = 0;
                     message = "Checking For Updates";
                     break;
+                case UpdateState.UpdateAvailable:
+                    progress = 0;
+                    if (updatedItemCount > 0)
+                        message = updatedItemCount + " Updates Available";
+                    else
+                        message = "Novel Up To Date";
+                    break;
                 case UpdateState.Fetching:
                     message = "Fetching Updates: " + updatedItemCount + " / " + totalUpdateItemCount;
                     break;
@@ -266,10 +317,10 @@ namespace NovelReader
                         message = "Inactive Novel Up To Date";
                     else if (_state == NovelState.Dropped)
                         message = "Dropped Novel Up To Date";
-                    progress = 100;
+                    progress = 0;
                     break;
                 case UpdateState.Completed:
-                    progress = 100;
+                    progress = 0;
                     message = "Novel Completed";
                     break;
                 case UpdateState.Inactive:

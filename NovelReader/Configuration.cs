@@ -21,7 +21,7 @@ namespace NovelReader
         private string _novelFolderLocation { get; set; }
         private string _metaFileLocation { get; set; }
         private int _ttsThreadCount { get; set; }
-        private int _updateInterval = 10;
+        private int _updateInterval = 1000;
         private DateTime _lastFullUpdateTime { get; set; }
 
         private Rectangle _novelReaderFormRect { get; set; }

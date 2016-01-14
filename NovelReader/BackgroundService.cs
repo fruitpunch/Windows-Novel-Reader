@@ -48,9 +48,13 @@ namespace NovelReader
         {
             this.ttsScheduler = new Scheduler(Configuration.Instance.TTSThreadCount);
             this.ttsScheduler.ttsCompleteEventHandler += TTSComplete;
-            this.updateTimer = new System.Timers.Timer();
-            this.updateTimer.Elapsed += new ElapsedEventHandler(this.OnUpdateTimer);
-            this.updateTimer.Interval = Configuration.Instance.UpdateInterval;
+            this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
+            this.updateTimer.Enabled = true;
+            this.updateTimer.Elapsed += new ElapsedEventHandler(OnUpdateTimer);
+            //this.updateTimer.Interval = Configuration.Instance.UpdateInterval;
+
+            Console.WriteLine("update interval " + Configuration.Instance.UpdateInterval); 
+            
             this.updateTimer.Start();
             this.ttsScheduler.StartTTSService();
 
@@ -70,8 +74,7 @@ namespace NovelReader
         private void OnUpdateTimer(Object source, ElapsedEventArgs e)
         {
             Console.WriteLine("Call update");
-            foreach (Novel n in NovelLibrary.Instance.NovelList)
-                n.Update();
+
         }
 
         /*============Public Function=======*/
@@ -115,8 +118,8 @@ namespace NovelReader
         {
             string novelTitle = (string)obj;
             Novel n = NovelLibrary.Instance.GetNovel(novelTitle);
-            UpdateNovels();
-
+            CheckUpdates();
+            DownloadUpdates();
             for (int i = 0; i < n.Chapters.Count; i++)
             {
                 Chapter c = n.Chapters[i];
@@ -130,14 +133,28 @@ namespace NovelReader
             Console.WriteLine("TTS completed event");
         }
 
-        private void UpdateNovels()
+        private bool CheckUpdates()
         {
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
-
+            bool newChapterAvailable = false;
             foreach (Novel n in updateNovels)
             {
-                n.Update();
+                n.CheckForUpdate();
+                if (n.NewChapterCount > 0)
+                    newChapterAvailable = true;
             }
+            return newChapterAvailable;
+        }
+
+        private void DownloadUpdates()
+        {
+            Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
+            foreach (Novel n in updateNovels)
+            {
+                if (n.State == Novel.NovelState.Active && n.NewChapterCount > 0)
+                    n.DownloadUpdate();
+            }
+
             Configuration.Instance.LastFullUpdateTime = DateTime.Now;
         }
 

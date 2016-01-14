@@ -29,16 +29,24 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.refreshUpdateLabelTimer = new System.Windows.Forms.Timer(this.components);
             this.dgvNovelList = new System.Windows.Forms.DataGridView();
             this.btnTest = new System.Windows.Forms.Button();
             this.btnRankUp = new System.Windows.Forms.Button();
             this.btnRankDown = new System.Windows.Forms.Button();
             this.btnAddNovel = new System.Windows.Forms.Button();
             this.labelLastUpdateTime = new System.Windows.Forms.Label();
-            this.refreshUpdateLabelTimer = new System.Windows.Forms.Timer(this.components);
+            this.upUpdateFreq = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNovelList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.upUpdateFreq)).BeginInit();
             this.SuspendLayout();
+            // 
+            // refreshUpdateLabelTimer
+            // 
+            this.refreshUpdateLabelTimer.Interval = 1000;
+            this.refreshUpdateLabelTimer.Tick += new System.EventHandler(this.refreshUpdateLabelTimer_Tick);
             // 
             // dgvNovelList
             // 
@@ -49,14 +57,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvNovelList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvNovelList.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvNovelList.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvNovelList.Location = new System.Drawing.Point(40, 40);
             this.dgvNovelList.MultiSelect = false;
             this.dgvNovelList.Name = "dgvNovelList";
@@ -119,21 +127,55 @@
             // labelLastUpdateTime
             // 
             this.labelLastUpdateTime.AutoSize = true;
-            this.labelLastUpdateTime.Location = new System.Drawing.Point(37, 11);
+            this.labelLastUpdateTime.Location = new System.Drawing.Point(279, 13);
             this.labelLastUpdateTime.Name = "labelLastUpdateTime";
-            this.labelLastUpdateTime.Size = new System.Drawing.Size(35, 13);
+            this.labelLastUpdateTime.Size = new System.Drawing.Size(106, 13);
             this.labelLastUpdateTime.TabIndex = 5;
-            this.labelLastUpdateTime.Text = "label1";
+            this.labelLastUpdateTime.Text = "Last Updated: X Ago";
             // 
-            // refreshUpdateLabelTimer
+            // upUpdateFreq
             // 
-            this.refreshUpdateLabelTimer.Interval = 1000;
-            this.refreshUpdateLabelTimer.Tick += new System.EventHandler(this.refreshUpdateLabelTimer_Tick);
+            this.upUpdateFreq.CausesValidation = false;
+            this.upUpdateFreq.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.upUpdateFreq.Location = new System.Drawing.Point(172, 11);
+            this.upUpdateFreq.Maximum = new decimal(new int[] {
+            1440,
+            0,
+            0,
+            0});
+            this.upUpdateFreq.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.upUpdateFreq.Name = "upUpdateFreq";
+            this.upUpdateFreq.Size = new System.Drawing.Size(47, 20);
+            this.upUpdateFreq.TabIndex = 6;
+            this.upUpdateFreq.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(28, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(138, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Update Frequency(Minutes)";
             // 
             // NovelListController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.upUpdateFreq);
             this.Controls.Add(this.labelLastUpdateTime);
             this.Controls.Add(this.btnAddNovel);
             this.Controls.Add(this.btnRankDown);
@@ -143,7 +185,9 @@
             this.Name = "NovelListController";
             this.Size = new System.Drawing.Size(970, 650);
             this.Load += new System.EventHandler(this.NovelListController_Load);
+            this.Click += new System.EventHandler(this.NovelListController_Click);
             ((System.ComponentModel.ISupportInitialize)(this.dgvNovelList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.upUpdateFreq)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -151,12 +195,14 @@
 
         #endregion
 
+        private System.Windows.Forms.Timer refreshUpdateLabelTimer;
         private System.Windows.Forms.DataGridView dgvNovelList;
         private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.Button btnRankUp;
         private System.Windows.Forms.Button btnRankDown;
         private System.Windows.Forms.Button btnAddNovel;
         private System.Windows.Forms.Label labelLastUpdateTime;
-        private System.Windows.Forms.Timer refreshUpdateLabelTimer;
+        private System.Windows.Forms.NumericUpDown upUpdateFreq;
+        private System.Windows.Forms.Label label1;
     }
 }

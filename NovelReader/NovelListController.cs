@@ -11,68 +11,6 @@ using System.Collections;
 
 namespace NovelReader
 {
-    public class UpdateDataGridViewProgressColumn : DataGridViewImageColumn
-    {
-        public UpdateDataGridViewProgressColumn()
-        {
-            CellTemplate = new UpdateDataGridViewProgressCell();
-        }
-    }
-
-    class UpdateDataGridViewProgressCell : DataGridViewImageCell
-    {
-        // Used to make custom cell consistent with a DataGridViewImageCell
-        static Image emptyImage;
-        static UpdateDataGridViewProgressCell()
-        {
-            emptyImage = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-        }
-        public UpdateDataGridViewProgressCell()
-        {
-            this.ValueType = typeof(Tuple<int, string>);
-        }
-        // Method required to make the Progress Cell consistent with the default Image Cell. 
-        // The default Image Cell assumes an Image as a value, although the value of the Progress Cell is an int.
-        protected override object GetFormattedValue(object value,
-                            int rowIndex, ref DataGridViewCellStyle cellStyle,
-                            TypeConverter valueTypeConverter,
-                            TypeConverter formattedValueTypeConverter,
-                            DataGridViewDataErrorContexts context)
-        {
-            return emptyImage;
-        }
-
-        protected override void Paint(System.Drawing.Graphics g, System.Drawing.Rectangle clipBounds, System.Drawing.Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
-        {
-            Tuple<int, string> updateInfo = (Tuple<int, string>)value;
-            int progressVal = updateInfo.Item1;
-            string message = updateInfo.Item2;
-
-            float percentage = ((float)progressVal / 100.0f); // Need to convert to float before division; otherwise C# returns int which is 0 for anything but 100%.
-            Brush backColorBrush = new SolidBrush(cellStyle.BackColor);
-            Brush foreColorBrush = new SolidBrush(cellStyle.ForeColor);
-            // Draws the cell grid
-            base.Paint(g, clipBounds, cellBounds,
-             rowIndex, cellState, value, formattedValue, errorText,
-             cellStyle, advancedBorderStyle, (paintParts & ~DataGridViewPaintParts.ContentForeground));
-
-            
-            if (percentage > 0.0)
-            {
-                // Draw the progress bar and the text
-                g.FillRectangle(new SolidBrush(Color.FromArgb(163, 189, 242)), cellBounds.X + 2, cellBounds.Y + 2, Convert.ToInt32((percentage * cellBounds.Width - 4)), cellBounds.Height - 4);
-                g.DrawString(message, cellStyle.Font, foreColorBrush, cellBounds.X + 6, cellBounds.Y + 2);
-            }
-            else
-            {
-                // draw the text
-                if (this.DataGridView.CurrentRow.Index == rowIndex)
-                    g.DrawString(message, cellStyle.Font, new SolidBrush(cellStyle.SelectionForeColor), cellBounds.X + 6, cellBounds.Y + 2);
-                else
-                    g.DrawString(message, cellStyle.Font, foreColorBrush, cellBounds.X + 6, cellBounds.Y + 2);
-            }
-        }
-    }
 
 
     public partial class NovelListController : UserControl
@@ -92,7 +30,6 @@ namespace NovelReader
             this.whitePen = new Pen(Color.FromArgb(0, Color.White.R, Color.White.G, Color.White.B));
             this.whitePen.Width = penWidth;
             this.labelLastUpdateTime.Text = "";
-
             BackgroundService.Instance.novelListController = this;
         }
 
@@ -235,6 +172,11 @@ namespace NovelReader
             labelLastUpdateTime.Text = Util.GetUpdateTimeString(Configuration.Instance.LastFullUpdateTime);
         }
 
+        private void NovelListController_Click(object sender, EventArgs e)
+        {
+            this.Focus();
+        }
+
         /*============PrivateFunction=======*/
 
         private void BindGrid()
@@ -254,7 +196,7 @@ namespace NovelReader
                 Name = "NovelTitle",
                 HeaderText = "Novel Title",
                 DataPropertyName = "NovelTitle",
-                Width = 200,
+                Width = 150,
                 ReadOnly = true
             };
 
@@ -264,7 +206,7 @@ namespace NovelReader
                 Name = "Rank",
                 HeaderText = "Rank",
                 DataPropertyName = "Rank",
-                Width = 100,
+                Width = 50,
                 ReadOnly = true
             };
 
@@ -274,17 +216,17 @@ namespace NovelReader
                 Name = "ChapterCount",
                 HeaderText = "Chapter Count",
                 DataPropertyName = "ChapterCount",
-                Width = 150,
+                Width = 100,
                 ReadOnly = true
             };
 
             DataGridViewTextBoxColumn newChapterCountColumn = new DataGridViewTextBoxColumn()
             {
                 CellTemplate = newChapterCountCell,
-                Name = "NewChapterCount",
-                HeaderText = "New Chapter Count",
-                DataPropertyName = "NewChapterCount",
-                Width = 150,
+                Name = "NewChaptersNotReadCount",
+                HeaderText = "New Unread Chapters",
+                DataPropertyName = "NewChaptersNotReadCount",
+                Width = 100,
                 ReadOnly = true
             };
 
@@ -313,7 +255,7 @@ namespace NovelReader
                 Name = "UpdateProgress",
                 HeaderText = "Update Progress",
                 DataPropertyName = "UpdateProgress",
-                Width = 100,
+                Width = 250,
             };
             
             dgvNovelList.Columns.Add(novelTitleColumn);
@@ -368,6 +310,13 @@ namespace NovelReader
             foreach (Novel n in NovelLibrary.Instance.NovelList)
                 n.Reading = false;
         }
+
+        private void backPanel_Click(object sender, EventArgs e)
+        {
+            this.Focus();
+        }
+
+        
 
         
 
