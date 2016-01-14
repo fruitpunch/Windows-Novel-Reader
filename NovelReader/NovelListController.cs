@@ -216,7 +216,7 @@ namespace NovelReader
                 Name = "ChapterCount",
                 HeaderText = "Chapter Count",
                 DataPropertyName = "ChapterCount",
-                Width = 100,
+                Width = 125,
                 ReadOnly = true
             };
 
@@ -226,7 +226,7 @@ namespace NovelReader
                 Name = "NewChaptersNotReadCount",
                 HeaderText = "New Unread Chapters",
                 DataPropertyName = "NewChaptersNotReadCount",
-                Width = 100,
+                Width = 125,
                 ReadOnly = true
             };
 
@@ -255,7 +255,8 @@ namespace NovelReader
                 Name = "UpdateProgress",
                 HeaderText = "Update Progress",
                 DataPropertyName = "UpdateProgress",
-                Width = 250,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                //Width = 250,
             };
             
             dgvNovelList.Columns.Add(novelTitleColumn);
@@ -265,6 +266,8 @@ namespace NovelReader
             dgvNovelList.Columns.Add(stateColumn);
             dgvNovelList.Columns.Add(makeAudioColumn);
             dgvNovelList.Columns.Add(updateProgressColumn);
+            //dgvNovelList.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+
 
             dgvNovelList.DataSource = NovelLibrary.Instance.NovelList;
 
@@ -311,10 +314,6 @@ namespace NovelReader
                 n.Reading = false;
         }
 
-        private void backPanel_Click(object sender, EventArgs e)
-        {
-            this.Focus();
-        }
 
         
 

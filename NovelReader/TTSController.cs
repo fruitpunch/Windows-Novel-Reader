@@ -101,7 +101,7 @@ namespace NovelReader
                 Name = "Progress",
                 HeaderText = "Progress",
                 DataPropertyName = "Progress",
-                Width = 197
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             };
             
             dgvTTS.Columns.Add(novelTitleColumn);
