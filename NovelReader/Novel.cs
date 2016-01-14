@@ -25,6 +25,9 @@ namespace NovelReader
         private Tuple<int, string> _updateProgress { get; set; }
         private BindingList<Chapter> _chapters;
 
+        private HashSet<int> validURLID;
+        private HashSet<int> invalidURLID;
+
         /*============Properties============*/
 
         public string NovelTitle
@@ -113,6 +116,8 @@ namespace NovelReader
             this._isReading = isReading;
 
             this._chapters = new BindingList<Chapter>();
+            this.validURLID = new HashSet<int>();
+            this.validURLID = new HashSet<int>();
             SetUpdateProgress();
         }
 
@@ -143,7 +148,7 @@ namespace NovelReader
             Tuple<string, string>[] menuItems = s.GetMenuURLs();
             int newlyAddedChapter = 0;
 
-
+            //Do state checking
 
             
             for (int i = _chapters.Count; i < menuItems.Length; i++)
