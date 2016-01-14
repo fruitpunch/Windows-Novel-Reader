@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Source;
 using System.IO;
+using Db4objects.Db4o;
 
 namespace NovelReader
 {
@@ -212,9 +213,14 @@ namespace NovelReader
             }
         }
 
-        public void UpdateDB()
+        public void LoadChapterFromDB()
         {
             
+        }
+
+        public void SaveChapterToDB()
+        {
+            //IObjectContainer db = Db4oEmbedded.OpenFile(Db4oEmbedded.;
         }
 
         //Change the index of the chapter and change the file name of the text and audio file.

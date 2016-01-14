@@ -44,11 +44,7 @@ namespace NovelReader
         {
             //NovelReaderForm nrf = new NovelReaderForm();
             //nrf.ShowDialog();
-            if (dgvNovelList.SelectedRows.Count > 0)
-            {
-                string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
-                BackgroundService.Instance.UpdateTTSTest(novelTitle);
-            }
+            BackgroundService.Instance.UpdateTTSTest();
         }
 
 
@@ -177,6 +173,11 @@ namespace NovelReader
             this.Focus();
         }
 
+        private void upUpdateFreq_ValueChanged(object sender, EventArgs e)
+        {
+            BackgroundService.Instance.UpdateTimerInterval((int)upUpdateFreq.Value);
+        }
+
         /*============PrivateFunction=======*/
 
         private void BindGrid()
@@ -237,7 +238,8 @@ namespace NovelReader
                 DataPropertyName = "State",
                 DataSource = Enum.GetValues(typeof(Novel.NovelState)),
                 ValueType = typeof(Novel.NovelState),
-                Width = 100
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                //Width = 100
             };
 
             DataGridViewCheckBoxColumn makeAudioColumn = new DataGridViewCheckBoxColumn()
@@ -246,7 +248,8 @@ namespace NovelReader
                 Name = "MakeAudio",
                 HeaderText = "Make Audio",
                 DataPropertyName = "MakeAudio",
-                Width = 100,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                //Width = 100,
             };
 
             UpdateDataGridViewProgressColumn updateProgressColumn = new UpdateDataGridViewProgressColumn()
@@ -313,6 +316,8 @@ namespace NovelReader
             foreach (Novel n in NovelLibrary.Instance.NovelList)
                 n.Reading = false;
         }
+
+        
 
 
         

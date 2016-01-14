@@ -94,38 +94,34 @@ namespace NovelReader
             return NovelLibrary.Instance.RankDownNovel(novelTitle);
         }
 
-        public void UpdateTTSTest(string novelTitle)
+        public void UpdateTTSTest()
         {
-            /*
-            Novel n = NovelLibrary.Instance.GetNovel(novelTitle);
-            n.Update();
+            Thread t = new Thread(Test);
+            t.Start();
+        }
 
+        public void UpdateTimerInterval(int minutes)
+        {
+            int ms = minutes * 60000; //60000ms per min
+            Configuration.Instance.UpdateInterval = ms;
+            updateTimer.Interval = ms;
+            this.updateTimer.Start();
+            Console.WriteLine(ms);
+        }
+
+        /*============Private Function======*/
+
+        private void Test()
+        {
+            CheckUpdates();
+            DownloadUpdates();
+            /*
             for (int i = 0; i < n.Chapters.Count; i++)
             {
                 Chapter c = n.Chapters[i];
                 Request r = new Request("VW Hui", c, n.GetReplaceSpecificationLocation(), n.GetDeleteSpecificationLocation(), 2, 0);
                 ttsScheduler.AddRequest(r);
             }*/
-            Thread t = new Thread(new ParameterizedThreadStart(Test));
-            t.Start(novelTitle);
-        }
-
-        
-
-        /*============Private Function======*/
-
-        private void Test(Object obj)
-        {
-            string novelTitle = (string)obj;
-            Novel n = NovelLibrary.Instance.GetNovel(novelTitle);
-            CheckUpdates();
-            DownloadUpdates();
-            for (int i = 0; i < n.Chapters.Count; i++)
-            {
-                Chapter c = n.Chapters[i];
-                Request r = new Request("VW Hui", c, n.GetReplaceSpecificationLocation(), n.GetDeleteSpecificationLocation(), 2, 0);
-                ttsScheduler.AddRequest(r);
-            }
         }
 
         private void TTSComplete(Object sender, TTSCompleteEventArgs e)
