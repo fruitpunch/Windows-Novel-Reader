@@ -222,7 +222,8 @@ namespace NovelReader
 
         public void DownloadChapterContent(Chapter chapter)
         {
-
+            if (chapter.SourceURL == null)
+                return;
             string[] novelContent = _novelSource.GetChapterContent(chapter.ChapterTitle, chapter.SourceURL);
             System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
         }
@@ -243,8 +244,10 @@ namespace NovelReader
             _chapters.RemoveAt(oldIndex);
             _chapters.Insert(newIndex, tmp);
 
-            for (int i = 0; i < _chapters.Count; i++)
-                _chapters[i].ChangeIndex(i);
+            VeryifyAndCorrectChapterIndexing();
+
+            //for (int i = 0; i < _chapters.Count; i++)
+            //    _chapters[i].Index = i;
         }
 
         public Chapter GetChapter(int chapterIndex = -1)
@@ -261,6 +264,14 @@ namespace NovelReader
                 chapter.Read = true;
                 LastReadChapter = chapter;
                 NewChaptersNotReadCount = 0;
+            }
+        }
+
+        public void DeleteChapter(Chapter chapter)
+        {
+            if (_chapters.Contains(chapter))
+            {
+
             }
         }
 
@@ -286,12 +297,26 @@ namespace NovelReader
             }
         }
 
-        private void InsertChapter(Chapter chapter)
+        private void VeryifyAndCorrectChapterIndexing()
         {
-            for (int i = 0; i < _chapters.Count; i++)
+            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
             {
-                if (chapter.Index < _chapters[i].Index)
-                    _chapters.Insert(i, chapter);
+                BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                {
+                    for (int i = 0; i < _chapters.Count; i++)
+                    {
+                        if (_chapters[i].Index != i)
+                            _chapters[i].ChangeIndex(i);
+                    }
+                }));
+            }
+            else
+            {
+                for (int i = 0; i < _chapters.Count; i++)
+                {
+                    if (_chapters[i].Index != i)
+                        _chapters[i].ChangeIndex(i);
+                }
             }
         }
 

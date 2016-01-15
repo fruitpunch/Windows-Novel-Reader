@@ -43,9 +43,16 @@ namespace NovelReader
             this.dgvChapterList.DataSource = novel.Chapters;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
             if (novel.LastReadChapter != null)
+            {
                 ReadChapter(novel.LastReadChapter);
+                dgvChapterList.FirstDisplayedScrollingRowIndex = novel.LastReadChapter.Index;
+            }
             else
+            {
                 ReadChapter(novel.GetChapter(0));
+                dgvChapterList.FirstDisplayedScrollingRowIndex = 0;
+            }
+            
         }
 
         /*============EventHandler==========*/
@@ -100,13 +107,14 @@ namespace NovelReader
 
         private void dgvChapterList_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
-            if (dgvChapterList.IsCurrentCellDirty)
-                dgvChapterList.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            if (dgvChapterList.IsCurrentCellDirty && dgvChapterList.CurrentCell.ColumnIndex == dgvChapterList.Columns["Read"].Index)
+               dgvChapterList.CommitEdit(DataGridViewDataErrorContexts.Commit);
         }
 
         private void dgvChapterList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            ModifyCellStyle(e.RowIndex);
+            if(dgvChapterList.Columns[e.ColumnIndex].Name.Equals("Read"))
+                ModifyCellStyle(e.RowIndex);
         }
 
         private void dgvChapterList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -180,13 +188,13 @@ namespace NovelReader
             currentReadingChapter = chapter;
             rtbChapterTextBox.Select(0, 0);
             rtbChapterTextBox.ScrollToCaret();
+            
             if (chapter.HasText)
             {
                 using (StreamReader sr = new StreamReader(chapter.GetTextFileLocation()))
                 {
                     string chapterText = sr.ReadToEnd();
                     rtbChapterTextBox.Text = chapterText;
-                    
                 }
             }
             else
