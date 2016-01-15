@@ -144,7 +144,7 @@ namespace NovelReader
                     File.Create(Path.Combine(newNovelLocation, Configuration.Instance.DeleteSpecification));
             }
 
-            Novel newNovel = new Novel(novelTitle);
+            Novel newNovel = new Novel(novelTitle, source, sourceID);
             _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
             UpdateNovelRanking();
             Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");

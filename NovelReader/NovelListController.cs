@@ -51,7 +51,11 @@ namespace NovelReader
         private void btnAddNovel_Click(object sender, EventArgs e)
         {
             AddNovelForm anf = new AddNovelForm();
-            anf.Location = this.Location;
+            Rectangle r = this.ParentForm.DesktopBounds;
+            int x = r.X + (r.Width / 2) - 150;
+            int y = r.Y + (r.Height / 2) - 150;
+            anf.StartPosition = FormStartPosition.Manual;
+            anf.DesktopBounds = new Rectangle(new Point(x, y), anf.Size);
             anf.ShowDialog();
         }
 

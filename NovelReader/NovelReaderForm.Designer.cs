@@ -30,7 +30,6 @@
         {
             this.dgvChapterList = new System.Windows.Forms.DataGridView();
             this.rtbChapterTextBox = new System.Windows.Forms.RichTextBox();
-            this.btnPrevious = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnPlay = new System.Windows.Forms.Button();
@@ -38,6 +37,8 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.cbAutoPlay = new System.Windows.Forms.CheckBox();
             this.labelTitle = new System.Windows.Forms.Label();
+            this.btnPrevious = new System.Windows.Forms.Button();
+            this.btnRedownload = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,6 +65,8 @@
             this.rtbChapterTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbChapterTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.rtbChapterTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.rtbChapterTextBox.Location = new System.Drawing.Point(380, 61);
             this.rtbChapterTextBox.Name = "rtbChapterTextBox";
             this.rtbChapterTextBox.ReadOnly = true;
@@ -71,18 +74,6 @@
             this.rtbChapterTextBox.TabIndex = 1;
             this.rtbChapterTextBox.Text = "";
             this.rtbChapterTextBox.TextChanged += new System.EventHandler(this.rtbChapterTextBox_TextChanged);
-            // 
-            // btnPrevious
-            // 
-            this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPrevious.Location = new System.Drawing.Point(380, 691);
-            this.btnPrevious.Name = "btnPrevious";
-            this.btnPrevious.Size = new System.Drawing.Size(80, 35);
-            this.btnPrevious.TabIndex = 2;
-            this.btnPrevious.Text = "Prev";
-            this.btnPrevious.UseVisualStyleBackColor = true;
-            this.btnPrevious.Click += new System.EventHandler(this.btnPrevious_Click);
             // 
             // btnNext
             // 
@@ -145,13 +136,14 @@
             // 
             this.cbAutoPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbAutoPlay.AutoSize = true;
+            this.cbAutoPlay.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.cbAutoPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cbAutoPlay.Location = new System.Drawing.Point(983, 699);
             this.cbAutoPlay.Name = "cbAutoPlay";
             this.cbAutoPlay.Size = new System.Drawing.Size(87, 21);
             this.cbAutoPlay.TabIndex = 8;
             this.cbAutoPlay.Text = "Auto Play";
-            this.cbAutoPlay.UseVisualStyleBackColor = true;
+            this.cbAutoPlay.UseVisualStyleBackColor = false;
             // 
             // labelTitle
             // 
@@ -163,12 +155,38 @@
             this.labelTitle.TabIndex = 9;
             this.labelTitle.Text = "Title";
             // 
+            // btnPrevious
+            // 
+            this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnPrevious.Location = new System.Drawing.Point(380, 691);
+            this.btnPrevious.Name = "btnPrevious";
+            this.btnPrevious.Size = new System.Drawing.Size(80, 35);
+            this.btnPrevious.TabIndex = 2;
+            this.btnPrevious.Text = "Prev";
+            this.btnPrevious.UseVisualStyleBackColor = true;
+            this.btnPrevious.Click += new System.EventHandler(this.btnPrevious_Click);
+            // 
+            // btnRedownload
+            // 
+            this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnRedownload.Location = new System.Drawing.Point(936, 15);
+            this.btnRedownload.Name = "btnRedownload";
+            this.btnRedownload.Size = new System.Drawing.Size(135, 35);
+            this.btnRedownload.TabIndex = 10;
+            this.btnRedownload.Text = "Download Chapter";
+            this.btnRedownload.UseVisualStyleBackColor = true;
+            this.btnRedownload.Click += new System.EventHandler(this.btnRedownload_Click);
+            // 
             // NovelReaderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
+            this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1084, 730);
+            this.Controls.Add(this.btnRedownload);
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.cbAutoPlay);
             this.Controls.Add(this.btnStop);
@@ -179,6 +197,7 @@
             this.Controls.Add(this.btnPrevious);
             this.Controls.Add(this.rtbChapterTextBox);
             this.Controls.Add(this.dgvChapterList);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Name = "NovelReaderForm";
             this.Text = "NovelReaderForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NovelReaderForm_FormClosing);
@@ -192,7 +211,6 @@
 
         private System.Windows.Forms.DataGridView dgvChapterList;
         private System.Windows.Forms.RichTextBox rtbChapterTextBox;
-        private System.Windows.Forms.Button btnPrevious;
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnPlay;
@@ -200,5 +218,7 @@
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.CheckBox cbAutoPlay;
         private System.Windows.Forms.Label labelTitle;
+        private System.Windows.Forms.Button btnPrevious;
+        private System.Windows.Forms.Button btnRedownload;
     }
 }

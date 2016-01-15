@@ -16,6 +16,7 @@ namespace NovelReader
         private string _novelTitle{ get; set; }
         private bool _hasRead { get; set; }
         private int _index { get; set; }
+        private string _sourceUrl { get; set; }
 
         /*============Properties============*/
 
@@ -34,6 +35,12 @@ namespace NovelReader
         public string NovelTitle
         {
             get { return this._novelTitle; }
+        }
+
+        public string SourceURL
+        {
+            get { return this._sourceUrl; }
+            set { this._sourceUrl = value; }
         }
 
         public bool Read
@@ -69,10 +76,11 @@ namespace NovelReader
 
         /*============Constructor===========*/
 
-        public Chapter(string chapterTitle, string novelTitle, bool hasRead = false, int index = -1)
+        public Chapter(string chapterTitle, string novelTitle, string sourceUrl, bool hasRead = false, int index = -1)
         {
             this._chapterTitle = chapterTitle;
             this._novelTitle = novelTitle;
+            this._sourceUrl = sourceUrl;
             this._hasRead = hasRead;
             this._index = index;
         }
@@ -123,6 +131,7 @@ namespace NovelReader
                 }
             }
         }
+
 
         /*============Private Function======*/
 

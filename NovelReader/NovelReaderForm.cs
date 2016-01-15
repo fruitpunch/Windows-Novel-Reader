@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -41,7 +42,10 @@ namespace NovelReader
             this.Text = novel.NovelTitle;
             this.dgvChapterList.DataSource = novel.Chapters;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
-            ReadChapter(novel.LastReadChapter);
+            if (novel.LastReadChapter != null)
+                ReadChapter(novel.LastReadChapter);
+            else
+                ReadChapter(novel.GetChapter(0));
         }
 
         /*============EventHandler==========*/
@@ -54,7 +58,7 @@ namespace NovelReader
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (editModeOn) //Finished Editing
+            if (!rtbChapterTextBox.ReadOnly) //Finished Editing
                 FinishEditing();
             else //Start Editing
                 StartEditing();     
@@ -62,6 +66,7 @@ namespace NovelReader
 
         private void btnNext_Click(object sender, EventArgs e)
         {
+            FinishEditing();
             if (currentReadingChapter != null)
             {
                 Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
@@ -71,6 +76,7 @@ namespace NovelReader
 
         private void btnPrevious_Click(object sender, EventArgs e)
         {
+            FinishEditing();
             if (currentReadingChapter != null)
             {
                 Chapter prevChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index - 1);
@@ -106,6 +112,21 @@ namespace NovelReader
         private void dgvChapterList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             ModifyCellStyle(e.RowIndex);
+        }
+
+
+        private void btnRedownload_Click(object sender, EventArgs e)
+        {
+            if (!rtbChapterTextBox.ReadOnly && currentChapterDirty)
+            {
+                MessageBox.Show("Please finish editing first.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (currentReadingNovel != null)
+            {
+                Thread t = new Thread(new ParameterizedThreadStart(DownloadAndReadChapter));
+                t.Start(currentReadingChapter);
+            }
         }
 
         /*============PrivateFunction=======*/
@@ -154,21 +175,25 @@ namespace NovelReader
         {
             if (chapter == null)
                 return;
+            labelTitle.Text = currentReadingNovel.NovelTitle + " - " + chapter.ChapterTitle;
+            currentReadingNovel.ReadChapter(chapter);
+            currentReadingChapter = chapter;
+            rtbChapterTextBox.Select(0, 0);
+            rtbChapterTextBox.ScrollToCaret();
             if (chapter.HasText)
             {
                 using (StreamReader sr = new StreamReader(chapter.GetTextFileLocation()))
                 {
                     string chapterText = sr.ReadToEnd();
                     rtbChapterTextBox.Text = chapterText;
+                    
                 }
             }
             else
             {
                 rtbChapterTextBox.Text = "No text file available";
             }
-            labelTitle.Text = currentReadingNovel.NovelTitle + " - " + chapter.ChapterTitle;
-            currentReadingNovel.ReadChapter(chapter);
-            currentReadingChapter = chapter;
+            
             currentChapterDirty = false;
 
             if (dgvChapterList.SelectedRows.Count > 0)
@@ -179,6 +204,20 @@ namespace NovelReader
                 }
             }
             dgvChapterList.Rows[chapter.Index].Selected = true;
+        }
+
+        private void DownloadAndReadChapter(Object chapterObj)
+        {
+            Chapter chapter = (Chapter)chapterObj;
+            currentReadingNovel.DownloadChapterContent(chapter);
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                {
+                    ReadChapter(chapter);
+                }));
+            }
+            
         }
 
         private void StartEditing()
@@ -243,6 +282,7 @@ namespace NovelReader
                 row.DefaultCellStyle.SelectionBackColor = Color.Green;
             }
         }
+
 
 
 

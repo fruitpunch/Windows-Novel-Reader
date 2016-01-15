@@ -35,6 +35,7 @@ namespace NovelReader
         private Chapter _lastReadChapter { get; set; }
         private bool _makeAudio { get; set; }
         private bool _isReading { get; set; }
+        Source.Source _novelSource { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
         private BindingList<Chapter> _chapters;
 
@@ -114,6 +115,12 @@ namespace NovelReader
             set { this._isReading = value; }
         }
 
+        public Source.Source NovelSource
+        {
+            get { return this._novelSource; }
+            set { this._novelSource = value; }
+        }
+
         public Tuple<int, string> UpdateProgress
         {
             get { return this._updateProgress; }
@@ -131,9 +138,10 @@ namespace NovelReader
 
         /*============Constructor===========*/
 
-        public Novel(string novelTitle, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
+        public Novel(string novelTitle, SourceManager.Sources source, int sourceId, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
         {
             this._novelTitle = novelTitle;
+            this._novelSource = SourceManager.GetSource(novelTitle, sourceId, source);
             this._state = state;
             this._rank = rank;
             this._newChaptersNotReadCount = 0;
@@ -171,8 +179,7 @@ namespace NovelReader
         {
             SetUpdateProgress(0, 0, UpdateState.Checking);
             updateUrlList.Clear();
-            Source.Source s = SourceManager.GetSource(_novelTitle, 22590, SourceManager.Sources.web69);
-            Tuple<string, string>[] menuItems = s.GetMenuURLs();
+            Tuple<string, string>[] menuItems = _novelSource.GetMenuURLs();
             foreach (Tuple<string, string> kvp in menuItems)
             {
                 int urlHash = kvp.Item2.GetHashCode();
@@ -186,8 +193,6 @@ namespace NovelReader
         //Download the new chapters.
         public void DownloadUpdate()
         {
-            Source.Source s = SourceManager.GetSource(_novelTitle, 22590, SourceManager.Sources.web69);
-            
             int newlyAddedChapter = 0;
             int index = _chapters.Count;
 
@@ -196,14 +201,12 @@ namespace NovelReader
                 string chapterTitle = updateUrlList[i].Item1;
                 string url = updateUrlList[i].Item2;
 
-                Chapter newChapter = new Chapter(chapterTitle, _novelTitle, false, index + i);
+                Chapter newChapter = new Chapter(chapterTitle, _novelTitle, url, false, index + i);
                 AppendNewChapter(newChapter);
                 validUrlIdSet.Add(url.GetHashCode());
                 newlyAddedChapter++;
                 SetUpdateProgress(i, updateUrlList.Count, UpdateState.Fetching);
-                string[] novelContent = s.GetChapterContent(chapterTitle, url);
-                string chapterLocation = newChapter.GetTextFileLocation();
-                System.IO.File.WriteAllLines(chapterLocation, novelContent);
+                DownloadChapterContent(newChapter);
                 
             }
             updateUrlList.Clear();
@@ -215,6 +218,13 @@ namespace NovelReader
                     NewChaptersNotReadCount = _newChaptersNotReadCount + newlyAddedChapter;
                 }));
             }
+        }
+
+        public void DownloadChapterContent(Chapter chapter)
+        {
+
+            string[] novelContent = _novelSource.GetChapterContent(chapter.ChapterTitle, chapter.SourceURL);
+            System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
         }
 
         //Change the index of the chapter and change the file name of the text and audio file.
@@ -255,6 +265,8 @@ namespace NovelReader
         }
 
         /*============Private Function======*/
+        
+
         //Add a new chapter to the end of chapter list.
         private void AppendNewChapter(Chapter chapter)
         {
