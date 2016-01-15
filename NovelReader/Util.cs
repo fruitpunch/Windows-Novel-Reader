@@ -17,15 +17,15 @@ namespace NovelReader
         public static void LoadComponents()
         {
             Configuration.LoadConfiguration();
-            NovelLibrary.Instance.LoadNovelLibrary();
             BackgroundService.Instance.StartService();
+            NovelLibrary.Instance.LoadNovelLibrary();
         }
 
         public static void SaveComponents()
         {
-            Configuration.SaveConfiguration();
             NovelLibrary.Instance.SaveNovelLibrary();
             BackgroundService.Instance.CloseService();
+            Configuration.SaveConfiguration();
         }
 
         public static string CleanFileTitle(string input)

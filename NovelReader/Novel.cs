@@ -73,8 +73,13 @@ namespace NovelReader
             set
             {
                 this._newChaptersNotReadCount = value;
-                NotifyPropertyChanged("NewChaptersNotReadCount");
+                NotifyPropertyChanged("ChapterCountStatus");
             }
+        }
+
+        public string ChapterCountStatus
+        {
+            get { return this._chapters.Count.ToString() + "  ( " + this._newChaptersNotReadCount + " )"; }
         }
 
         public int Rank
@@ -208,19 +213,8 @@ namespace NovelReader
                 BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
                     NewChaptersNotReadCount = _newChaptersNotReadCount + newlyAddedChapter;
-                    NotifyPropertyChanged("ChapterCount");
                 }));
             }
-        }
-
-        public void LoadChapterFromDB()
-        {
-            
-        }
-
-        public void SaveChapterToDB()
-        {
-            //IObjectContainer db = Db4oEmbedded.OpenFile(Db4oEmbedded.;
         }
 
         //Change the index of the chapter and change the file name of the text and audio file.
@@ -262,6 +256,15 @@ namespace NovelReader
             else
             {
                 _chapters.Add(chapter);
+            }
+        }
+
+        private void InsertChapter(Chapter chapter)
+        {
+            for (int i = 0; i < _chapters.Count; i++)
+            {
+                if (chapter.Index < _chapters[i].Index)
+                    _chapters.Insert(i, chapter);
             }
         }
 

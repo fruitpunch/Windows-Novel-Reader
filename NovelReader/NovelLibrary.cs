@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Db4objects.Db4o;
+using Db4objects.Db4o.Config;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -14,6 +16,7 @@ namespace NovelReader
         private static NovelLibrary instance;
 
         private BindingList<Novel> _novelList{ get; set; }
+        private IObjectContainer db;
         
 
         /*============Properties============*/
@@ -45,12 +48,36 @@ namespace NovelReader
 
         public void LoadNovelLibrary()
         {
+            IEmbeddedConfiguration config = Db4oEmbedded.NewConfiguration();
+            config.Common.ObjectClass(typeof(Novel)).CascadeOnUpdate(true);
+            config.Common.ObjectClass(typeof(Chapter)).CascadeOnUpdate(true);
+            db = Db4oEmbedded.OpenFile(config, Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.NovelListDBName));
+            try
+            {
+                IObjectSet novels = db.QueryByExample(typeof(Novel));
+                InsertNovels(novels);
+            }
+            catch (Exception e)
+            {
 
+            }
         }
 
         public void SaveNovelLibrary()
         {
-
+            try
+            {
+                foreach (Novel n in _novelList)
+                {
+                    db.Store(n);
+                    db.Commit();
+                }
+            }
+            catch(Exception e)
+            {
+            }
+            
+            db.Close();
         }
 
         /*============Getter/Setter=========*/
@@ -119,6 +146,7 @@ namespace NovelReader
 
             Novel newNovel = new Novel(novelTitle);
             _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
+            UpdateNovelRanking();
             Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");
             return successfulReturn;
 
@@ -171,7 +199,7 @@ namespace NovelReader
             Novel tmp = _novelList[oldPosition];
             _novelList.RemoveAt(oldPosition);
             _novelList.Insert(newPosition, tmp);
-
+            UpdateNovelRanking();
             return true;
         }
 
@@ -194,6 +222,51 @@ namespace NovelReader
                     count++;
             }
             return count;
+        }
+
+        private void UpdateNovelRanking()
+        {
+            for (int i = 0; i < _novelList.Count; i++)
+            {
+                _novelList[i].Rank = i + 1;
+            }
+        }
+
+        private void InsertNovels(IObjectSet novelSet)
+        {
+            Novel[] novels = new Novel[novelSet.Count];
+            for (int i = 0; i < novelSet.Count; i++)
+                novels[i] = (Novel)novelSet[i];
+
+            if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
+            {
+                BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                {
+                    foreach (Novel n in novels)
+                    {
+                        int i = 0;
+                        for (; i < _novelList.Count; i++)
+                        {
+                            if (n.Rank < _novelList[i].Rank)
+                                break;
+                        }
+                        _novelList.Insert(i, n);
+                    }
+                }));
+            }
+            else
+            {
+                foreach (Novel n in novels)
+                {
+                    int i = 0;
+                    for (; i < _novelList.Count; i++)
+                    {
+                        if (n.Rank < _novelList[i].Rank)
+                            break;
+                    }
+                    _novelList.Insert(i, n);
+                }
+            }   
         }
     }
 }

@@ -73,7 +73,7 @@ namespace NovelReader
 
         private void OnUpdateTimer(Object source, ElapsedEventArgs e)
         {
-            Console.WriteLine("Call update");
+            //Console.WriteLine("Call update");
 
         }
 

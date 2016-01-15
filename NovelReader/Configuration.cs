@@ -85,6 +85,11 @@ namespace NovelReader
             get { return "ReplaceSpecification.txt"; }
         }
 
+        public string NovelListDBName
+        {
+            get { return "NovelList.db"; }
+        }
+
         public Rectangle NovelReaderRect
         {
             get { return this._novelReaderFormRect; }

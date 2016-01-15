@@ -186,8 +186,7 @@ namespace NovelReader
 
             DataGridViewCell novelTitleCell = new DataGridViewTextBoxCell();
             DataGridViewCell rankingCell = new DataGridViewTextBoxCell();
-            DataGridViewCell chapterCountCell = new DataGridViewTextBoxCell();
-            DataGridViewCell newChapterCountCell = new DataGridViewTextBoxCell();
+            DataGridViewCell chapterCountStatusCell = new DataGridViewTextBoxCell();
             DataGridViewCheckBoxCell makeAudioCell = new DataGridViewCheckBoxCell();
             UpdateDataGridViewProgressCell updateProgressCell = new UpdateDataGridViewProgressCell();
 
@@ -211,22 +210,12 @@ namespace NovelReader
                 ReadOnly = true
             };
 
-            DataGridViewTextBoxColumn chapterCountColumn = new DataGridViewTextBoxColumn()
+            DataGridViewTextBoxColumn chapterCountStatusColumn = new DataGridViewTextBoxColumn()
             {
-                CellTemplate = chapterCountCell,
-                Name = "ChapterCount",
-                HeaderText = "Chapter Count",
-                DataPropertyName = "ChapterCount",
-                Width = 125,
-                ReadOnly = true
-            };
-
-            DataGridViewTextBoxColumn newChapterCountColumn = new DataGridViewTextBoxColumn()
-            {
-                CellTemplate = newChapterCountCell,
-                Name = "NewChaptersNotReadCount",
-                HeaderText = "New Unread Chapters",
-                DataPropertyName = "NewChaptersNotReadCount",
+                CellTemplate = chapterCountStatusCell,
+                Name = "ChapterCountStatus",
+                HeaderText = "Chapters(New)",
+                DataPropertyName = "ChapterCountStatus",
                 Width = 125,
                 ReadOnly = true
             };
@@ -261,11 +250,10 @@ namespace NovelReader
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                 //Width = 250,
             };
-            
-            dgvNovelList.Columns.Add(novelTitleColumn);
+
             dgvNovelList.Columns.Add(rankingColumn);
-            dgvNovelList.Columns.Add(chapterCountColumn);
-            dgvNovelList.Columns.Add(newChapterCountColumn);
+            dgvNovelList.Columns.Add(novelTitleColumn);
+            dgvNovelList.Columns.Add(chapterCountStatusColumn);
             dgvNovelList.Columns.Add(stateColumn);
             dgvNovelList.Columns.Add(makeAudioColumn);
             dgvNovelList.Columns.Add(updateProgressColumn);

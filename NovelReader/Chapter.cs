@@ -88,6 +88,8 @@ namespace NovelReader
 
         public void ChangeIndex(int newIndex)
         {
+            if (newIndex == this._index)
+                return;
             string oldAudioFileLocation = GetAudioFileLocation();
             string oldTextFileLocation = GetTextFileLocation();
             this._index = newIndex;
