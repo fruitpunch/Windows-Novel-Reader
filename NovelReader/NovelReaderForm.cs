@@ -47,12 +47,16 @@ namespace NovelReader
                 ReadChapter(novel.LastReadChapter);
                 dgvChapterList.FirstDisplayedScrollingRowIndex = novel.LastReadChapter.Index;
             }
-            else
+            else if (currentReadingNovel.ChapterCount > 0)
             {
                 ReadChapter(novel.GetChapter(0));
                 dgvChapterList.FirstDisplayedScrollingRowIndex = 0;
             }
-            
+            else
+            {
+                rtbChapterTextBox.Text = "No chapters available";
+            }
+
         }
 
         /*============EventHandler==========*/
@@ -135,6 +139,25 @@ namespace NovelReader
                 Thread t = new Thread(new ParameterizedThreadStart(DownloadAndReadChapter));
                 t.Start(currentReadingChapter);
             }
+        }
+
+
+        private void btnDeleteChapter_Click(object sender, EventArgs e)
+        {
+            if (currentReadingNovel != null && currentReadingChapter != null)
+            {
+                DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete " + currentReadingChapter.ChapterTitle, "Delete Chapter", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    currentReadingNovel.DeleteChapter(currentReadingChapter);
+                    ReadChapter(currentReadingNovel.LastReadChapter);
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
         }
 
         /*============PrivateFunction=======*/
@@ -290,6 +313,7 @@ namespace NovelReader
                 row.DefaultCellStyle.SelectionBackColor = Color.Green;
             }
         }
+
 
 
 

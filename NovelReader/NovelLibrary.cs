@@ -16,7 +16,7 @@ namespace NovelReader
         private static NovelLibrary instance;
 
         private BindingList<Novel> _novelList{ get; set; }
-        private IObjectContainer db;
+        public IObjectContainer db;
         
 
         /*============Properties============*/

@@ -39,6 +39,7 @@
             this.labelTitle = new System.Windows.Forms.Label();
             this.btnPrevious = new System.Windows.Forms.Button();
             this.btnRedownload = new System.Windows.Forms.Button();
+            this.btnDeleteChapter = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -171,13 +172,25 @@
             // 
             this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnRedownload.Location = new System.Drawing.Point(936, 15);
+            this.btnRedownload.Location = new System.Drawing.Point(787, 19);
             this.btnRedownload.Name = "btnRedownload";
             this.btnRedownload.Size = new System.Drawing.Size(135, 35);
             this.btnRedownload.TabIndex = 10;
             this.btnRedownload.Text = "Download Chapter";
             this.btnRedownload.UseVisualStyleBackColor = true;
             this.btnRedownload.Click += new System.EventHandler(this.btnRedownload_Click);
+            // 
+            // btnDeleteChapter
+            // 
+            this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeleteChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnDeleteChapter.Location = new System.Drawing.Point(928, 20);
+            this.btnDeleteChapter.Name = "btnDeleteChapter";
+            this.btnDeleteChapter.Size = new System.Drawing.Size(135, 35);
+            this.btnDeleteChapter.TabIndex = 11;
+            this.btnDeleteChapter.Text = "Delete Chapter";
+            this.btnDeleteChapter.UseVisualStyleBackColor = true;
+            this.btnDeleteChapter.Click += new System.EventHandler(this.btnDeleteChapter_Click);
             // 
             // NovelReaderForm
             // 
@@ -186,6 +199,7 @@
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1084, 730);
+            this.Controls.Add(this.btnDeleteChapter);
             this.Controls.Add(this.btnRedownload);
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.cbAutoPlay);
@@ -220,5 +234,6 @@
         private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.Button btnPrevious;
         private System.Windows.Forms.Button btnRedownload;
+        private System.Windows.Forms.Button btnDeleteChapter;
     }
 }

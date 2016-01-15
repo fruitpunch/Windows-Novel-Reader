@@ -41,7 +41,6 @@ namespace NovelReader
         private BackgroundService()
         {
             Console.WriteLine("Backgroundservice Constructor");
-
         }
 
         public void StartService()

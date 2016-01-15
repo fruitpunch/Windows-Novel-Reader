@@ -30,6 +30,7 @@ namespace NovelReader
 
         private string _novelTitle { get; set; }
         private NovelState _state { get; set; }
+        private int _chapterCount { get; set; }
         private int _newChaptersNotReadCount { get; set; }
         private int _rank { get; set; }
         private Chapter _lastReadChapter { get; set; }
@@ -65,7 +66,12 @@ namespace NovelReader
 
         public int ChapterCount
         {
-            get { return _chapters.Count; }
+            get { return this._chapterCount; }
+            set
+            {
+                this._chapterCount = value;
+                NotifyPropertyChanged("ChapterCountStatus");
+            }
         }
 
         public int NewChaptersNotReadCount
@@ -222,7 +228,7 @@ namespace NovelReader
 
         public void DownloadChapterContent(Chapter chapter)
         {
-            if (chapter.SourceURL == null)
+            if (chapter == null || chapter.SourceURL == null)
                 return;
             string[] novelContent = _novelSource.GetChapterContent(chapter.ChapterTitle, chapter.SourceURL);
             System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
@@ -245,14 +251,11 @@ namespace NovelReader
             _chapters.Insert(newIndex, tmp);
 
             VeryifyAndCorrectChapterIndexing();
-
-            //for (int i = 0; i < _chapters.Count; i++)
-            //    _chapters[i].Index = i;
         }
 
         public Chapter GetChapter(int chapterIndex = -1)
         {
-            if (chapterIndex >= 0 && chapterIndex < ChapterCount)
+            if (chapterIndex >= 0 && chapterIndex < ChapterCount && _chapters.Count > 0)
                 return _chapters[chapterIndex];
             return null;
         }
@@ -271,7 +274,37 @@ namespace NovelReader
         {
             if (_chapters.Contains(chapter))
             {
-
+                if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
+                {
+                    BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                    {
+                        _chapters.Remove(chapter);
+                    }));
+                }
+                else
+                {
+                    _chapters.Remove(chapter);
+                }
+                if (chapter.SourceURL != null)
+                {
+                    invalidUrlIdSet.Add(chapter.SourceURL.GetHashCode());
+                    validUrlIdSet.Remove(chapter.SourceURL.GetHashCode());
+                    if (chapter.HasAudio)
+                        File.Delete(chapter.GetAudioFileLocation());
+                    if (chapter.HasText)
+                        File.Delete(chapter.GetTextFileLocation());
+                    if (chapter.Equals(_lastReadChapter))
+                    {
+                        if (chapter.Index > 0)
+                            _lastReadChapter = GetChapter(chapter.Index - 1);
+                        else if (chapter.Index == 0)
+                            _lastReadChapter = GetChapter(0);
+                        else
+                            _lastReadChapter = null;
+                    }
+                    //Add remove from DB
+                }
+                VeryifyAndCorrectChapterIndexing();
             }
         }
 
@@ -295,6 +328,26 @@ namespace NovelReader
             {
                 _chapters.Add(chapter);
             }
+            _chapterCount++;
+        }
+
+        private void InsertNewChapter(Chapter chapter, int pos)
+        {
+            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
+            {
+                System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false);
+                BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                {
+                    _chapters.Insert(pos, chapter);
+                    mre.Set();
+                }));
+                mre.WaitOne(-1);
+            }
+            else
+            {
+                _chapters.Insert(pos, chapter);
+            }
+            VeryifyAndCorrectChapterIndexing();
         }
 
         private void VeryifyAndCorrectChapterIndexing()
@@ -318,6 +371,7 @@ namespace NovelReader
                         _chapters[i].ChangeIndex(i);
                 }
             }
+            ChapterCount = _chapters.Count;
         }
 
         //Set the progress to be displayed in NovelListControl.
