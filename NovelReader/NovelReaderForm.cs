@@ -16,10 +16,11 @@ namespace NovelReader
 
     public partial class NovelReaderForm : Form
     {
-        private Novel novel;
-        private Chapter currentChapter;
+        private Novel currentReadingNovel;
+        private Chapter currentReadingChapter;
         private bool editModeOn;
         private bool currentChapterDirty;
+        private FileSystemWatcher novelDirectoryWatcher;
 
         public NovelReaderForm()
         {
@@ -30,35 +31,51 @@ namespace NovelReader
             this.editModeOn = false;
             this.currentChapterDirty = false;
             this.rtbChapterTextBox.BackColor = Color.AliceBlue;
+            this.novelDirectoryWatcher = new FileSystemWatcher();
+            //novelDirectoryWatcher.NotifyFilter = NotifyFilters.
         }
 
-        public void SetReadingNovel(Novel n)
+        public void SetReadingNovel(Novel novel)
         {
-            this.novel = n;
-            this.Text = n.NovelTitle;
-            dgvChapterList.DataSource = n.Chapters;
+            this.currentReadingNovel = novel;
+            this.Text = novel.NovelTitle;
+            this.dgvChapterList.DataSource = novel.Chapters;
+            this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
+            ReadChapter(novel.LastReadChapter);
         }
 
         /*============EventHandler==========*/
 
         private void dgvChapterList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            ReadChapter(novel.Chapters[e.RowIndex]);
-            
+            ReadChapter(currentReadingNovel.Chapters[e.RowIndex]);
         }
 
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
             if (editModeOn) //Finished Editing
-            {
                 FinishEditing();
-            }
             else //Start Editing
+                StartEditing();     
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            if (currentReadingChapter != null)
             {
-                StartEditing();
+                Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
+                ReadChapter(nextChapter);
             }
-            editModeOn = !editModeOn;
+        }
+
+        private void btnPrevious_Click(object sender, EventArgs e)
+        {
+            if (currentReadingChapter != null)
+            {
+                Chapter prevChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index - 1);
+                ReadChapter(prevChapter);
+            }
         }
 
         private void rtbChapterTextBox_TextChanged(object sender, EventArgs e)
@@ -73,6 +90,22 @@ namespace NovelReader
                 Configuration.Instance.NovelReaderMaximized = true;
             else
                 Configuration.Instance.NovelReaderMaximized = false;
+        }
+
+        private void dgvChapterList_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if (dgvChapterList.IsCurrentCellDirty)
+                dgvChapterList.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        }
+
+        private void dgvChapterList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            ModifyCellStyle(e.RowIndex);
+        }
+
+        private void dgvChapterList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            ModifyCellStyle(e.RowIndex);
         }
 
         /*============PrivateFunction=======*/
@@ -119,14 +152,33 @@ namespace NovelReader
 
         private void ReadChapter(Chapter chapter)
         {
-            using (StreamReader sr = new StreamReader(chapter.GetTextFileLocation()))
+            if (chapter == null)
+                return;
+            if (chapter.HasText)
             {
-                string chapterText = sr.ReadToEnd();
-                rtbChapterTextBox.Text = chapterText;
-                chapter.Read = true;
+                using (StreamReader sr = new StreamReader(chapter.GetTextFileLocation()))
+                {
+                    string chapterText = sr.ReadToEnd();
+                    rtbChapterTextBox.Text = chapterText;
+                }
             }
-            currentChapter = chapter;
+            else
+            {
+                rtbChapterTextBox.Text = "No text file available";
+            }
+            labelTitle.Text = currentReadingNovel.NovelTitle + " - " + chapter.ChapterTitle;
+            currentReadingNovel.ReadChapter(chapter);
+            currentReadingChapter = chapter;
             currentChapterDirty = false;
+
+            if (dgvChapterList.SelectedRows.Count > 0)
+            {
+                foreach (DataGridViewRow row in dgvChapterList.SelectedRows)
+                {
+                    row.Selected = false;
+                }
+            }
+            dgvChapterList.Rows[chapter.Index].Selected = true;
         }
 
         private void StartEditing()
@@ -135,6 +187,7 @@ namespace NovelReader
             currentChapterDirty = false;
             rtbChapterTextBox.BackColor = Color.White;
             btnEdit.Text = "Finish Edit";
+            editModeOn = true;
         }
 
         private void FinishEditing()
@@ -145,21 +198,53 @@ namespace NovelReader
             if (currentChapterDirty)
             {
                 Console.WriteLine("Current Chapter dirty");
-                if (currentChapter != null)
+                if (currentReadingChapter != null)
                 {
                     string text = rtbChapterTextBox.Text;
-                    System.IO.File.WriteAllText(currentChapter.GetTextFileLocation(), text);
+                    System.IO.File.WriteAllText(currentReadingChapter.GetTextFileLocation(), text);
                 }
             }
             else
             {
                 Console.WriteLine("Current Chapter clean");
             }
+            editModeOn = false;
         }
 
-        
+        private void ModifyCellStyle(int rowIndex)
+        {
+            DataGridViewRow row = dgvChapterList.Rows[rowIndex];
+            Chapter chapter = currentReadingNovel.Chapters[rowIndex];
 
-        
+            if (!chapter.HasText)
+            {
+
+                row.DefaultCellStyle.BackColor = Color.LightPink;
+                row.DefaultCellStyle.SelectionBackColor = Color.Firebrick;
+            }
+            else if (!chapter.Read && chapter.HasText && chapter.HasAudio)
+            {
+
+                row.DefaultCellStyle.BackColor = Color.LightBlue;
+                row.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
+
+            }
+            else if (!chapter.Read && chapter.HasText && !chapter.HasAudio)
+            {
+
+                row.DefaultCellStyle.BackColor = Color.LemonChiffon;
+                row.DefaultCellStyle.SelectionBackColor = Color.BurlyWood;
+
+            }
+            else if (chapter.Read && chapter.HasText)
+            {
+
+                row.DefaultCellStyle.BackColor = Color.LightGreen;
+                row.DefaultCellStyle.SelectionBackColor = Color.Green;
+            }
+        }
+
+
 
     }
 }

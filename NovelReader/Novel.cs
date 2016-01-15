@@ -32,7 +32,7 @@ namespace NovelReader
         private NovelState _state { get; set; }
         private int _newChaptersNotReadCount { get; set; }
         private int _rank { get; set; }
-        private int _lastPlayedChapterID { get; set; }
+        private Chapter _lastReadChapter { get; set; }
         private bool _makeAudio { get; set; }
         private bool _isReading { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
@@ -91,10 +91,10 @@ namespace NovelReader
             }
         }
 
-        public int LastPlayedChapterID
+        public Chapter LastReadChapter
         {
-            get { return this._lastPlayedChapterID; }
-            set { this._lastPlayedChapterID = value; }
+            get { return this._lastReadChapter; }
+            set { this._lastReadChapter = value; }
         }
 
         public bool MakeAudio
@@ -237,7 +237,22 @@ namespace NovelReader
                 _chapters[i].ChangeIndex(i);
         }
 
-        
+        public Chapter GetChapter(int chapterIndex = -1)
+        {
+            if (chapterIndex >= 0 && chapterIndex < ChapterCount)
+                return _chapters[chapterIndex];
+            return null;
+        }
+
+        public void ReadChapter(Chapter chapter)
+        {
+            if(_chapters.Contains(chapter))
+            {
+                chapter.Read = true;
+                LastReadChapter = chapter;
+                NewChaptersNotReadCount = 0;
+            }
+        }
 
         /*============Private Function======*/
         //Add a new chapter to the end of chapter list.

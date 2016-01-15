@@ -95,7 +95,6 @@
       <DependentUpon>ApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Novel.cs" />
-    <Compile Include="NovelInfoDB.cs" />
     <Compile Include="NovelLibrary.cs" />
     <Compile Include="NovelListController.cs">
       <SubType>UserControl</SubType>

@@ -168,11 +168,6 @@ namespace NovelReader
             labelLastUpdateTime.Text = Util.GetUpdateTimeString(Configuration.Instance.LastFullUpdateTime);
         }
 
-        private void NovelListController_Click(object sender, EventArgs e)
-        {
-            this.Focus();
-        }
-
         private void upUpdateFreq_ValueChanged(object sender, EventArgs e)
         {
             BackgroundService.Instance.UpdateTimerInterval((int)upUpdateFreq.Value);
@@ -257,12 +252,8 @@ namespace NovelReader
             dgvNovelList.Columns.Add(stateColumn);
             dgvNovelList.Columns.Add(makeAudioColumn);
             dgvNovelList.Columns.Add(updateProgressColumn);
-            //dgvNovelList.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-
 
             dgvNovelList.DataSource = NovelLibrary.Instance.NovelList;
-
-
         }
 
         private void ModifyCellStyle(int rowIndex)
@@ -304,17 +295,5 @@ namespace NovelReader
             foreach (Novel n in NovelLibrary.Instance.NovelList)
                 n.Reading = false;
         }
-
-        
-
-
-        
-
-        
-
-        
-
-        
-
     }
 }

@@ -62,6 +62,11 @@ namespace NovelReader
             get { return File.Exists(GetAudioFileLocation()); }
         }
 
+        public bool HasText
+        {
+            get { return File.Exists(GetTextFileLocation()); }
+        }
+
         /*============Constructor===========*/
 
         public Chapter(string chapterTitle, string novelTitle, bool hasRead = false, int index = -1)
