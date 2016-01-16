@@ -58,7 +58,6 @@ namespace NovelReader
         {
             get { return this._index; }
             set {
-                Console.WriteLine("old index: " + _index + "  new index: " + value);
                 if (this._index != -1 && this._index != value)
                     NovelLibrary.Instance.GetNovel(_novelTitle).ChangeIndex(this._index, value);
                 else

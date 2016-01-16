@@ -8,7 +8,7 @@ namespace Source
 {
     public class SourceManager
     {
-        public enum Sources { web69 };
+        public enum Sources { web69, WebPiaoTian };
 
         public static Source GetSource(string novelTitle, int sourceID, Sources s)
         {
@@ -17,6 +17,9 @@ namespace Source
             {
                 case Sources.web69:
                     rtnSource = new SourceWeb69(novelTitle, sourceID);
+                    break;
+                case Sources.WebPiaoTian:
+                    rtnSource = new SourcePiaoTian(novelTitle, sourceID);
                     break;
                 default:
                     rtnSource = null;

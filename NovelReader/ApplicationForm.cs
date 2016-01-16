@@ -14,11 +14,13 @@ namespace NovelReader
     {
         public ApplicationForm()
         {
+            Util.LoadComponents();
             InitializeComponent();
         }
 
         private void ApplicationForm_Load(object sender, EventArgs e)
         {
+            
             this.DesktopBounds = Configuration.Instance.ApplicationRect;
             if (Configuration.Instance.ApplicationMaximized)
                 this.WindowState = FormWindowState.Maximized;

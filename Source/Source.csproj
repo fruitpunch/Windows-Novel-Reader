@@ -45,6 +45,7 @@
     <Compile Include="Source.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceManager.cs" />
+    <Compile Include="SourcePiaoTian.cs" />
     <Compile Include="SourceWeb69.cs" />
     <Compile Include="WebUtil.cs" />
   </ItemGroup>

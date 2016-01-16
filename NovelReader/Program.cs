@@ -14,7 +14,7 @@ namespace NovelReader
         [STAThread]
         static void Main()
         {
-            Util.LoadComponents();
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new ApplicationForm());

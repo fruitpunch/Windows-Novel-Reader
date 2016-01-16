@@ -195,7 +195,7 @@ namespace NovelReader
             foreach (Chapter chapter in sorted)
             {
                 AppendNewChapter(chapter);
-                Console.WriteLine("added chapter " + chapter.Index);
+                //Console.WriteLine("added chapter " + chapter.Index);
                 if (_lastReadChapter != null && _lastReadChapter.Index == chapter.Index)
                     _lastReadChapter = chapter;
             }
@@ -346,6 +346,8 @@ namespace NovelReader
         {
             Chapter chapter = new Chapter("<Enter Chapter Title>", _novelTitle, null, false, _chapterCount);
             AppendNewChapter(chapter);
+            NovelLibrary.Instance.db.Store(chapter);
+            NovelLibrary.Instance.db.Commit();
             return chapter;
         }
 
@@ -366,24 +368,27 @@ namespace NovelReader
                 }
                 if (chapter.SourceURL != null)
                 {
-                    validUrlIdSet.Remove(chapter.SourceURL.GetHashCode());
                     if(blackList)
                         invalidUrlIdSet.Add(chapter.SourceURL.GetHashCode());
-                    if (chapter.HasAudio)
-                        File.Delete(chapter.GetAudioFileLocation());
-                    if (chapter.HasText)
-                        File.Delete(chapter.GetTextFileLocation());
-                    if (chapter.Equals(_lastReadChapter))
-                    {
-                        if (chapter.Index > 0)
-                            _lastReadChapter = GetChapter(chapter.Index - 1);
-                        else if (chapter.Index == 0)
-                            _lastReadChapter = GetChapter(0);
-                        else
-                            _lastReadChapter = null;
-                    }
-                    NovelLibrary.Instance.db.Delete(chapter);
+                    validUrlIdSet.Remove(chapter.SourceURL.GetHashCode());
                 }
+
+                
+                if (chapter.HasAudio)
+                    File.Delete(chapter.GetAudioFileLocation());
+                if (chapter.HasText)
+                    File.Delete(chapter.GetTextFileLocation());
+                if (chapter.Equals(_lastReadChapter))
+                {
+                    if (chapter.Index > 0)
+                        _lastReadChapter = GetChapter(chapter.Index - 1);
+                    else if (chapter.Index == 0)
+                        _lastReadChapter = GetChapter(0);
+                    else
+                        _lastReadChapter = null;
+                }
+                NovelLibrary.Instance.db.Delete(chapter);
+                NovelLibrary.Instance.db.Commit();
                 VeryifyAndCorrectChapterIndexing();
             }
         }

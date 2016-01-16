@@ -48,7 +48,8 @@ namespace NovelReader
             if (novel.LastReadChapter != null)
             {
                 ReadChapter(novel.LastReadChapter);
-                dgvChapterList.FirstDisplayedScrollingRowIndex = novel.LastReadChapter.Index;
+                Console.WriteLine(novel.LastReadChapter.Index);
+                dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
             }
             else if (currentReadingNovel.ChapterCount > 0)
             {
@@ -162,10 +163,14 @@ namespace NovelReader
                 DialogResult deleteResult = MessageBox.Show("Are you sure you want to delete " + currentReadingChapter.ChapterTitle, "Delete Chapter", MessageBoxButtons.YesNo);
                 if (deleteResult == DialogResult.No)
                     return;
-
-                DialogResult blackListResult = MessageBox.Show("Do you want to blacklist " + currentReadingChapter.ChapterTitle + "'s Source Link?", "Blacklist Link.", MessageBoxButtons.YesNo);
-                if (blackListResult == DialogResult.Yes)
-                    currentReadingNovel.DeleteChapter(currentReadingChapter, true);
+                if (currentReadingChapter.SourceURL != null)
+                {
+                    DialogResult blackListResult = MessageBox.Show("Do you want to blacklist " + currentReadingChapter.ChapterTitle + "'s Source Link?", "Blacklist Link.", MessageBoxButtons.YesNo);
+                    if (blackListResult == DialogResult.Yes)
+                        currentReadingNovel.DeleteChapter(currentReadingChapter, true);
+                    else
+                        currentReadingNovel.DeleteChapter(currentReadingChapter, false);
+                }
                 else
                     currentReadingNovel.DeleteChapter(currentReadingChapter, false);
                 ReadChapter(currentReadingNovel.LastReadChapter);
@@ -221,6 +226,8 @@ namespace NovelReader
                 DataPropertyName = "Read",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             };
+
+
 
             dgvChapterList.Columns.Add(titleColumn);
             dgvChapterList.Columns.Add(indexColumn);
@@ -294,17 +301,13 @@ namespace NovelReader
             btnEdit.Text = "Edit";
             if (currentChapterDirty)
             {
-                Console.WriteLine("Current Chapter dirty");
                 if (currentReadingChapter != null)
                 {
                     string text = rtbChapterTextBox.Text;
                     System.IO.File.WriteAllText(currentReadingChapter.GetTextFileLocation(), text);
                 }
             }
-            else
-            {
-                Console.WriteLine("Current Chapter clean");
-            }
+
             editModeOn = false;
         }
 

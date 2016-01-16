@@ -146,8 +146,7 @@ namespace NovelReader
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
             foreach (Novel n in updateNovels)
             {
-                if (n.State == Novel.NovelState.Active && n.NewChapterCount > 0)
-                    n.DownloadUpdate();
+                n.DownloadUpdate();
             }
 
             Configuration.Instance.LastFullUpdateTime = DateTime.Now;
