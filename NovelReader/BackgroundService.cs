@@ -135,8 +135,6 @@ namespace NovelReader
             foreach (Novel n in updateNovels)
             {
                 n.CheckForUpdate();
-                if (n.NewChapterCount > 0)
-                    newChapterAvailable = true;
             }
             return newChapterAvailable;
         }

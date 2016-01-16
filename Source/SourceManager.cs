@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Source
 {
+    public enum SourceLocation { Web69, WebPiaoTian };
+
     public class SourceManager
     {
         public enum Sources { web69, WebPiaoTian };

@@ -16,6 +16,16 @@ namespace Source
         int novelID;
         CultureInfo cultureInfo;
 
+        public SourceManager.Sources SourceLocation
+        {
+            get { return SourceManager.Sources.WebPiaoTian; }
+        }
+
+        public int NovelID
+        {
+            get { return this.novelID; }
+        }
+
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
             {
                 {"<script>txttopshow7();</script><!--章节内容结束-->", ""},
@@ -47,9 +57,7 @@ namespace Source
             List<Tuple<string, string>> chapterURLs = new List<Tuple<string, string>>();
 
             string url = baseURL + "/read/" + novelID.ToString() + "/index.html";
-            Console.WriteLine("menu url " + url);
             string chapterMatchingSubstring = "<a href=\"/read/" + novelID.ToString() + "/";
-            Console.WriteLine("matching string " + chapterMatchingSubstring);
             string[] lines = WebUtil.GetUrlContents(url);
             string title, chURL;
 
@@ -72,7 +80,6 @@ namespace Source
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
-            Console.WriteLine(baseURL + url);
             string[] lines = WebUtil.GetUrlContents(baseURL + url);
             List<string> novelContent = new List<string>();
             bool contentFound = false;
@@ -94,12 +101,9 @@ namespace Source
 
         private string NovelContentCleanup(string content)
         {
-            //content = Util.GeneralNovelContentCleanup(content);
-
             foreach (KeyValuePair<string, string> entry in replaceRegex)
                 content = content.Replace(entry.Key, entry.Value);
             content = content.ToLower(cultureInfo);
-            //Console.WriteLine(content);
             return content;
         }
     }

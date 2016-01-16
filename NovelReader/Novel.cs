@@ -43,7 +43,6 @@ namespace NovelReader
 
         private HashSet<int> validUrlIdSet;
         private HashSet<int> invalidUrlIdSet;
-        private List<Tuple<string, string>> updateUrlList;
 
         /*============Properties============*/
 
@@ -138,11 +137,6 @@ namespace NovelReader
             }
         }
 
-        public int NewChapterCount
-        {
-            get { return this.updateUrlList.Count; }
-        }
-
         /*============Constructor===========*/
 
         public Novel(string novelTitle, SourceManager.Sources source, int sourceId, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
@@ -157,7 +151,6 @@ namespace NovelReader
             this._chapters = new BindingList<Chapter>();
             this.validUrlIdSet = new HashSet<int>();
             this.invalidUrlIdSet = new HashSet<int>();
-            this.updateUrlList = new List<Tuple<string, string>>();
             SetUpdateProgress();
         }
 
@@ -225,7 +218,6 @@ namespace NovelReader
             LoadChapterFromDB();
 
             SetUpdateProgress(0, 0, UpdateState.Checking);
-            updateUrlList.Clear();
             Tuple<string, string>[] menuItems = _novelSource.GetMenuURLs();
             int updateChapterCount = 0;
             int chapterIndex = 0;
@@ -246,13 +238,13 @@ namespace NovelReader
                     validUrlIdSet.Add(menuItems[i].Item2.GetHashCode());
                     chapterIndex++;
                     updateChapterCount++;
-                    updateUrlList.Add(menuItems[i]);
                 }
                 
             }
             
             SetUpdateProgress(updateChapterCount, 0, UpdateState.UpdateAvailable);
-            return updateUrlList.Count > 0;
+            SaveChapterToDB();
+            return updateChapterCount > 0;
         }
 
         //Download the new chapters.
@@ -261,20 +253,24 @@ namespace NovelReader
             int newlyAddedChapter = 0;
             int index = _chapters.Count;
 
+            int updateCount = 0;
+            foreach (Chapter c in _chapters)
+                if (c.SourceURL != null && !c.HasAudio)
+                    updateCount++;
+
             for (int i = 0; i < _chapters.Count; i++)
             {
-                if (!_chapters[i].HasText)
+                if (!_chapters[i].HasText && _chapters[i].SourceURL != null)
                 {
                     newlyAddedChapter++;
                     DownloadChapterContent(_chapters[i]);
-                    SetUpdateProgress(i, updateUrlList.Count, UpdateState.Fetching);
+                    SetUpdateProgress(i, updateCount, UpdateState.Fetching);
                 }
             }
             SaveChapterToDB();
             if (!_isReading)
                 ClearChapters();
 
-            updateUrlList.Clear();
             SetUpdateProgress(0, 0, UpdateState.UpToDate);
             if (BackgroundService.Instance.novelListController.InvokeRequired)
             {

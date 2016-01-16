@@ -15,6 +15,16 @@ namespace Source
         int novelID;
         CultureInfo cultureInfo;
 
+        public SourceManager.Sources SourceLocation
+        {
+            get { return SourceManager.Sources.web69; }
+        }
+
+        public int NovelID
+        {
+            get { return this.novelID; }
+        }
+
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
             {
                 {"<script>txttopshow7();</script><!--章节内容结束-->", ""},
