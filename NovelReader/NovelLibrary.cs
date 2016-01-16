@@ -1,5 +1,6 @@
 ﻿using Db4objects.Db4o;
 using Db4objects.Db4o.Config;
+using Source;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -109,7 +110,7 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Tuple<bool, string> AddNovel(string novelTitle, Source.SourceManager.Sources source, int sourceID)
+        public Tuple<bool, string> AddNovel(string novelTitle, SourceLocation source, int sourceID)
         {
             foreach (Novel n in _novelList)
             {

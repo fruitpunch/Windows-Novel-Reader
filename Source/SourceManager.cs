@@ -10,17 +10,16 @@ namespace Source
 
     public class SourceManager
     {
-        public enum Sources { web69, WebPiaoTian };
 
-        public static Source GetSource(string novelTitle, int sourceID, Sources s)
+        public static Source GetSource(string novelTitle, int sourceID, SourceLocation s)
         {
             Source rtnSource;
             switch (s)
             {
-                case Sources.web69:
+                case SourceLocation.Web69:
                     rtnSource = new SourceWeb69(novelTitle, sourceID);
                     break;
-                case Sources.WebPiaoTian:
+                case SourceLocation.WebPiaoTian:
                     rtnSource = new SourcePiaoTian(novelTitle, sourceID);
                     break;
                 default:

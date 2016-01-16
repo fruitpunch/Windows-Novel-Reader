@@ -19,13 +19,13 @@ namespace NovelReader
         {
             InitializeComponent();
 
-            sourceSelector.DataSource = Enum.GetValues(typeof(SourceManager.Sources));
+            sourceSelector.DataSource = Enum.GetValues(typeof(SourceLocation));
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             string newNovelTitle = null;
-            SourceManager.Sources source;
+            SourceLocation source;
             int sourceID = -1;
             
 
@@ -42,7 +42,7 @@ namespace NovelReader
             }
 
             newNovelTitle = inputNovelTitle.Text;
-            source = (SourceManager.Sources)Enum.Parse(typeof(SourceManager.Sources), sourceSelector.SelectedItem.ToString());
+            source = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
             Tuple<bool, string> result = BackgroundService.Instance.AddNovel(newNovelTitle, source, sourceID);
 
             if (!result.Item1)

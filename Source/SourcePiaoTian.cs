@@ -16,9 +16,9 @@ namespace Source
         int novelID;
         CultureInfo cultureInfo;
 
-        public SourceManager.Sources SourceLocation
+        public SourceLocation SourceLocation
         {
-            get { return SourceManager.Sources.WebPiaoTian; }
+            get { return SourceLocation.WebPiaoTian; }
         }
 
         public int NovelID

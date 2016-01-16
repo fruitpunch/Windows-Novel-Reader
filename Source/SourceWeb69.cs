@@ -15,9 +15,9 @@ namespace Source
         int novelID;
         CultureInfo cultureInfo;
 
-        public SourceManager.Sources SourceLocation
+        public SourceLocation SourceLocation
         {
-            get { return SourceManager.Sources.web69; }
+            get { return SourceLocation.Web69; }
         }
 
         public int NovelID

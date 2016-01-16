@@ -139,10 +139,10 @@ namespace NovelReader
 
         /*============Constructor===========*/
 
-        public Novel(string novelTitle, SourceManager.Sources source, int sourceId, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
+        public Novel(string novelTitle, SourceLocation sourceLocation, int sourceId, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
         {
             this._novelTitle = novelTitle;
-            this._novelSource = SourceManager.GetSource(novelTitle, sourceId, source);
+            this._novelSource = SourceManager.GetSource(novelTitle, sourceId, sourceLocation);
             this._state = state;
             this._rank = rank;
             this._newChaptersNotReadCount = 0;

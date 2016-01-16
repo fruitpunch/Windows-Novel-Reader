@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Source;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -78,7 +79,7 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Tuple<bool, string> AddNovel(string novelTitle, Source.SourceManager.Sources source, int sourceID)
+        public Tuple<bool, string> AddNovel(string novelTitle, SourceLocation source, int sourceID)
         {
             return NovelLibrary.Instance.AddNovel(novelTitle, source, sourceID);
         }
