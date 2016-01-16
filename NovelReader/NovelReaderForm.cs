@@ -33,6 +33,10 @@ namespace NovelReader
             this.currentChapterDirty = false;
             this.rtbChapterTextBox.BackColor = Color.AliceBlue;
             this.novelDirectoryWatcher = new FileSystemWatcher();
+            this.novelDirectoryWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            this.novelDirectoryWatcher.Created += new FileSystemEventHandler(OnFileChange);
+            this.novelDirectoryWatcher.Deleted += new FileSystemEventHandler(OnFileChange);
+            this.novelDirectoryWatcher.IncludeSubdirectories = true;
             //novelDirectoryWatcher.NotifyFilter = NotifyFilters.
         }
 
@@ -45,6 +49,9 @@ namespace NovelReader
             this.Text = novel.NovelTitle;
             this.dgvChapterList.DataSource = novel.Chapters;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
+            
+            this.novelDirectoryWatcher.EnableRaisingEvents = true;
+
             if (novel.LastReadChapter != null)
             {
                 ReadChapter(novel.LastReadChapter);
@@ -65,11 +72,25 @@ namespace NovelReader
 
         /*============EventHandler==========*/
 
+        private void OnFileChange(object source, FileSystemEventArgs e)
+        {
+            int fileIndex = -1;
+            string[] parts = Path.GetFileName(e.Name).Split('_');
+                
+            if (parts.Length != 2)
+                return;
+            if (Int32.TryParse(parts[0], out fileIndex) && fileIndex >= 0 && fileIndex < currentReadingNovel.Chapters.Count)
+            {
+                if (e.FullPath.Equals(currentReadingNovel.Chapters[fileIndex].GetAudioFileLocation()) || e.FullPath.Equals(currentReadingNovel.Chapters[fileIndex].GetTextFileLocation()))
+                    ModifyCellStyle(fileIndex);
+            }
+
+        }
+
         private void dgvChapterList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             ReadChapter(currentReadingNovel.Chapters[e.RowIndex]);
         }
-
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
