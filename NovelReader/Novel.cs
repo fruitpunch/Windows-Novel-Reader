@@ -37,6 +37,7 @@ namespace NovelReader
         private bool _makeAudio { get; set; }
         private bool _isReading { get; set; }
         Source.Source _novelSource { get; set; }
+        UpdateState _updateState { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
         [Transient] 
         private BindingList<Chapter> _chapters;
@@ -192,6 +193,7 @@ namespace NovelReader
                 if (_lastReadChapter != null && _lastReadChapter.Index == chapter.Index)
                     _lastReadChapter = chapter;
             }
+            Console.WriteLine("Load Chapters for " + _novelTitle);
         }
 
         public void SaveChapterToDB()
@@ -209,7 +211,10 @@ namespace NovelReader
         {
             if (_chapters == null)
                 return;
+            if (_updateState != UpdateState.Checking || _updateState != UpdateState.Fetching)
+                return;
             _chapters.Clear();
+            Console.WriteLine("Clear Chapters for " + _novelTitle);
         }
 
         //Check and see if there is new chapter available for download.
@@ -325,16 +330,33 @@ namespace NovelReader
         {
             _isReading = false;
             SaveChapterToDB();
-            ClearChapters();
+            ClearChapters(); 
         }
 
-        public void ReadChapter(Chapter chapter)
+        public void StartReadingChapter(Chapter chapter)
         {
             if(_chapters.Contains(chapter))
             {
-                chapter.Read = true;
+                chapter.NotifyPropertyChanged("Read");
                 LastReadChapter = chapter;
                 NewChaptersNotReadCount = 0;
+            }
+        }
+
+        public void StopReadingChapter(Chapter chapter)
+        {
+            if (_chapters.Contains(chapter))
+            {
+                LastReadChapter = chapter;
+            }
+        }
+
+        public void MarkOffChapter(Chapter chapter)
+        {
+            if (_chapters.Contains(chapter))
+            {
+                chapter.Read = true;
+                LastReadChapter = chapter;
             }
         }
 
@@ -530,7 +552,7 @@ namespace NovelReader
                     message = "Novel Dropped";
                     break;
             }
-
+            _updateState = updateState;
             if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
             {
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
@@ -548,7 +570,17 @@ namespace NovelReader
         {
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
+                {
+                    BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                    }));
+                }
+                else
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                }
             }
         }
 

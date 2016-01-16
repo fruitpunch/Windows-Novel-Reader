@@ -170,7 +170,7 @@ namespace NovelReader
             }
         }
 
-        private void NotifyPropertyChanged(string propertyName)
+        public void NotifyPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
             {

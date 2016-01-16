@@ -41,6 +41,7 @@
             this.btnRedownload = new System.Windows.Forms.Button();
             this.btnDeleteChapter = new System.Windows.Forms.Button();
             this.btnAddChapter = new System.Windows.Forms.Button();
+            this.btnFinishReading = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -72,7 +73,7 @@
             this.rtbChapterTextBox.Location = new System.Drawing.Point(380, 61);
             this.rtbChapterTextBox.Name = "rtbChapterTextBox";
             this.rtbChapterTextBox.ReadOnly = true;
-            this.rtbChapterTextBox.Size = new System.Drawing.Size(690, 624);
+            this.rtbChapterTextBox.Size = new System.Drawing.Size(790, 624);
             this.rtbChapterTextBox.TabIndex = 1;
             this.rtbChapterTextBox.Text = "";
             this.rtbChapterTextBox.TextChanged += new System.EventHandler(this.rtbChapterTextBox_TextChanged);
@@ -81,7 +82,7 @@
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnNext.Location = new System.Drawing.Point(466, 691);
+            this.btnNext.Location = new System.Drawing.Point(588, 691);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(80, 35);
             this.btnNext.TabIndex = 3;
@@ -91,9 +92,9 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnEdit.Location = new System.Drawing.Point(574, 691);
+            this.btnEdit.Location = new System.Drawing.Point(756, 19);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(125, 35);
             this.btnEdit.TabIndex = 4;
@@ -105,7 +106,7 @@
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPlay.Location = new System.Drawing.Point(722, 691);
+            this.btnPlay.Location = new System.Drawing.Point(815, 691);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(75, 35);
             this.btnPlay.TabIndex = 5;
@@ -116,7 +117,7 @@
             // 
             this.btnPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPause.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPause.Location = new System.Drawing.Point(803, 691);
+            this.btnPause.Location = new System.Drawing.Point(896, 691);
             this.btnPause.Name = "btnPause";
             this.btnPause.Size = new System.Drawing.Size(75, 35);
             this.btnPause.TabIndex = 6;
@@ -127,7 +128,7 @@
             // 
             this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnStop.Location = new System.Drawing.Point(884, 691);
+            this.btnStop.Location = new System.Drawing.Point(977, 691);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 35);
             this.btnStop.TabIndex = 7;
@@ -140,7 +141,7 @@
             this.cbAutoPlay.AutoSize = true;
             this.cbAutoPlay.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.cbAutoPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.cbAutoPlay.Location = new System.Drawing.Point(983, 699);
+            this.cbAutoPlay.Location = new System.Drawing.Point(1057, 699);
             this.cbAutoPlay.Name = "cbAutoPlay";
             this.cbAutoPlay.Size = new System.Drawing.Size(87, 21);
             this.cbAutoPlay.TabIndex = 8;
@@ -173,7 +174,7 @@
             // 
             this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnRedownload.Location = new System.Drawing.Point(787, 19);
+            this.btnRedownload.Location = new System.Drawing.Point(887, 19);
             this.btnRedownload.Name = "btnRedownload";
             this.btnRedownload.Size = new System.Drawing.Size(135, 35);
             this.btnRedownload.TabIndex = 10;
@@ -185,7 +186,7 @@
             // 
             this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDeleteChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnDeleteChapter.Location = new System.Drawing.Point(928, 20);
+            this.btnDeleteChapter.Location = new System.Drawing.Point(1028, 20);
             this.btnDeleteChapter.Name = "btnDeleteChapter";
             this.btnDeleteChapter.Size = new System.Drawing.Size(135, 35);
             this.btnDeleteChapter.TabIndex = 11;
@@ -205,13 +206,26 @@
             this.btnAddChapter.UseVisualStyleBackColor = true;
             this.btnAddChapter.Click += new System.EventHandler(this.btnAddChapter_Click);
             // 
+            // btnFinishReading
+            // 
+            this.btnFinishReading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnFinishReading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnFinishReading.Location = new System.Drawing.Point(466, 691);
+            this.btnFinishReading.Name = "btnFinishReading";
+            this.btnFinishReading.Size = new System.Drawing.Size(116, 35);
+            this.btnFinishReading.TabIndex = 13;
+            this.btnFinishReading.Text = "Finish Reading";
+            this.btnFinishReading.UseVisualStyleBackColor = true;
+            this.btnFinishReading.Click += new System.EventHandler(this.btnFinishReading_Click);
+            // 
             // NovelReaderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(1084, 730);
+            this.ClientSize = new System.Drawing.Size(1184, 730);
+            this.Controls.Add(this.btnFinishReading);
             this.Controls.Add(this.btnAddChapter);
             this.Controls.Add(this.btnDeleteChapter);
             this.Controls.Add(this.btnRedownload);
@@ -250,5 +264,6 @@
         private System.Windows.Forms.Button btnRedownload;
         private System.Windows.Forms.Button btnDeleteChapter;
         private System.Windows.Forms.Button btnAddChapter;
+        private System.Windows.Forms.Button btnFinishReading;
     }
 }

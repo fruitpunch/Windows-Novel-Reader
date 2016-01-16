@@ -196,18 +196,16 @@ namespace TTS
                 ms.Seek(0, SeekOrigin.Begin);
 
                 //Convert from wav to mp3 to save space
-                using (var rdr = new WaveFileReader(ms))
-                using (var wtr = new LameMP3FileWriter(outputFileLocation, rdr.WaveFormat, LAMEPreset.VBR_90))
+                using (WaveFileReader rdr = new WaveFileReader(ms))
+                using (LameMP3FileWriter wtr = new LameMP3FileWriter(outputFileLocation, rdr.WaveFormat, LAMEPreset.VBR_90))
                 {
                     rdr.CopyTo(wtr);
                 }
             }
-
         }
 
         private void BuildPrompt(string sentence, string symbol, bool quoted)
         {
-            //Console.WriteLine("Sentence: " + str + " quoted: " + quoted);
             string distinct = new String(sentence.Distinct().ToArray());
             bool isDistinct = distinct.Length == 1 ? true : false;
             bool shortened = isDistinct && sentence.Length > 2 ? true : false;

@@ -47,7 +47,7 @@ namespace NovelReader
         public void StartService()
         {
             this.ttsScheduler = new Scheduler(Configuration.Instance.TTSThreadCount);
-            this.ttsScheduler.ttsCompleteEventHandler += TTSComplete;
+            this.ttsScheduler.ttsCompleteEventHandler += TTSProgress;
             this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
             this.updateTimer.Enabled = true;
             this.updateTimer.Elapsed += new ElapsedEventHandler(OnUpdateTimer);
@@ -75,6 +75,11 @@ namespace NovelReader
         {
             //Console.WriteLine("Call update");
 
+        }
+
+        private void TTSProgress(Object sender, TTSProgressEventArgs e)
+        {
+            Console.WriteLine(e.request.ChapterTitle + " complete.");
         }
 
         /*============Public Function=======*/
@@ -124,9 +129,9 @@ namespace NovelReader
             }*/
         }
 
-        private void TTSComplete(Object sender, TTSCompleteEventArgs e)
+        private void ScheduleTTS()
         {
-            Console.WriteLine("TTS completed event");
+
         }
 
         private bool CheckUpdates()

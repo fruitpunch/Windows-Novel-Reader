@@ -55,7 +55,6 @@ namespace NovelReader
             if (novel.LastReadChapter != null)
             {
                 ReadChapter(novel.LastReadChapter);
-                Console.WriteLine(novel.LastReadChapter.Index);
                 dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
             }
             else if (currentReadingNovel.ChapterCount > 0)
@@ -103,7 +102,7 @@ namespace NovelReader
         private void btnNext_Click(object sender, EventArgs e)
         {
             FinishEditing();
-            if (currentReadingChapter != null)
+            if (currentReadingNovel != null && currentReadingChapter != null)
             {
                 Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
                 ReadChapter(nextChapter);
@@ -113,9 +112,21 @@ namespace NovelReader
         private void btnPrevious_Click(object sender, EventArgs e)
         {
             FinishEditing();
-            if (currentReadingChapter != null)
+            if (currentReadingNovel != null && currentReadingChapter != null)
             {
-                Chapter prevChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index - 1);
+                Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index - 1);
+                ReadChapter(nextChapter);
+            }
+        }
+
+
+        private void btnFinishReading_Click(object sender, EventArgs e)
+        {
+            FinishEditing();
+            if (currentReadingNovel != null && currentReadingChapter != null)
+            {
+                currentReadingNovel.MarkOffChapter(currentReadingChapter);
+                Chapter prevChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
                 ReadChapter(prevChapter);
             }
         }
@@ -262,7 +273,7 @@ namespace NovelReader
             labelTitle.DataBindings.Clear();
             labelTitle.DataBindings.Add(new Binding("Text", chapter, "ChapterTitle", false, DataSourceUpdateMode.OnPropertyChanged));
             //labelTitle.Text = currentReadingNovel.NovelTitle + " - " + chapter.ChapterTitle;
-            currentReadingNovel.ReadChapter(chapter);
+            currentReadingNovel.StartReadingChapter(chapter);
             currentReadingChapter = chapter;
             rtbChapterTextBox.Select(0, 0);
             rtbChapterTextBox.ScrollToCaret();
@@ -334,6 +345,8 @@ namespace NovelReader
 
         private void ModifyCellStyle(int rowIndex)
         {
+            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count)
+                return;
             DataGridViewRow row = dgvChapterList.Rows[rowIndex];
             Chapter chapter = currentReadingNovel.Chapters[rowIndex];
             row.DefaultCellStyle.SelectionForeColor = Color.DimGray;
@@ -383,6 +396,7 @@ namespace NovelReader
                 //row.DefaultCellStyle.SelectionBackColor = Color.Green;
             }
         }
+
 
 
 

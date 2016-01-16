@@ -124,12 +124,12 @@ namespace NovelReader
         }
     }
 
-    public class TTSCompleteEventArgs : EventArgs
+    public class TTSProgressEventArgs : EventArgs
     {
-
+        public Request request { get; set; }
     }
 
-    public delegate void TTSCompleteEventHandler(Object sender, TTSCompleteEventArgs e);
+    public delegate void TTSCompleteEventHandler(Object sender, TTSProgressEventArgs e);
 
     public class Scheduler
     {
@@ -244,7 +244,6 @@ namespace NovelReader
                 threadCount = ActiveThreadCount();
                 if (_requestList.Count == 0)
                 {
-                    TTSComplete();
                     idleMRE.Reset();
                     idleMRE.WaitOne(-1);
                 }
@@ -262,6 +261,7 @@ namespace NovelReader
                     break;
                 LaunchSubProcess(request);
                 RemoveTop(request);
+                TTSProgress(request);
             } while (threadId < _setThreadCount && !shutDown);
         }
 
@@ -325,6 +325,7 @@ namespace NovelReader
 
         private void LaunchSubProcess(Request request)
         {
+            string specifiedOutputAudioLocation = request.OutputAudioFile;
             string args = String.Format(" \"{0}\" -i \"{1}\" -o \"{2}\" -rate {3} -replace \"{4}\" -delete \"{5}\" -utf8", 
                 request.Voice, request.InputTextFile, request.OutputAudioFile, request.Rate, request.ReplacementFile, request.DeletionFile);
             Process p = new Process();
@@ -340,27 +341,32 @@ namespace NovelReader
             string line;
             while ((line = output.ReadLine()) != null)
             {
-                if (BackgroundService.Instance.ttsController.InvokeRequired)
+                int percent;
+                if (Int32.TryParse(line, out percent))
                 {
-                    BackgroundService.Instance.ttsController.BeginInvoke(new MethodInvoker(delegate
+                    if (BackgroundService.Instance.ttsController.InvokeRequired)
                     {
-                        int percent;
-                        if(Int32.TryParse(line, out percent))
+                        BackgroundService.Instance.ttsController.BeginInvoke(new MethodInvoker(delegate
                         {
                             request.Progress = percent;
-                        }
-                    }));
+                        }));
+                    }
                 }
             }
             p.WaitForExit();
+            //For if user rename file while the process is running
+            if (!specifiedOutputAudioLocation.Equals(request.OutputAudioFile))
+                File.Move(specifiedOutputAudioLocation, request.OutputAudioFile);
         }
 
-        private void TTSComplete()
+        private void TTSProgress(Request request)
         {
-            RaiseTTSCompleteEvent(new TTSCompleteEventArgs());
+            TTSProgressEventArgs args = new TTSProgressEventArgs();
+            args.request = request;
+            RaiseProgressEvent(args);
         }
 
-        protected virtual void RaiseTTSCompleteEvent(TTSCompleteEventArgs e)
+        protected virtual void RaiseProgressEvent(TTSProgressEventArgs e)
         {
             TTSCompleteEventHandler handler = ttsCompleteEventHandler;
             if (handler != null)
