@@ -40,6 +40,7 @@
             this.btnPrevious = new System.Windows.Forms.Button();
             this.btnRedownload = new System.Windows.Forms.Button();
             this.btnDeleteChapter = new System.Windows.Forms.Button();
+            this.btnAddChapter = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -192,6 +193,18 @@
             this.btnDeleteChapter.UseVisualStyleBackColor = true;
             this.btnDeleteChapter.Click += new System.EventHandler(this.btnDeleteChapter_Click);
             // 
+            // btnAddChapter
+            // 
+            this.btnAddChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnAddChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnAddChapter.Location = new System.Drawing.Point(15, 691);
+            this.btnAddChapter.Name = "btnAddChapter";
+            this.btnAddChapter.Size = new System.Drawing.Size(135, 35);
+            this.btnAddChapter.TabIndex = 12;
+            this.btnAddChapter.Text = "Add Chapter";
+            this.btnAddChapter.UseVisualStyleBackColor = true;
+            this.btnAddChapter.Click += new System.EventHandler(this.btnAddChapter_Click);
+            // 
             // NovelReaderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,6 +212,7 @@
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(1084, 730);
+            this.Controls.Add(this.btnAddChapter);
             this.Controls.Add(this.btnDeleteChapter);
             this.Controls.Add(this.btnRedownload);
             this.Controls.Add(this.labelTitle);
@@ -235,5 +249,6 @@
         private System.Windows.Forms.Button btnPrevious;
         private System.Windows.Forms.Button btnRedownload;
         private System.Windows.Forms.Button btnDeleteChapter;
+        private System.Windows.Forms.Button btnAddChapter;
     }
 }

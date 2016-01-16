@@ -38,7 +38,10 @@ namespace NovelReader
 
         public void SetReadingNovel(Novel novel)
         {
+            if (this.currentReadingNovel != null)
+                this.currentReadingNovel.StopReading();
             this.currentReadingNovel = novel;
+            this.currentReadingNovel.StartReading();
             this.Text = novel.NovelTitle;
             this.dgvChapterList.DataSource = novel.Chapters;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
@@ -107,6 +110,8 @@ namespace NovelReader
                 Configuration.Instance.NovelReaderMaximized = true;
             else
                 Configuration.Instance.NovelReaderMaximized = false;
+            if (currentReadingNovel != null)
+                currentReadingNovel.StopReading();
         }
 
         private void dgvChapterList_CurrentCellDirtyStateChanged(object sender, EventArgs e)
@@ -136,8 +141,16 @@ namespace NovelReader
             }
             if (currentReadingNovel != null)
             {
-                Thread t = new Thread(new ParameterizedThreadStart(DownloadAndReadChapter));
-                t.Start(currentReadingChapter);
+                if (currentReadingChapter != null && currentReadingChapter.SourceURL != null)
+                {
+                    Thread t = new Thread(new ParameterizedThreadStart(DownloadAndReadChapter));
+                    t.Start(currentReadingChapter);
+                }
+                else if (currentReadingChapter != null && currentReadingChapter.SourceURL == null)
+                {
+                    MessageBox.Show("This chapter does not contain a source link to download from.", "No Source Link", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
         }
 
@@ -146,18 +159,30 @@ namespace NovelReader
         {
             if (currentReadingNovel != null && currentReadingChapter != null)
             {
-                DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete " + currentReadingChapter.ChapterTitle, "Delete Chapter", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
-                    currentReadingNovel.DeleteChapter(currentReadingChapter);
-                    ReadChapter(currentReadingNovel.LastReadChapter);
-                }
-                else if (dialogResult == DialogResult.No)
-                {
+                DialogResult deleteResult = MessageBox.Show("Are you sure you want to delete " + currentReadingChapter.ChapterTitle, "Delete Chapter", MessageBoxButtons.YesNo);
+                if (deleteResult == DialogResult.No)
                     return;
-                }
+
+                DialogResult blackListResult = MessageBox.Show("Do you want to blacklist " + currentReadingChapter.ChapterTitle + "'s Source Link?", "Blacklist Link.", MessageBoxButtons.YesNo);
+                if (blackListResult == DialogResult.Yes)
+                    currentReadingNovel.DeleteChapter(currentReadingChapter, true);
+                else
+                    currentReadingNovel.DeleteChapter(currentReadingChapter, false);
+                ReadChapter(currentReadingNovel.LastReadChapter);
             }
 
+        }
+
+
+        private void btnAddChapter_Click(object sender, EventArgs e)
+        {
+            if (currentReadingNovel != null)
+            {
+                Chapter chapter = currentReadingNovel.AddChapter();
+                ReadChapter(chapter);
+                dgvChapterList.CurrentCell = dgvChapterList[0, chapter.Index];
+                dgvChapterList.BeginEdit(true);
+            }
         }
 
         /*============PrivateFunction=======*/
@@ -206,7 +231,9 @@ namespace NovelReader
         {
             if (chapter == null)
                 return;
-            labelTitle.Text = currentReadingNovel.NovelTitle + " - " + chapter.ChapterTitle;
+            labelTitle.DataBindings.Clear();
+            labelTitle.DataBindings.Add(new Binding("Text", chapter, "ChapterTitle", false, DataSourceUpdateMode.OnPropertyChanged));
+            //labelTitle.Text = currentReadingNovel.NovelTitle + " - " + chapter.ChapterTitle;
             currentReadingNovel.ReadChapter(chapter);
             currentReadingChapter = chapter;
             rtbChapterTextBox.Select(0, 0);
@@ -234,7 +261,7 @@ namespace NovelReader
                     row.Selected = false;
                 }
             }
-            dgvChapterList.Rows[chapter.Index].Selected = true;
+            //dgvChapterList.Rows[chapter.Index].Selected = true;
         }
 
         private void DownloadAndReadChapter(Object chapterObj)
@@ -285,34 +312,54 @@ namespace NovelReader
         {
             DataGridViewRow row = dgvChapterList.Rows[rowIndex];
             Chapter chapter = currentReadingNovel.Chapters[rowIndex];
-
-            if (!chapter.HasText)
+            row.DefaultCellStyle.SelectionForeColor = Color.DimGray;
+            if (chapter.Equals(currentReadingChapter))
+            {
+                row.DefaultCellStyle.BackColor = Color.Orange;
+                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
+                //row.DefaultCellStyle.SelectionBackColor = Color.LightPink;
+                
+                row.DefaultCellStyle.SelectionBackColor = Color.Orange;
+            }
+            else if (!chapter.HasText)
             {
 
                 row.DefaultCellStyle.BackColor = Color.LightPink;
-                row.DefaultCellStyle.SelectionBackColor = Color.Firebrick;
+                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
+                row.DefaultCellStyle.SelectionBackColor = Color.LightPink;
+                //row.DefaultCellStyle.SelectionBackColor = Color.Firebrick;
             }
             else if (!chapter.Read && chapter.HasText && chapter.HasAudio)
             {
 
                 row.DefaultCellStyle.BackColor = Color.LightBlue;
-                row.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
+                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
+                row.DefaultCellStyle.SelectionBackColor = Color.LightBlue;
+
+                //row.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
 
             }
             else if (!chapter.Read && chapter.HasText && !chapter.HasAudio)
             {
 
-                row.DefaultCellStyle.BackColor = Color.LemonChiffon;
-                row.DefaultCellStyle.SelectionBackColor = Color.BurlyWood;
+                row.DefaultCellStyle.BackColor = Color.Cornsilk;
+                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
+                row.DefaultCellStyle.SelectionBackColor = Color.Cornsilk;
+
+                //row.DefaultCellStyle.SelectionBackColor = Color.BurlyWood;
 
             }
             else if (chapter.Read && chapter.HasText)
             {
 
                 row.DefaultCellStyle.BackColor = Color.LightGreen;
-                row.DefaultCellStyle.SelectionBackColor = Color.Green;
+                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
+                row.DefaultCellStyle.SelectionBackColor = Color.LightGreen;
+
+                //row.DefaultCellStyle.SelectionBackColor = Color.Green;
             }
         }
+
 
 
 

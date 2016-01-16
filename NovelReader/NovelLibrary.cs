@@ -69,6 +69,7 @@ namespace NovelReader
             {
                 foreach (Novel n in _novelList)
                 {
+                    n.SaveChapterToDB();
                     db.Store(n);
                     db.Commit();
                 }

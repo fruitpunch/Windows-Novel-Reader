@@ -24,6 +24,8 @@ namespace NovelReader
         {
             get { return this._chapterTitle; }
             set {
+                if (value.Length == 0)
+                    return;
                 if (this._chapterTitle != value)
                     ChangeChapterTitle(value);
                 else
