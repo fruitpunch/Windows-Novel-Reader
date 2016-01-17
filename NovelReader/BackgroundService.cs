@@ -16,6 +16,7 @@ namespace NovelReader
         private Thread workerThread;
         private System.Timers.Timer updateTimer;
         public Scheduler ttsScheduler;
+        private HashSet<Chapter> requestSet;
 
         public TTSController ttsController;
         public NovelListController novelListController;
@@ -46,6 +47,7 @@ namespace NovelReader
 
         public void StartService()
         {
+            this.requestSet = new HashSet<Chapter>();
             this.ttsScheduler = new Scheduler(Configuration.Instance.TTSThreadCount);
             this.ttsScheduler.ttsCompleteEventHandler += TTSProgress;
             this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
@@ -119,19 +121,27 @@ namespace NovelReader
         private void Test()
         {
             CheckUpdates();
+            
             DownloadUpdates();
-            /*
-            for (int i = 0; i < n.Chapters.Count; i++)
-            {
-                Chapter c = n.Chapters[i];
-                Request r = new Request("VW Hui", c, n.GetReplaceSpecificationLocation(), n.GetDeleteSpecificationLocation(), 2, 0);
-                ttsScheduler.AddRequest(r);
-            }*/
+            ScheduleTTS();
+            
         }
 
         private void ScheduleTTS()
         {
-
+            Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
+            int[] pos = new int[updateNovels.Length];
+            while (true)
+            {
+                for (int i = 0; i < updateNovels.Length; i++)
+                {
+                    Console.WriteLine("add request");
+                    Request r = new Request("VW Hui", updateNovels[i].Chapters[pos[i]], updateNovels[i].GetReplaceSpecificationLocation(), updateNovels[i].GetDeleteSpecificationLocation(), 3, updateNovels.Length-i);
+                    pos[i]++;
+                    ttsScheduler.AddRequest(r);
+                    Thread.Sleep(5000);
+                }
+            }
         }
 
         private bool CheckUpdates()
@@ -150,7 +160,8 @@ namespace NovelReader
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
             foreach (Novel n in updateNovels)
             {
-                n.DownloadUpdate();
+                if(n.UpdateState == Novel.UpdateStates.UpdateAvailable)
+                    n.DownloadUpdate();
             }
 
             Configuration.Instance.LastFullUpdateTime = DateTime.Now;

@@ -24,7 +24,7 @@ namespace NovelReader
          */
 
 
-        public enum UpdateState { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped };
+        public enum UpdateStates { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped };
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -37,13 +37,16 @@ namespace NovelReader
         private bool _makeAudio { get; set; }
         private bool _isReading { get; set; }
         Source.Source _novelSource { get; set; }
-        UpdateState _updateState { get; set; }
+        UpdateStates _updateState { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
+        private int _dbRequest { get; set; }
         [Transient] 
         private BindingList<Chapter> _chapters;
 
         private HashSet<int> validUrlIdSet;
         private HashSet<int> invalidUrlIdSet;
+
+        
 
         /*============Properties============*/
 
@@ -138,6 +141,18 @@ namespace NovelReader
             }
         }
 
+        public UpdateStates UpdateState
+        {
+            get { return this._updateState; }
+            set { this._updateState = value; }
+        }
+
+        public int DBRequest
+        {
+            get { return this._dbRequest; }
+            set { this._dbRequest = value; }
+        }
+
         /*============Constructor===========*/
 
         public Novel(string novelTitle, SourceLocation sourceLocation, int sourceId, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
@@ -152,6 +167,7 @@ namespace NovelReader
             this._chapters = new BindingList<Chapter>();
             this.validUrlIdSet = new HashSet<int>();
             this.invalidUrlIdSet = new HashSet<int>();
+            this._dbRequest = 0;
             SetUpdateProgress();
         }
 
@@ -177,10 +193,13 @@ namespace NovelReader
 
         public void LoadChapterFromDB()
         {
+            _dbRequest++;
+            Console.WriteLine("Load Chapters for " + _novelTitle + " " + _dbRequest);
+            if (_dbRequest > 1)
+                return;
+
             if (_chapters == null)
                 _chapters = new BindingList<Chapter>();
-            //var results = NovelLibrary.Instance.db.QueryByExample(new Chapter(null, _novelTitle, null, false, -1));
-            //var results = NovelLibrary.Instance.db.QueryByExample(typeof(Chapter));
             var results = NovelLibrary.Instance.db.Query<Chapter>();
             var sorted = from chapters in results
                          where chapters.NovelTitle == _novelTitle
@@ -193,7 +212,7 @@ namespace NovelReader
                 if (_lastReadChapter != null && _lastReadChapter.Index == chapter.Index)
                     _lastReadChapter = chapter;
             }
-            Console.WriteLine("Load Chapters for " + _novelTitle);
+            
         }
 
         public void SaveChapterToDB()
@@ -209,30 +228,88 @@ namespace NovelReader
 
         public void ClearChapters()
         {
+            _dbRequest--;
+            Console.WriteLine("Clear Chapters for " + _novelTitle + " " + _dbRequest);
+            if (_dbRequest > 0)
+                return;
             if (_chapters == null)
                 return;
-            if (_updateState != UpdateState.Checking || _updateState != UpdateState.Fetching)
+            if (_updateState != UpdateStates.Checking || _updateState != UpdateStates.Fetching)
                 return;
             _chapters.Clear();
-            Console.WriteLine("Clear Chapters for " + _novelTitle);
+            
         }
+
+        public bool MakeAudio(Chapter chapter)
+        {
+            if (!_makeAudio)
+                return false;
+            if (_state == NovelState.Dropped)
+                return false;
+            if (chapter.HasText && !chapter.HasAudio)
+                return true;
+            if (chapter.HasText && chapter.HasAudio)
+            {
+                if (File.GetLastWriteTime(chapter.GetAudioFileLocation()) < File.GetLastWriteTime(chapter.GetTextFileLocation()))
+                    return true;
+                else
+                    return false;
+            }
+            return false;
+        }
+
+        public double GetTTSPriority(Chapter chapter)
+        {
+            double priority = 0;
+            
+            int lastReadChapterIndex = -1;
+            priority += NovelLibrary.Instance.GetNovelCount() - _rank;
+
+            if (_isReading)
+                priority += 5;
+
+            switch (_state)
+            {
+                case NovelState.Active:
+                    priority += 3;
+                    break;
+                case NovelState.Completed:
+                    priority += 2;
+                    break;
+                case NovelState.Inactive:
+                    priority += 1;
+                    break;
+                case NovelState.Dropped:
+                    break;
+            }
+
+            if (_lastReadChapter != null)
+            {
+                lastReadChapterIndex = _lastReadChapter.Index;
+            }
+            else if (chapter.Equals(_lastReadChapter))
+            {
+
+            }
+
+
+
+            return priority;
+        }
+
 
         //Check and see if there is new chapter available for download.
         public bool CheckForUpdate()
         {
             LoadChapterFromDB();
 
-            SetUpdateProgress(0, 0, UpdateState.Checking);
+            SetUpdateProgress(0, 0, UpdateStates.Checking);
             Tuple<string, string>[] menuItems = _novelSource.GetMenuURLs();
-            int updateChapterCount = 0;
             int chapterIndex = 0;
             for (int i = 0; i < menuItems.Length; i++)
             {
-                //if (chapterIndex < _chapters.Count && menuItems[i].Item2.Equals(_chapters[chapterIndex].SourceURL))
                 if (chapterIndex < _chapters.Count && validUrlIdSet.Contains(menuItems[i].Item2.GetHashCode()))
-                {
                     chapterIndex++;
-                }
                 else if (!invalidUrlIdSet.Contains(menuItems[i].Item2.GetHashCode()) && !validUrlIdSet.Contains(menuItems[i].Item2.GetHashCode()))
                 {
                     Chapter newChapter = new Chapter(menuItems[i].Item1, _novelTitle, menuItems[i].Item2, false, chapterIndex);
@@ -242,22 +319,29 @@ namespace NovelReader
                         InsertNewChapter(newChapter, chapterIndex);
                     validUrlIdSet.Add(menuItems[i].Item2.GetHashCode());
                     chapterIndex++;
-                    updateChapterCount++;
                 }
-                
             }
-            
-            SetUpdateProgress(updateChapterCount, 0, UpdateState.UpdateAvailable);
+
+            int updateCount = 0;
+            foreach (Chapter c in _chapters)
+                if (c.SourceURL != null && !c.HasAudio)
+                    updateCount++;
+
             SaveChapterToDB();
-            return updateChapterCount > 0;
+            ClearChapters();
+            if (updateCount == 0)
+                SetUpdateProgress(0, 0, UpdateStates.UpToDate);
+            else
+                SetUpdateProgress(updateCount, 0, UpdateStates.UpdateAvailable);
+            return updateCount > 0;
         }
 
         //Download the new chapters.
         public void DownloadUpdate()
         {
+            LoadChapterFromDB();
             int newlyAddedChapter = 0;
             int index = _chapters.Count;
-
             int updateCount = 0;
             foreach (Chapter c in _chapters)
                 if (c.SourceURL != null && !c.HasAudio)
@@ -269,14 +353,13 @@ namespace NovelReader
                 {
                     newlyAddedChapter++;
                     DownloadChapterContent(_chapters[i]);
-                    SetUpdateProgress(i, updateCount, UpdateState.Fetching);
+                    SetUpdateProgress(i, updateCount, UpdateStates.Fetching);
                 }
             }
             SaveChapterToDB();
-            if (!_isReading)
-                ClearChapters();
+            ClearChapters();
 
-            SetUpdateProgress(0, 0, UpdateState.UpToDate);
+            SetUpdateProgress(0, 0, UpdateStates.UpToDate);
             if (BackgroundService.Instance.novelListController.InvokeRequired)
             {
                 BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
@@ -480,7 +563,7 @@ namespace NovelReader
         }
 
         //Set the progress to be displayed in NovelListControl.
-        private void SetUpdateProgress(int updatedItemCount = 0, int totalUpdateItemCount = 0, UpdateState updateState = UpdateState.Default)
+        private void SetUpdateProgress(int updatedItemCount = 0, int totalUpdateItemCount = 0, UpdateStates updateState = UpdateStates.Default)
         {
             int progress = 0;
             string message = "";
@@ -488,21 +571,21 @@ namespace NovelReader
             if (totalUpdateItemCount > 0)
                 progress = (int)(100.0f * (float)updatedItemCount / (float)totalUpdateItemCount);
 
-            if (updateState == UpdateState.Default)
+            if (updateState == UpdateStates.Default)
             {
                 switch (_state)
                 {
                     case NovelState.Active:
-                        updateState = UpdateState.Waiting;
+                        updateState = UpdateStates.Waiting;
                         break;
                     case NovelState.Completed:
-                        updateState = UpdateState.Completed;
+                        updateState = UpdateStates.Completed;
                         break;
                     case NovelState.Inactive:
-                        updateState = UpdateState.Inactive;
+                        updateState = UpdateStates.Inactive;
                         break;
                     case NovelState.Dropped:
-                        updateState = UpdateState.Dropped;
+                        updateState = UpdateStates.Dropped;
                         break;
 
                 }
@@ -510,25 +593,25 @@ namespace NovelReader
 
             switch (updateState)
             {
-                case UpdateState.Waiting:
+                case UpdateStates.Waiting:
                     progress = 0;
                     message = "Waiting For Updates";
                     break;
-                case UpdateState.Checking:
+                case UpdateStates.Checking:
                     progress = 0;
                     message = "Checking For Updates";
                     break;
-                case UpdateState.UpdateAvailable:
+                case UpdateStates.UpdateAvailable:
                     progress = 0;
                     if (updatedItemCount > 0)
                         message = updatedItemCount + " Updates Available";
                     else
                         message = "Novel Up To Date";
                     break;
-                case UpdateState.Fetching:
+                case UpdateStates.Fetching:
                     message = "Fetching Updates: " + updatedItemCount + " / " + totalUpdateItemCount;
                     break;
-                case UpdateState.UpToDate:
+                case UpdateStates.UpToDate:
                     if (_state == NovelState.Active)
                         message = "Novel Up To Date";
                     else if(_state == NovelState.Completed)
@@ -539,15 +622,15 @@ namespace NovelReader
                         message = "Dropped Novel Up To Date";
                     progress = 0;
                     break;
-                case UpdateState.Completed:
+                case UpdateStates.Completed:
                     progress = 0;
                     message = "Novel Completed";
                     break;
-                case UpdateState.Inactive:
+                case UpdateStates.Inactive:
                     progress = 0;
                     message = "Novel Inactive";
                     break;
-                case UpdateState.Dropped:
+                case UpdateStates.Dropped:
                     progress = 0;
                     message = "Novel Dropped";
                     break;

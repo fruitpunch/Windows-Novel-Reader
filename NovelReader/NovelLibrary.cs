@@ -94,12 +94,18 @@ namespace NovelReader
             return null;
         }
 
+        public int GetNovelCount()
+        {
+            return _novelList.Count;
+        }
+
         public Novel[] GetUpdatingNovel()
         {
             List<Novel> updatingNovels = new List<Novel>();
 
             var results = from novel in _novelList
                           where novel.State == Novel.NovelState.Active || novel.State == Novel.NovelState.Inactive
+                          orderby novel.Rank ascending
                           select novel;
 
             foreach (Novel n in results)
@@ -253,6 +259,7 @@ namespace NovelReader
                                 break;
                         }
                         _novelList.Insert(i, n);
+                        n.DBRequest = 0;
                     }
                 }));
             }
@@ -267,6 +274,7 @@ namespace NovelReader
                             break;
                     }
                     _novelList.Insert(i, n);
+                    n.DBRequest = 0;
                 }
             }   
         }

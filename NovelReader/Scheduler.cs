@@ -21,7 +21,7 @@ namespace NovelReader
         private string _replacementFile { get; set; }
         private string _deletetionFile { get; set; }
         private int _rate { get; set; }
-        private int _priority { get; set; }
+        private double _priority { get; set; }
         private int _progress { get; set; }
         private int _takenBy { get; set; }
         private int _pos { get; set; }
@@ -77,9 +77,13 @@ namespace NovelReader
             get { return this._rate; }
         }
 
-        public int Priority
+        public double Priority
         {
             get { return this._priority; }
+            set { 
+                this._priority = value;
+                NotifyPropertyChanged("Priority"); 
+            }
         }
 
         public int Progress
@@ -103,7 +107,7 @@ namespace NovelReader
             set { this._pos = value; }
         }
 
-        public Request(string voice, Chapter chapter, string replacementFile = null, string deletetionFile = null, int rate = 0, int priority = 0)
+        public Request(string voice, Chapter chapter, string replacementFile = null, string deletetionFile = null, int rate = 0, double priority = 0)
         {
             this._voice = voice;
             this._id = count++;
@@ -171,7 +175,7 @@ namespace NovelReader
             Console.WriteLine("TTS Initiated");
         }
 
-        public int GetHighestPriority()
+        public double GetHighestPriority()
         {
             if (_requestList.Count > 0)
                 return _requestList[0].Priority;
@@ -183,7 +187,7 @@ namespace NovelReader
             int i = 0;
             for (; i < _requestList.Count; i++)
             {
-                if (request.Priority > _requestList[i].Priority && request.ID < _requestList[i].ID && _requestList[i].TakenBy == -1)
+                if (request.Priority > _requestList[i].Priority && _requestList[i].TakenBy == -1)
                     break;
             }
             //request.Position = i;
@@ -279,6 +283,7 @@ namespace NovelReader
                         break;
                     }
                 }
+                
             }
             return request;
         }
@@ -292,6 +297,10 @@ namespace NovelReader
                     BackgroundService.Instance.ttsController.BeginInvoke(new MethodInvoker(delegate
                     {
                         _requestList.Remove(request);
+                        for (int i = 0; i < _requestList.Count; i++)
+                        {
+                            _requestList[i].Priority++;
+                        }
                     }));
                 }
                 
