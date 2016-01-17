@@ -154,6 +154,8 @@ namespace NovelReader
 
             Novel newNovel = new Novel(novelTitle, source, sourceID);
             _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
+            db.Store(newNovel);
+            db.Commit();
             UpdateNovelRanking();
             Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");
             return successfulReturn;
@@ -259,7 +261,7 @@ namespace NovelReader
                                 break;
                         }
                         _novelList.Insert(i, n);
-                        n.DBRequest = 0;
+                        n.Init();
                     }
                 }));
             }
@@ -274,7 +276,7 @@ namespace NovelReader
                             break;
                     }
                     _novelList.Insert(i, n);
-                    n.DBRequest = 0;
+                    n.Init();
                 }
             }   
         }

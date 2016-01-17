@@ -16,7 +16,6 @@ namespace NovelReader
         private Thread workerThread;
         private System.Timers.Timer updateTimer;
         public Scheduler ttsScheduler;
-        private HashSet<Chapter> requestSet;
 
         public TTSController ttsController;
         public NovelListController novelListController;
@@ -47,7 +46,6 @@ namespace NovelReader
 
         public void StartService()
         {
-            this.requestSet = new HashSet<Chapter>();
             this.ttsScheduler = new Scheduler(Configuration.Instance.TTSThreadCount);
             this.ttsScheduler.ttsCompleteEventHandler += TTSProgress;
             this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
@@ -81,7 +79,8 @@ namespace NovelReader
 
         private void TTSProgress(Object sender, TTSProgressEventArgs e)
         {
-            Console.WriteLine(e.request.ChapterTitle + " complete.");
+            //Console.WriteLine(e.request.ChapterTitle + " complete.");
+            NovelLibrary.Instance.GetNovel(e.request.Chapter.NovelTitle).FinishRequest(e.request.Chapter);
         }
 
         /*============Public Function=======*/
@@ -116,6 +115,15 @@ namespace NovelReader
             Console.WriteLine(ms);
         }
 
+        public void ResetTTSList()
+        {
+            ttsScheduler.ClearRequests();
+            foreach (Novel n in NovelLibrary.Instance.NovelList)
+            {
+                n.ResetTTSRequest();
+            }
+        }
+
         /*============Private Function======*/
 
         private void Test()
@@ -129,20 +137,21 @@ namespace NovelReader
 
         private void ScheduleTTS()
         {
-            Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
-            int[] pos = new int[updateNovels.Length];
+            int roundRobin = 0;
+            Dictionary<string, int> position = new Dictionary<string, int>();
             while (true)
             {
-                for (int i = 0; i < updateNovels.Length; i++)
-                {
-                    Console.WriteLine("add request");
-                    Request r = new Request("VW Hui", updateNovels[i].Chapters[pos[i]], updateNovels[i].GetReplaceSpecificationLocation(), updateNovels[i].GetDeleteSpecificationLocation(), 3, updateNovels.Length-i);
-                    pos[i]++;
-                    ttsScheduler.AddRequest(r);
-                    Thread.Sleep(5000);
-                }
+                Novel n = NovelLibrary.Instance.NovelList[roundRobin%NovelLibrary.Instance.GetNovelCount()];
+                roundRobin++;
+                Request request = n.GetTTSRequest(Configuration.Instance.TTSSpeed);
+                if (request == null)
+                    continue;
+                ttsScheduler.AddRequest(request);
+                Thread.Sleep(5000);
+                
             }
         }
+
 
         private bool CheckUpdates()
         {

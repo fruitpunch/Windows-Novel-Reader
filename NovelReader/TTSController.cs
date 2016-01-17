@@ -30,9 +30,20 @@ namespace NovelReader
             BackgroundService.Instance.ttsScheduler.Threads = (int)udThreadCount.Value;
         }
 
+        private void udTTSSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            Configuration.Instance.TTSSpeed = (int)udTTSSpeed.Value;
+            BackgroundService.Instance.ResetTTSList();
+        }
+
         private void TTSController_Load(object sender, EventArgs e)
         {
             dgvTTS.DataSource = BackgroundService.Instance.ttsScheduler.RequestList;
+        }
+
+        private void btnResetList_Click(object sender, EventArgs e)
+        {
+            BackgroundService.Instance.ResetTTSList();
         }
 
         /*============PublicFunction========*/
@@ -47,6 +58,7 @@ namespace NovelReader
         private void BindGrid()
         {
             udThreadCount.Value = Configuration.Instance.TTSThreadCount;
+            udTTSSpeed.Value = Configuration.Instance.TTSSpeed;
 
             dgvTTS.AutoGenerateColumns = false;
 
@@ -54,6 +66,7 @@ namespace NovelReader
             DataGridViewCell chapterTitleCell = new DataGridViewTextBoxCell();
             DataGridViewCell chapterIndexCell = new DataGridViewTextBoxCell();
             DataGridViewCell requestPriorityCell = new DataGridViewTextBoxCell();
+            DataGridViewCell requestRateCell = new DataGridViewTextBoxCell();
             TTSDataGridViewProgressCell progressCell = new TTSDataGridViewProgressCell();
 
             DataGridViewTextBoxColumn novelTitleColumn = new DataGridViewTextBoxColumn()
@@ -62,7 +75,7 @@ namespace NovelReader
                 Name = "NovelTitle",
                 HeaderText = "Novel Title",
                 DataPropertyName = "NovelTitle",
-                Width = 200,
+                Width = 150,
                 ReadOnly = true
             };
 
@@ -72,7 +85,7 @@ namespace NovelReader
                 Name = "ChapterTitle",
                 HeaderText = "Chapter Title",
                 DataPropertyName = "ChapterTitle",
-                Width = 200,
+                Width = 150,
                 ReadOnly = true
             };
 
@@ -95,6 +108,16 @@ namespace NovelReader
                 Width = 100,
                 ReadOnly = true
             };
+
+            DataGridViewTextBoxColumn requestRateColumn = new DataGridViewTextBoxColumn()
+            {
+                CellTemplate = requestRateCell,
+                Name = "Rate",
+                HeaderText = "Speak Rate",
+                DataPropertyName = "Rate",
+                Width = 100,
+                ReadOnly = true
+            };
             
             TTSDataGridViewProgressColumn progressColumn = new TTSDataGridViewProgressColumn()
             {
@@ -108,11 +131,17 @@ namespace NovelReader
             dgvTTS.Columns.Add(chapterTitleColumn);
             dgvTTS.Columns.Add(chapterIndexColumn);
             dgvTTS.Columns.Add(requestPriorityColumn);
+            dgvTTS.Columns.Add(requestRateColumn);
             dgvTTS.Columns.Add(progressColumn);
 
             
 
         }
+
+        
+
+
+        
 
         
     }

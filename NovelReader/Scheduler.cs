@@ -25,7 +25,7 @@ namespace NovelReader
         private int _progress { get; set; }
         private int _takenBy { get; set; }
         private int _pos { get; set; }
-        private Chapter chapter;
+        private Chapter _chapter;
 
         public string Voice
         {
@@ -39,27 +39,27 @@ namespace NovelReader
 
         public string NovelTitle
         {
-            get { return this.chapter.NovelTitle; }
+            get { return this._chapter.NovelTitle; }
         }
 
         public string ChapterTitle
         {
-            get { return this.chapter.ChapterTitle; }
+            get { return this._chapter.ChapterTitle; }
         }
 
         public int ChapterIndex
         {
-            get { return this.chapter.Index; }
+            get { return this._chapter.Index; }
         }
 
         public string InputTextFile
         {
-            get { return this.chapter.GetTextFileLocation(); }
+            get { return this._chapter.GetTextFileLocation(); }
         }
 
         public string OutputAudioFile
         {
-            get { return this.chapter.GetAudioFileLocation(); }
+            get { return this._chapter.GetAudioFileLocation(); }
         }
 
         public string ReplacementFile
@@ -107,11 +107,16 @@ namespace NovelReader
             set { this._pos = value; }
         }
 
+        public Chapter Chapter
+        {
+            get { return this._chapter; }
+        }
+
         public Request(string voice, Chapter chapter, string replacementFile = null, string deletetionFile = null, int rate = 0, double priority = 0)
         {
             this._voice = voice;
             this._id = count++;
-            this.chapter = chapter;
+            this._chapter = chapter;
             this._replacementFile = replacementFile;
             this._deletetionFile = deletetionFile;
             this._rate = rate;
@@ -130,7 +135,9 @@ namespace NovelReader
 
     public class TTSProgressEventArgs : EventArgs
     {
+        public enum ProgressType { RequestComplete, RequestRemoved};
         public Request request { get; set; }
+        public ProgressType type { get; set; }
     }
 
     public delegate void TTSCompleteEventHandler(Object sender, TTSProgressEventArgs e);
@@ -191,20 +198,54 @@ namespace NovelReader
                     break;
             }
             //request.Position = i;
-            ManualResetEvent mre = new ManualResetEvent(false);
+            
             lock (requestListLock)
             {
                 if (BackgroundService.Instance.ttsController.InvokeRequired)
                 {
+                    ManualResetEvent mre = new ManualResetEvent(false);
                     BackgroundService.Instance.ttsController.BeginInvoke(new MethodInvoker(delegate
                     {
                         _requestList.Insert(i, request);
                         mre.Set();
                     }));
+                    mre.WaitOne(-1);
+                }
+                else
+                {
+                    _requestList.Insert(i, request);
                 }
             }
-            mre.WaitOne(-1);
+            
             idleMRE.Set();
+        }
+
+        public void ClearRequests()
+        {
+            lock (requestListLock)
+            {
+                if (BackgroundService.Instance.ttsController!= null && BackgroundService.Instance.ttsController.InvokeRequired)
+                {
+                    BackgroundService.Instance.ttsController.BeginInvoke(new MethodInvoker(delegate
+                    {
+                        var requestArray = _requestList.ToArray();
+                        foreach (Request r in requestArray)
+                        {
+                            if (r.TakenBy == -1)
+                                _requestList.Remove(r);
+                        }
+                    }));
+                }
+                else
+                {
+                    var requestArray = _requestList.ToArray();
+                    foreach (Request r in requestArray)
+                    {
+                        if (r.TakenBy == -1)
+                            _requestList.Remove(r);
+                    }
+                }
+            }
         }
 
         public void StartTTSService()
@@ -265,7 +306,7 @@ namespace NovelReader
                     break;
                 LaunchSubProcess(request);
                 RemoveTop(request);
-                TTSProgress(request);
+                TTSProgress(request, TTSProgressEventArgs.ProgressType.RequestComplete);
             } while (threadId < _setThreadCount && !shutDown);
         }
 
@@ -337,6 +378,7 @@ namespace NovelReader
             string specifiedOutputAudioLocation = request.OutputAudioFile;
             string args = String.Format(" \"{0}\" -i \"{1}\" -o \"{2}\" -rate {3} -replace \"{4}\" -delete \"{5}\" -utf8", 
                 request.Voice, request.InputTextFile, request.OutputAudioFile, request.Rate, request.ReplacementFile, request.DeletionFile);
+            Console.WriteLine(args);
             Process p = new Process();
             p.StartInfo.FileName = Path.Combine("TTS", "TTS.exe");
             p.StartInfo.UseShellExecute = false;
@@ -368,10 +410,11 @@ namespace NovelReader
                 File.Move(specifiedOutputAudioLocation, request.OutputAudioFile);
         }
 
-        private void TTSProgress(Request request)
+        private void TTSProgress(Request request, TTSProgressEventArgs.ProgressType type)
         {
             TTSProgressEventArgs args = new TTSProgressEventArgs();
             args.request = request;
+            args.type = type;
             RaiseProgressEvent(args);
         }
 

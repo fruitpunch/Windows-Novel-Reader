@@ -49,12 +49,12 @@ namespace NovelReader
             this.Text = novel.NovelTitle;
             this.dgvChapterList.DataSource = novel.Chapters;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
-            
+            BackgroundService.Instance.ResetTTSList();
             this.novelDirectoryWatcher.EnableRaisingEvents = true;
 
-            if (novel.LastReadChapter != null)
+            if (novel.LastViewedChapter != null)
             {
-                ReadChapter(novel.LastReadChapter);
+                ReadChapter(novel.LastViewedChapter);
                 dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
             }
             else if (currentReadingNovel.ChapterCount > 0)
@@ -205,7 +205,7 @@ namespace NovelReader
                 }
                 else
                     currentReadingNovel.DeleteChapter(currentReadingChapter, false);
-                ReadChapter(currentReadingNovel.LastReadChapter);
+                ReadChapter(currentReadingNovel.LastViewedChapter);
             }
 
         }

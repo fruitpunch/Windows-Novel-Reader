@@ -33,6 +33,7 @@ namespace NovelReader
         private int _chapterCount { get; set; }
         private int _newChaptersNotReadCount { get; set; }
         private int _rank { get; set; }
+        private Chapter _lastViewedChapter { get; set; }
         private Chapter _lastReadChapter { get; set; }
         private bool _makeAudio { get; set; }
         private bool _isReading { get; set; }
@@ -46,7 +47,10 @@ namespace NovelReader
         private HashSet<int> validUrlIdSet;
         private HashSet<int> invalidUrlIdSet;
 
-        
+        //==========
+        private Dictionary<Chapter, Request> queuedTTSChapters;
+        private int requestIndex;
+        //==========
 
         /*============Properties============*/
 
@@ -102,6 +106,12 @@ namespace NovelReader
             }
         }
 
+        public Chapter LastViewedChapter
+        {
+            get { return this._lastViewedChapter; }
+            set { this._lastViewedChapter = value; }
+        }
+
         public Chapter LastReadChapter
         {
             get { return this._lastReadChapter; }
@@ -111,7 +121,13 @@ namespace NovelReader
         public bool MakeAudio
         {
             get { return this._makeAudio; }
-            set { this._makeAudio = value; }
+            set { 
+                this._makeAudio = value;
+                if (this._makeAudio)
+                    LoadChapterFromDB();
+                else
+                    SaveChapterToDB();
+            }
         }
 
         public BindingList<Chapter> Chapters
@@ -168,7 +184,17 @@ namespace NovelReader
             this.validUrlIdSet = new HashSet<int>();
             this.invalidUrlIdSet = new HashSet<int>();
             this._dbRequest = 0;
+            this.queuedTTSChapters = new Dictionary<Chapter, Request>();
             SetUpdateProgress();
+        }
+
+        public void Init()
+        {
+            this._dbRequest = 0;
+            this.requestIndex = 0;
+            this.queuedTTSChapters = new Dictionary<Chapter, Request>();
+            if (this._makeAudio)
+                LoadChapterFromDB();
         }
 
         /*============Getter/Setter=========*/
@@ -209,6 +235,8 @@ namespace NovelReader
             {
                 AppendNewChapter(chapter);
                 //Console.WriteLine("added chapter " + chapter.Index);
+                if (_lastViewedChapter != null && _lastViewedChapter.Index == chapter.Index)
+                    _lastViewedChapter = chapter;
                 if (_lastReadChapter != null && _lastReadChapter.Index == chapter.Index)
                     _lastReadChapter = chapter;
             }
@@ -240,14 +268,71 @@ namespace NovelReader
             
         }
 
-        public bool MakeAudio(Chapter chapter)
+        public Request GetTTSRequest(int speed)
         {
+            Request request = null;
+            for (requestIndex = 0; requestIndex < _chapters.Count; requestIndex++)
+            {
+                Chapter c = _chapters[requestIndex];
+                if(ShouldMakeAudio(c))
+                {
+                    if (!queuedTTSChapters.ContainsKey(c))
+                    {
+                        request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
+                        queuedTTSChapters.Add(c, request);
+                        break;
+                    }
+                }
+            }
+            if (requestIndex >= _chapterCount || request == null)
+            {
+                requestIndex = 0;
+            }
+
+
+            return request;
+        }
+
+        public void ResetTTSRequest()
+        {
+            var chapterArray = queuedTTSChapters.Keys.ToArray<Chapter>();
+            foreach (Chapter c in chapterArray)
+            {
+                if (queuedTTSChapters[c].TakenBy == -1)
+                {
+                    queuedTTSChapters.Remove(c);
+                }
+            }
+            requestIndex = 0;
+            Console.WriteLine(_novelTitle + " " + queuedTTSChapters.Count);
+        }
+
+        public void FinishRequest(Chapter c)
+        {
+            Console.WriteLine(_novelTitle + " Remove Request");
+            queuedTTSChapters.Remove(c);
+            Console.WriteLine(_novelTitle + " " + queuedTTSChapters.Count);
+        }
+
+        public bool ShouldMakeAudio(Chapter chapter)
+        {
+            if (_chapters == null || _chapters.Count == 0)
+                return false;
+            if (_lastReadChapter != null && _lastReadChapter.Index > chapter.Index)
+                return false;
+            //Do not make audio for novel not selected
             if (!_makeAudio)
                 return false;
+            //Do not make audio for novel that is dropped
             if (_state == NovelState.Dropped)
                 return false;
+            //Do not make audio for novel already read and setting checked for making tts for chapter already read
+            if (chapter.Read && !Configuration.Instance.MakeTTSForChapterAlreadyRead)
+                return false;
+            //Do make audio for chapter that has text and chapter that has no audio
             if (chapter.HasText && !chapter.HasAudio)
                 return true;
+            //Remake audio if text is editted after an audio file is made
             if (chapter.HasText && chapter.HasAudio)
             {
                 if (File.GetLastWriteTime(chapter.GetAudioFileLocation()) < File.GetLastWriteTime(chapter.GetTextFileLocation()))
@@ -262,12 +347,11 @@ namespace NovelReader
         {
             double priority = 0;
             
-            int lastReadChapterIndex = -1;
+            int lastReadChapterIndex = 0;
+            //Higher rank gets higher priority
             priority += NovelLibrary.Instance.GetNovelCount() - _rank;
 
-            if (_isReading)
-                priority += 5;
-
+            //State also changes priority
             switch (_state)
             {
                 case NovelState.Active:
@@ -283,16 +367,40 @@ namespace NovelReader
                     break;
             }
 
+            /*
+             * The more chapters buffered, the lower the priority. 
+             * The more chapters pasted the buffer, lower the priority.
+             */
             if (_lastReadChapter != null)
             {
-                lastReadChapterIndex = _lastReadChapter.Index;
+                lastReadChapterIndex = _lastViewedChapter.Index;
             }
-            else if (chapter.Equals(_lastReadChapter))
+            int chapterBuffer = 0;
+
+            if (chapter.Index >= lastReadChapterIndex)
             {
-
+                for (int i = lastReadChapterIndex; i < chapter.Index; i++)
+                {
+                    if (_chapters[i].HasAudio)
+                        chapterBuffer++;
+                }
+                if (chapterBuffer == 0)
+                    chapterBuffer = 1;
+                priority += 100 / chapterBuffer;
+                priority -= (chapter.Index - lastReadChapterIndex - chapterBuffer);
+            }
+            else
+            {
+                priority -= (lastReadChapterIndex - chapter.Index);
             }
 
+            //Increase priority if is reading
+            if (_isReading)
+                priority *= 2;
 
+            //Decrease priority if chapter has been read
+            if (!chapter.Read)
+                priority /= 2;
 
             return priority;
         }
@@ -421,7 +529,7 @@ namespace NovelReader
             if(_chapters.Contains(chapter))
             {
                 chapter.NotifyPropertyChanged("Read");
-                LastReadChapter = chapter;
+                _lastViewedChapter = chapter;
                 NewChaptersNotReadCount = 0;
             }
         }
@@ -430,7 +538,7 @@ namespace NovelReader
         {
             if (_chapters.Contains(chapter))
             {
-                LastReadChapter = chapter;
+                _lastViewedChapter = chapter;
             }
         }
 
@@ -439,7 +547,8 @@ namespace NovelReader
             if (_chapters.Contains(chapter))
             {
                 chapter.Read = true;
-                LastReadChapter = chapter;
+                LastViewedChapter = chapter;
+                _lastReadChapter = chapter;
             }
         }
 
@@ -479,14 +588,14 @@ namespace NovelReader
                     File.Delete(chapter.GetAudioFileLocation());
                 if (chapter.HasText)
                     File.Delete(chapter.GetTextFileLocation());
-                if (chapter.Equals(_lastReadChapter))
+                if (chapter.Equals(_lastViewedChapter))
                 {
                     if (chapter.Index > 0)
-                        _lastReadChapter = GetChapter(chapter.Index - 1);
+                        _lastViewedChapter = GetChapter(chapter.Index - 1);
                     else if (chapter.Index == 0)
-                        _lastReadChapter = GetChapter(0);
+                        _lastViewedChapter = GetChapter(0);
                     else
-                        _lastReadChapter = null;
+                        _lastViewedChapter = null;
                 }
                 NovelLibrary.Instance.db.Delete(chapter);
                 NovelLibrary.Instance.db.Commit();

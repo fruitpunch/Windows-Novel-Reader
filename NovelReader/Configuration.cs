@@ -22,6 +22,8 @@ namespace NovelReader
         private string _metaFileLocation { get; set; }
         private int _ttsThreadCount { get; set; }
         private int _updateInterval = 1000;
+        private int _ttsSpeed { get; set; }
+        private bool _makeTTSForChaptersAlreadyRead { get; set; }
         private DateTime _lastFullUpdateTime { get; set; }
 
         private Rectangle _novelReaderFormRect { get; set; }
@@ -63,6 +65,12 @@ namespace NovelReader
             set { this._ttsThreadCount = value; }
         }
 
+        public int TTSSpeed
+        {
+            get { return this._ttsSpeed; }
+            set { this._ttsSpeed = value; }
+        }
+
         public int UpdateInterval
         {
             get { return this._updateInterval; }
@@ -73,6 +81,12 @@ namespace NovelReader
         {
             get { return this._lastFullUpdateTime; }
             set { this._lastFullUpdateTime = value; }
+        }
+
+        public bool MakeTTSForChapterAlreadyRead
+        {
+            get { return this._makeTTSForChaptersAlreadyRead; }
+            set { this._makeTTSForChaptersAlreadyRead = value; }
         }
 
         public string DeleteSpecification
@@ -164,8 +178,9 @@ namespace NovelReader
         {
             SetNovelFolderLocation();
             this._ttsThreadCount = 1;
+            this._ttsSpeed = 0;
             this._applicationFormRect = new Rectangle(0, 0, 1075, 788);
-            this._novelReaderFormRect = new Rectangle(0, 0, 1100, 768);
+            this._novelReaderFormRect = new Rectangle(0, 0, 1200, 768);
         }
 
         /*============Public Function=======*/
