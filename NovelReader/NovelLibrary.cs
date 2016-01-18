@@ -60,7 +60,6 @@ namespace NovelReader
                 db = Db4oEmbedded.OpenFile(config, Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.NovelListDBName));
                 IObjectSet novels = db.QueryByExample(typeof(Novel));
                 InsertNovels(novels);
-                //db.Store(SourceManager.GetSource(SourceLocation.Web69, "asd"));
             }
             catch (FileNotFoundException e)
             {
