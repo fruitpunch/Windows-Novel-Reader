@@ -27,7 +27,7 @@ namespace NovelReader
         {
             
             InitializeComponent();
-            BindGrid();
+            SetControl();
             BackgroundService.Instance.novelReaderForm = this;
             this.editModeOn = false;
             this.currentChapterDirty = false;
@@ -37,6 +37,7 @@ namespace NovelReader
             this.novelDirectoryWatcher.Created += new FileSystemEventHandler(OnFileChange);
             this.novelDirectoryWatcher.Deleted += new FileSystemEventHandler(OnFileChange);
             this.novelDirectoryWatcher.IncludeSubdirectories = true;
+            
             //novelDirectoryWatcher.NotifyFilter = NotifyFilters.
         }
 
@@ -70,6 +71,11 @@ namespace NovelReader
         }
 
         /*============EventHandler==========*/
+
+        private void cbAutoPlay_CheckedChanged(object sender, EventArgs e)
+        {
+            Configuration.Instance.AutoPlay = cbAutoPlay.Checked;
+        }
 
         private void OnFileChange(object source, FileSystemEventArgs e)
         {
@@ -141,8 +147,8 @@ namespace NovelReader
             if (currentReadingNovel != null && currentReadingChapter != null)
             {
                 currentReadingNovel.MarkOffChapter(currentReadingChapter);
-                Chapter prevChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
-                ReadChapter(prevChapter);
+                Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
+                ReadChapter(nextChapter);
             }
         }
 
@@ -237,10 +243,37 @@ namespace NovelReader
             }
         }
 
+
+        private void btnPlay_Click(object sender, EventArgs e)
+        {
+            if (currentReadingChapter != null)
+                PlayAudio(currentReadingChapter);
+        }
+
+        private void mp3Player_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            if (e.newState == 8) //wmppMediaEnded
+            {
+                Thread.Sleep(1000);
+                if (currentReadingNovel != null && currentReadingChapter != null)
+                {
+                    currentReadingNovel.MarkOffChapter(currentReadingChapter);
+                    Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
+                    ReadChapter(nextChapter);
+                }
+            }
+            else if (e.newState == 10) //wmppsMediaReady
+            {
+                mp3Player.Ctlcontrols.play();
+            }
+        }
+
+
         /*============PrivateFunction=======*/
 
-        private void BindGrid()
+        private void SetControl()
         {
+            cbAutoPlay.Checked = Configuration.Instance.AutoPlay;
             dgvChapterList.AutoGenerateColumns = false;
 
             DataGridViewCell indexCell = new DataGridViewTextBoxCell();
@@ -292,7 +325,8 @@ namespace NovelReader
             currentReadingChapter = chapter;
             rtbChapterTextBox.Select(0, 0);
             rtbChapterTextBox.ScrollToCaret();
-            
+            if (Configuration.Instance.AutoPlay)
+                PlayAudio(chapter);
             if (chapter.HasText)
             {
                 try
@@ -323,6 +357,18 @@ namespace NovelReader
                 }
             }
             //dgvChapterList.Rows[chapter.Index].Selected = true;
+        }
+
+        private void PlayAudio(Chapter chapter)
+        {
+            if (chapter.HasAudio)
+            {
+                Console.WriteLine("play " + chapter.Index);
+                mp3Player.URL = new Uri(chapter.GetAudioFileLocation()).ToString();
+                Console.WriteLine("URI Set");
+                mp3Player.Ctlcontrols.play();
+                Console.WriteLine("Play Set");
+            }
         }
 
         private void DownloadAndReadChapter(Object chapterObj)
@@ -416,10 +462,6 @@ namespace NovelReader
                 //row.DefaultCellStyle.SelectionBackColor = Color.Green;
             }
         }
-
-
-
-
 
 
 

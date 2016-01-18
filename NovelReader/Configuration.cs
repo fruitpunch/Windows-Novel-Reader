@@ -23,6 +23,7 @@ namespace NovelReader
         private int _ttsThreadCount { get; set; }
         private int _updateInterval = 1000;
         private int _ttsSpeed { get; set; }
+        private bool _autoPlay { get; set; }
         private bool _makeTTSForChaptersAlreadyRead { get; set; }
         private DateTime _lastFullUpdateTime { get; set; }
 
@@ -75,6 +76,12 @@ namespace NovelReader
         {
             get { return this._updateInterval; }
             set { this._updateInterval = value; }
+        }
+
+        public bool AutoPlay
+        {
+            get { return this._autoPlay; }
+            set { this._autoPlay = value; }
         }
 
         public DateTime LastFullUpdateTime

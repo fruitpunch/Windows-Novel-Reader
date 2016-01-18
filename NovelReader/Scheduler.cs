@@ -170,6 +170,11 @@ namespace NovelReader
             }
         }
 
+        public int RequestCount
+        {
+            get { return this._requestList.Count; }
+        }
+
         public Scheduler(int threadCount)
         {
             this._requestList = new BindingList<Request>();
@@ -184,9 +189,13 @@ namespace NovelReader
 
         public double GetHighestPriority()
         {
-            if (_requestList.Count > 0)
-                return _requestList[0].Priority;
-            return 0;
+            double max = Double.MinValue;
+            foreach (Request r in _requestList)
+            {
+                if (r.Priority > max)
+                    max = r.Priority;
+            }
+            return max;
         }
 
         public void AddRequest(Request request)

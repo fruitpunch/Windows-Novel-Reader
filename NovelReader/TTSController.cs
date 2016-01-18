@@ -18,7 +18,7 @@ namespace NovelReader
         public TTSController()
         {
             InitializeComponent();
-            BindGrid();
+            SetControl();
             BackgroundService.Instance.ttsController = this;
         }
 
@@ -55,7 +55,7 @@ namespace NovelReader
 
         /*============PrivateFunction=======*/
 
-        private void BindGrid()
+        private void SetControl()
         {
             udThreadCount.Value = Configuration.Instance.TTSThreadCount;
             udTTSSpeed.Value = Configuration.Instance.TTSSpeed;

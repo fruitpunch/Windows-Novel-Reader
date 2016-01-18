@@ -24,7 +24,7 @@ namespace NovelReader
         public NovelListController()
         {
             InitializeComponent();
-            BindGrid();
+            SetControl();
             this.redPen = new Pen(Color.Red);
             this.redPen.Width = penWidth;
             this.whitePen = new Pen(Color.FromArgb(0, Color.White.R, Color.White.G, Color.White.B));
@@ -179,7 +179,7 @@ namespace NovelReader
 
         /*============PrivateFunction=======*/
 
-        private void BindGrid()
+        private void SetControl()
         {
             dgvNovelList.AutoGenerateColumns = false;
 

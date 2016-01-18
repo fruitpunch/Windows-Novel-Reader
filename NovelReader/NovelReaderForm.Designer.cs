@@ -28,13 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NovelReaderForm));
             this.dgvChapterList = new System.Windows.Forms.DataGridView();
             this.rtbChapterTextBox = new System.Windows.Forms.RichTextBox();
             this.btnNext = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnPlay = new System.Windows.Forms.Button();
-            this.btnPause = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
             this.cbAutoPlay = new System.Windows.Forms.CheckBox();
             this.labelTitle = new System.Windows.Forms.Label();
             this.btnPrevious = new System.Windows.Forms.Button();
@@ -42,7 +41,9 @@
             this.btnDeleteChapter = new System.Windows.Forms.Button();
             this.btnAddChapter = new System.Windows.Forms.Button();
             this.btnFinishReading = new System.Windows.Forms.Button();
+            this.mp3Player = new AxWMPLib.AxWindowsMediaPlayer();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mp3Player)).BeginInit();
             this.SuspendLayout();
             // 
             // dgvChapterList
@@ -56,7 +57,7 @@
             this.dgvChapterList.Name = "dgvChapterList";
             this.dgvChapterList.RowHeadersVisible = false;
             this.dgvChapterList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvChapterList.Size = new System.Drawing.Size(350, 670);
+            this.dgvChapterList.Size = new System.Drawing.Size(350, 643);
             this.dgvChapterList.TabIndex = 0;
             this.dgvChapterList.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvChapterList_CellDoubleClick);
             this.dgvChapterList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvChapterList_CellFormatting);
@@ -73,7 +74,7 @@
             this.rtbChapterTextBox.Location = new System.Drawing.Point(380, 61);
             this.rtbChapterTextBox.Name = "rtbChapterTextBox";
             this.rtbChapterTextBox.ReadOnly = true;
-            this.rtbChapterTextBox.Size = new System.Drawing.Size(790, 624);
+            this.rtbChapterTextBox.Size = new System.Drawing.Size(890, 597);
             this.rtbChapterTextBox.TabIndex = 1;
             this.rtbChapterTextBox.Text = "";
             this.rtbChapterTextBox.TextChanged += new System.EventHandler(this.rtbChapterTextBox_TextChanged);
@@ -82,7 +83,7 @@
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnNext.Location = new System.Drawing.Point(588, 691);
+            this.btnNext.Location = new System.Drawing.Point(588, 673);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(80, 37);
             this.btnNext.TabIndex = 3;
@@ -94,7 +95,7 @@
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnEdit.Location = new System.Drawing.Point(756, 19);
+            this.btnEdit.Location = new System.Drawing.Point(856, 19);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(128, 37);
             this.btnEdit.TabIndex = 4;
@@ -106,34 +107,13 @@
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPlay.Location = new System.Drawing.Point(815, 691);
+            this.btnPlay.Location = new System.Drawing.Point(704, 673);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(75, 37);
             this.btnPlay.TabIndex = 5;
             this.btnPlay.Text = "Play";
             this.btnPlay.UseVisualStyleBackColor = true;
-            // 
-            // btnPause
-            // 
-            this.btnPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnPause.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPause.Location = new System.Drawing.Point(896, 691);
-            this.btnPause.Name = "btnPause";
-            this.btnPause.Size = new System.Drawing.Size(75, 37);
-            this.btnPause.TabIndex = 6;
-            this.btnPause.Text = "Pause";
-            this.btnPause.UseVisualStyleBackColor = true;
-            // 
-            // btnStop
-            // 
-            this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnStop.Location = new System.Drawing.Point(977, 691);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(75, 37);
-            this.btnStop.TabIndex = 7;
-            this.btnStop.Text = "Stop";
-            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
             // 
             // cbAutoPlay
             // 
@@ -141,12 +121,13 @@
             this.cbAutoPlay.AutoSize = true;
             this.cbAutoPlay.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.cbAutoPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.cbAutoPlay.Location = new System.Drawing.Point(1057, 699);
+            this.cbAutoPlay.Location = new System.Drawing.Point(1197, 679);
             this.cbAutoPlay.Name = "cbAutoPlay";
             this.cbAutoPlay.Size = new System.Drawing.Size(87, 21);
             this.cbAutoPlay.TabIndex = 8;
             this.cbAutoPlay.Text = "Auto Play";
             this.cbAutoPlay.UseVisualStyleBackColor = false;
+            this.cbAutoPlay.CheckedChanged += new System.EventHandler(this.cbAutoPlay_CheckedChanged);
             // 
             // labelTitle
             // 
@@ -162,7 +143,7 @@
             // 
             this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPrevious.Location = new System.Drawing.Point(380, 691);
+            this.btnPrevious.Location = new System.Drawing.Point(380, 673);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(79, 37);
             this.btnPrevious.TabIndex = 2;
@@ -174,7 +155,7 @@
             // 
             this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnRedownload.Location = new System.Drawing.Point(887, 19);
+            this.btnRedownload.Location = new System.Drawing.Point(987, 19);
             this.btnRedownload.Name = "btnRedownload";
             this.btnRedownload.Size = new System.Drawing.Size(135, 37);
             this.btnRedownload.TabIndex = 10;
@@ -186,7 +167,7 @@
             // 
             this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDeleteChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnDeleteChapter.Location = new System.Drawing.Point(1028, 18);
+            this.btnDeleteChapter.Location = new System.Drawing.Point(1128, 18);
             this.btnDeleteChapter.Name = "btnDeleteChapter";
             this.btnDeleteChapter.Size = new System.Drawing.Size(135, 37);
             this.btnDeleteChapter.TabIndex = 11;
@@ -198,7 +179,7 @@
             // 
             this.btnAddChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAddChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnAddChapter.Location = new System.Drawing.Point(15, 691);
+            this.btnAddChapter.Location = new System.Drawing.Point(15, 673);
             this.btnAddChapter.Name = "btnAddChapter";
             this.btnAddChapter.Size = new System.Drawing.Size(135, 37);
             this.btnAddChapter.TabIndex = 12;
@@ -210,7 +191,7 @@
             // 
             this.btnFinishReading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnFinishReading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnFinishReading.Location = new System.Drawing.Point(466, 691);
+            this.btnFinishReading.Location = new System.Drawing.Point(466, 673);
             this.btnFinishReading.Name = "btnFinishReading";
             this.btnFinishReading.Size = new System.Drawing.Size(116, 37);
             this.btnFinishReading.TabIndex = 13;
@@ -218,21 +199,31 @@
             this.btnFinishReading.UseVisualStyleBackColor = true;
             this.btnFinishReading.Click += new System.EventHandler(this.btnFinishReading_Click);
             // 
+            // mp3Player
+            // 
+            this.mp3Player.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.mp3Player.Enabled = true;
+            this.mp3Player.Location = new System.Drawing.Point(785, 664);
+            this.mp3Player.Name = "mp3Player";
+            this.mp3Player.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("mp3Player.OcxState")));
+            this.mp3Player.Size = new System.Drawing.Size(406, 46);
+            this.mp3Player.TabIndex = 14;
+            this.mp3Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.mp3Player_PlayStateChange);
+            // 
             // NovelReaderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(1184, 730);
+            this.ClientSize = new System.Drawing.Size(1284, 712);
+            this.Controls.Add(this.mp3Player);
             this.Controls.Add(this.btnFinishReading);
             this.Controls.Add(this.btnAddChapter);
             this.Controls.Add(this.btnDeleteChapter);
             this.Controls.Add(this.btnRedownload);
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.cbAutoPlay);
-            this.Controls.Add(this.btnStop);
-            this.Controls.Add(this.btnPause);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnNext);
@@ -244,6 +235,7 @@
             this.Text = "NovelReaderForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NovelReaderForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mp3Player)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -256,8 +248,6 @@
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnPlay;
-        private System.Windows.Forms.Button btnPause;
-        private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.CheckBox cbAutoPlay;
         private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.Button btnPrevious;
@@ -265,5 +255,6 @@
         private System.Windows.Forms.Button btnDeleteChapter;
         private System.Windows.Forms.Button btnAddChapter;
         private System.Windows.Forms.Button btnFinishReading;
+        private AxWMPLib.AxWindowsMediaPlayer mp3Player;
     }
 }
