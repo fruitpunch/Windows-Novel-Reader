@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source.cs" />
+    <Compile Include="NovelSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceManager.cs" />
     <Compile Include="SourcePiaoTian.cs" />

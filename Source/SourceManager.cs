@@ -11,9 +11,9 @@ namespace Source
     public class SourceManager
     {
 
-        public static Source GetSource(SourceLocation s, string sourceID)
+        public static NovelSource GetSource(SourceLocation s, string sourceID)
         {
-            Source rtnSource;
+            NovelSource rtnSource;
             switch (s)
             {
                 case SourceLocation.Web69:
@@ -34,9 +34,9 @@ namespace Source
             switch (s)
             {
                 case SourceLocation.Web69:
-                    return SourceWeb69.BaseURL;
+                    return new SourceWeb69(null).BaseURL;
                 case SourceLocation.WebPiaoTian:
-                    return SourcePiaoTian.BaseURL;
+                    return new SourcePiaoTian(null).BaseURL;
                 default:
                     return null;
             }

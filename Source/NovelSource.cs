@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public interface Source
+    public interface NovelSource
     {
         SourceLocation SourceLocation
         {

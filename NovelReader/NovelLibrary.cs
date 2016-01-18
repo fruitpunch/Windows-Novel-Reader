@@ -1,4 +1,5 @@
-﻿using Db4objects.Db4o;
+﻿
+using Db4objects.Db4o;
 using Db4objects.Db4o.Config;
 using Source;
 using System;
@@ -49,18 +50,21 @@ namespace NovelReader
 
         public void LoadNovelLibrary()
         {
-            IEmbeddedConfiguration config = Db4oEmbedded.NewConfiguration();
-            config.Common.ObjectClass(typeof(Novel)).CascadeOnUpdate(true);
-            config.Common.ObjectClass(typeof(Chapter)).CascadeOnUpdate(true);
-            db = Db4oEmbedded.OpenFile(config, Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.NovelListDBName));
+            
             try
             {
+                IEmbeddedConfiguration config = Db4oEmbedded.NewConfiguration();
+                config.Common.ObjectClass(typeof(Novel)).CascadeOnUpdate(true);
+                config.Common.ObjectClass(typeof(Chapter)).CascadeOnUpdate(true);
+                config.Common.ObjectClass(typeof(NovelSource)).CascadeOnUpdate(true);
+                db = Db4oEmbedded.OpenFile(config, Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.NovelListDBName));
                 IObjectSet novels = db.QueryByExample(typeof(Novel));
                 InsertNovels(novels);
+                //db.Store(SourceManager.GetSource(SourceLocation.Web69, "asd"));
             }
-            catch (Exception e)
+            catch (FileNotFoundException e)
             {
-
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -72,8 +76,8 @@ namespace NovelReader
                 {
                     n.SaveChapterToDB();
                     db.Store(n);
-                    db.Commit();
                 }
+                db.Commit();
             }
             catch(Exception e)
             {
@@ -154,8 +158,16 @@ namespace NovelReader
 
             Novel newNovel = new Novel(novelTitle, source, sourceID);
             _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
-            db.Store(newNovel);
-            db.Commit();
+
+            try
+            {
+                db.Store(newNovel);
+                db.Commit();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
             UpdateNovelRanking();
             Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");
             return successfulReturn;

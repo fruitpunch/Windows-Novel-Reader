@@ -37,7 +37,7 @@ namespace NovelReader
         private Chapter _lastReadChapter { get; set; }
         private bool _makeAudio { get; set; }
         private bool _isReading { get; set; }
-        Source.Source _novelSource { get; set; }
+        NovelSource _novelSource { get; set; }
         UpdateStates _updateState { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
         private int _dbRequest { get; set; }
@@ -141,7 +141,7 @@ namespace NovelReader
             set { this._isReading = value; }
         }
 
-        public Source.Source NovelSource
+        public NovelSource NovelSource
         {
             get { return this._novelSource; }
             set { this._novelSource = value; }

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public class SourcePiaoTian : Source
+    public class SourcePiaoTian : NovelSource
     {
-        public static readonly string BaseURL = "http://www.piaotian.cc";
+        public string BaseURL = "http://www.piaotian.cc";
         string _novelTitle;
         string _novelID;
-        Regex linkParser;
+        //Regex linkParser;
         CultureInfo cultureInfo;
 
         public SourceLocation SourceLocation
@@ -99,7 +99,7 @@ namespace Source
             string[] lines = WebUtil.GetUrlContents(BaseURL + url);
             List<string> novelContent = new List<string>();
             bool contentFound = false;
-            linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            //linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             novelContent.Add(chapterTitle);
             novelContent.Add("\n\n");
             foreach (string line in lines)
@@ -120,7 +120,7 @@ namespace Source
             foreach (KeyValuePair<string, string> entry in replaceRegex)
                 content = content.Replace(entry.Key, entry.Value);
             content = Regex.Replace(content, @"<[^>]+>|&nbsp;", "");
-            content = linkParser.Replace(content, "");
+            content = Regex.Replace(content, @"\b(?:https?://|www\.)\S+\b", "", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             return content;
         }
     }

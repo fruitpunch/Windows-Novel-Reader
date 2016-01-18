@@ -88,7 +88,10 @@ namespace NovelReader
         private void OnUpdateTimer(Object source, ElapsedEventArgs e)
         {
             if (!updateThread.IsAlive)
+            {
+                updateThread = new Thread(Update);
                 updateThread.Start();
+            }
         }
 
         private void TTSProgress(Object sender, TTSProgressEventArgs e)
@@ -117,7 +120,10 @@ namespace NovelReader
         public void UpdateTTSTest()
         {
             if (!updateThread.IsAlive)
+            {
+                updateThread = new Thread(Update);
                 updateThread.Start();
+            }
         }
 
         public void UpdateTimerInterval(int minutes)

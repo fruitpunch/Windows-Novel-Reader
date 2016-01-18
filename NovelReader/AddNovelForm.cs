@@ -17,7 +17,7 @@ namespace NovelReader
         private SourceLocation sourceLocation;
         private string sourceID;
         private string novelTitle;
-        private Source.Source source;
+        private NovelSource source;
         public AddNovelForm()
         {
             InitializeComponent();
