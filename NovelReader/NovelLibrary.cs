@@ -116,7 +116,7 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Tuple<bool, string> AddNovel(string novelTitle, SourceLocation source, int sourceID)
+        public Tuple<bool, string> AddNovel(string novelTitle, SourceLocation source, string sourceID)
         {
             foreach (Novel n in _novelList)
             {

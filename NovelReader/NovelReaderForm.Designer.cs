@@ -52,12 +52,11 @@
             this.dgvChapterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.dgvChapterList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvChapterList.Location = new System.Drawing.Point(20, 18);
-            this.dgvChapterList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgvChapterList.Location = new System.Drawing.Point(15, 15);
             this.dgvChapterList.Name = "dgvChapterList";
             this.dgvChapterList.RowHeadersVisible = false;
             this.dgvChapterList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvChapterList.Size = new System.Drawing.Size(467, 825);
+            this.dgvChapterList.Size = new System.Drawing.Size(350, 670);
             this.dgvChapterList.TabIndex = 0;
             this.dgvChapterList.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvChapterList_CellDoubleClick);
             this.dgvChapterList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvChapterList_CellFormatting);
@@ -71,11 +70,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.rtbChapterTextBox.BackColor = System.Drawing.SystemColors.Control;
             this.rtbChapterTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.rtbChapterTextBox.Location = new System.Drawing.Point(507, 75);
-            this.rtbChapterTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rtbChapterTextBox.Location = new System.Drawing.Point(380, 61);
             this.rtbChapterTextBox.Name = "rtbChapterTextBox";
             this.rtbChapterTextBox.ReadOnly = true;
-            this.rtbChapterTextBox.Size = new System.Drawing.Size(1052, 767);
+            this.rtbChapterTextBox.Size = new System.Drawing.Size(790, 624);
             this.rtbChapterTextBox.TabIndex = 1;
             this.rtbChapterTextBox.Text = "";
             this.rtbChapterTextBox.TextChanged += new System.EventHandler(this.rtbChapterTextBox_TextChanged);
@@ -84,10 +82,9 @@
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnNext.Location = new System.Drawing.Point(784, 850);
-            this.btnNext.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnNext.Location = new System.Drawing.Point(588, 691);
             this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(107, 45);
+            this.btnNext.Size = new System.Drawing.Size(80, 37);
             this.btnNext.TabIndex = 3;
             this.btnNext.Text = "Next";
             this.btnNext.UseVisualStyleBackColor = true;
@@ -97,10 +94,9 @@
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnEdit.Location = new System.Drawing.Point(1008, 23);
-            this.btnEdit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnEdit.Location = new System.Drawing.Point(756, 19);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(170, 45);
+            this.btnEdit.Size = new System.Drawing.Size(128, 37);
             this.btnEdit.TabIndex = 4;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -110,10 +106,9 @@
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPlay.Location = new System.Drawing.Point(1087, 850);
-            this.btnPlay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnPlay.Location = new System.Drawing.Point(815, 691);
             this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(100, 45);
+            this.btnPlay.Size = new System.Drawing.Size(75, 37);
             this.btnPlay.TabIndex = 5;
             this.btnPlay.Text = "Play";
             this.btnPlay.UseVisualStyleBackColor = true;
@@ -122,10 +117,9 @@
             // 
             this.btnPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPause.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPause.Location = new System.Drawing.Point(1195, 850);
-            this.btnPause.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnPause.Location = new System.Drawing.Point(896, 691);
             this.btnPause.Name = "btnPause";
-            this.btnPause.Size = new System.Drawing.Size(100, 45);
+            this.btnPause.Size = new System.Drawing.Size(75, 37);
             this.btnPause.TabIndex = 6;
             this.btnPause.Text = "Pause";
             this.btnPause.UseVisualStyleBackColor = true;
@@ -134,10 +128,9 @@
             // 
             this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnStop.Location = new System.Drawing.Point(1303, 850);
-            this.btnStop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnStop.Location = new System.Drawing.Point(977, 691);
             this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(100, 45);
+            this.btnStop.Size = new System.Drawing.Size(75, 37);
             this.btnStop.TabIndex = 7;
             this.btnStop.Text = "Stop";
             this.btnStop.UseVisualStyleBackColor = true;
@@ -148,8 +141,7 @@
             this.cbAutoPlay.AutoSize = true;
             this.cbAutoPlay.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.cbAutoPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.cbAutoPlay.Location = new System.Drawing.Point(1409, 865);
-            this.cbAutoPlay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbAutoPlay.Location = new System.Drawing.Point(1057, 699);
             this.cbAutoPlay.Name = "cbAutoPlay";
             this.cbAutoPlay.Size = new System.Drawing.Size(87, 21);
             this.cbAutoPlay.TabIndex = 8;
@@ -160,8 +152,7 @@
             // 
             this.labelTitle.AutoSize = true;
             this.labelTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTitle.Location = new System.Drawing.Point(501, 24);
-            this.labelTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelTitle.Location = new System.Drawing.Point(376, 20);
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.Size = new System.Drawing.Size(71, 31);
             this.labelTitle.TabIndex = 9;
@@ -171,10 +162,9 @@
             // 
             this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPrevious.Location = new System.Drawing.Point(507, 850);
-            this.btnPrevious.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnPrevious.Location = new System.Drawing.Point(380, 691);
             this.btnPrevious.Name = "btnPrevious";
-            this.btnPrevious.Size = new System.Drawing.Size(105, 45);
+            this.btnPrevious.Size = new System.Drawing.Size(79, 37);
             this.btnPrevious.TabIndex = 2;
             this.btnPrevious.Text = "Prev";
             this.btnPrevious.UseVisualStyleBackColor = true;
@@ -184,10 +174,9 @@
             // 
             this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnRedownload.Location = new System.Drawing.Point(1183, 23);
-            this.btnRedownload.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRedownload.Location = new System.Drawing.Point(887, 19);
             this.btnRedownload.Name = "btnRedownload";
-            this.btnRedownload.Size = new System.Drawing.Size(180, 45);
+            this.btnRedownload.Size = new System.Drawing.Size(135, 37);
             this.btnRedownload.TabIndex = 10;
             this.btnRedownload.Text = "Download Chapter";
             this.btnRedownload.UseVisualStyleBackColor = true;
@@ -197,10 +186,9 @@
             // 
             this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDeleteChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnDeleteChapter.Location = new System.Drawing.Point(1371, 22);
-            this.btnDeleteChapter.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnDeleteChapter.Location = new System.Drawing.Point(1028, 18);
             this.btnDeleteChapter.Name = "btnDeleteChapter";
-            this.btnDeleteChapter.Size = new System.Drawing.Size(180, 45);
+            this.btnDeleteChapter.Size = new System.Drawing.Size(135, 37);
             this.btnDeleteChapter.TabIndex = 11;
             this.btnDeleteChapter.Text = "Delete Chapter";
             this.btnDeleteChapter.UseVisualStyleBackColor = true;
@@ -210,10 +198,9 @@
             // 
             this.btnAddChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAddChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnAddChapter.Location = new System.Drawing.Point(20, 850);
-            this.btnAddChapter.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnAddChapter.Location = new System.Drawing.Point(15, 691);
             this.btnAddChapter.Name = "btnAddChapter";
-            this.btnAddChapter.Size = new System.Drawing.Size(180, 45);
+            this.btnAddChapter.Size = new System.Drawing.Size(135, 37);
             this.btnAddChapter.TabIndex = 12;
             this.btnAddChapter.Text = "Add Chapter";
             this.btnAddChapter.UseVisualStyleBackColor = true;
@@ -223,10 +210,9 @@
             // 
             this.btnFinishReading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnFinishReading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnFinishReading.Location = new System.Drawing.Point(621, 850);
-            this.btnFinishReading.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnFinishReading.Location = new System.Drawing.Point(466, 691);
             this.btnFinishReading.Name = "btnFinishReading";
-            this.btnFinishReading.Size = new System.Drawing.Size(155, 45);
+            this.btnFinishReading.Size = new System.Drawing.Size(116, 37);
             this.btnFinishReading.TabIndex = 13;
             this.btnFinishReading.Text = "Finish Reading";
             this.btnFinishReading.UseVisualStyleBackColor = true;
@@ -234,11 +220,11 @@
             // 
             // NovelReaderForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(1579, 898);
+            this.ClientSize = new System.Drawing.Size(1184, 730);
             this.Controls.Add(this.btnFinishReading);
             this.Controls.Add(this.btnAddChapter);
             this.Controls.Add(this.btnDeleteChapter);
@@ -253,8 +239,7 @@
             this.Controls.Add(this.btnPrevious);
             this.Controls.Add(this.rtbChapterTextBox);
             this.Controls.Add(this.dgvChapterList);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "NovelReaderForm";
             this.Text = "NovelReaderForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NovelReaderForm_FormClosing);

@@ -201,7 +201,7 @@ namespace NovelReader
             
             lock (requestListLock)
             {
-                if (BackgroundService.Instance.ttsController.InvokeRequired)
+                if (BackgroundService.Instance.ttsController != null && BackgroundService.Instance.ttsController.InvokeRequired)
                 {
                     ManualResetEvent mre = new ManualResetEvent(false);
                     BackgroundService.Instance.ttsController.BeginInvoke(new MethodInvoker(delegate
@@ -378,7 +378,6 @@ namespace NovelReader
             string specifiedOutputAudioLocation = request.OutputAudioFile;
             string args = String.Format(" \"{0}\" -i \"{1}\" -o \"{2}\" -rate {3} -replace \"{4}\" -delete \"{5}\" -utf8", 
                 request.Voice, request.InputTextFile, request.OutputAudioFile, request.Rate, request.ReplacementFile, request.DeletionFile);
-            Console.WriteLine(args);
             Process p = new Process();
             p.StartInfo.FileName = Path.Combine("TTS", "TTS.exe");
             p.StartInfo.UseShellExecute = false;

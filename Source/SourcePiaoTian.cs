@@ -10,10 +10,10 @@ namespace Source
 {
     public class SourcePiaoTian : Source
     {
-
-        string baseURL = "http://www.piaotian.cc";
-        string novelTitle;
-        int novelID;
+        public static readonly string BaseURL = "http://www.piaotian.cc";
+        string _novelTitle;
+        string _novelID;
+        Regex linkParser;
         CultureInfo cultureInfo;
 
         public SourceLocation SourceLocation
@@ -21,9 +21,15 @@ namespace Source
             get { return SourceLocation.WebPiaoTian; }
         }
 
-        public int NovelID
+        public string NovelID
         {
-            get { return this.novelID; }
+            get { return this._novelID; }
+        }
+
+        public string NovelTitle
+        {
+            get { return this._novelTitle; }
+            set { this._novelTitle = value; }
         }
 
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
@@ -34,33 +40,43 @@ namespace Source
                 {"<br />", "\n"}
             };
 
-        public SourcePiaoTian(string novelTitle, int novelID)
+        public SourcePiaoTian(string novelID)
         {
-            this.novelTitle = novelTitle;
-            this.novelID = novelID;
-            cultureInfo = new CultureInfo("en-US", false);
-            //Console.WriteLine("Piao Tian");
+            this._novelID = novelID;
+            this.cultureInfo = new CultureInfo("en-US", false);
         }
 
-        public string GetNovelTitle()
+        public Tuple<bool, string> VerifySource()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool IsValidID(string novelTitle, int sourceID)
-        {
-            throw new NotImplementedException();
+            string url = BaseURL + "/read/" + _novelID.ToString() + "/index.html";
+            string[] lines = WebUtil.GetUrlContents(url);
+            string title = null;
+            foreach (string line in lines)
+            {
+                if (line.Contains("404 - 找不到文件或目录。"))
+                    return new Tuple<bool, string>(false, null);
+            }
+            foreach (string line in lines)
+            {
+                if (line.Contains("<meta name=\"keywords\" content=\""))
+                {
+                    title = line.Replace("<meta name=\"keywords\" content=\"", "");
+                    title = title.Replace("\" />", "");
+                    break;
+                }
+            }
+            return new Tuple<bool, string>(true, title);
         }
 
         public Tuple<string, string>[] GetMenuURLs()
         {
             List<Tuple<string, string>> chapterURLs = new List<Tuple<string, string>>();
 
-            string url = baseURL + "/read/" + novelID.ToString() + "/index.html";
-            string chapterMatchingSubstring = "<a href=\"/read/" + novelID.ToString() + "/";
+            string url = BaseURL + "/read/" + _novelID.ToString() + "/index.html";
+            string chapterMatchingSubstring = "<a href=\"/read/" + _novelID.ToString() + "/";
             string[] lines = WebUtil.GetUrlContents(url);
             string title, chURL;
-
+            
             foreach (string line in lines)
             {
                 if (line.Contains(chapterMatchingSubstring))
@@ -80,9 +96,10 @@ namespace Source
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
-            string[] lines = WebUtil.GetUrlContents(baseURL + url);
+            string[] lines = WebUtil.GetUrlContents(BaseURL + url);
             List<string> novelContent = new List<string>();
             bool contentFound = false;
+            linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             novelContent.Add(chapterTitle);
             novelContent.Add("\n\n");
             foreach (string line in lines)
@@ -95,7 +112,6 @@ namespace Source
                     contentFound = true;
                 }
             }
-
             return novelContent.ToArray();
         }
 
@@ -103,7 +119,8 @@ namespace Source
         {
             foreach (KeyValuePair<string, string> entry in replaceRegex)
                 content = content.Replace(entry.Key, entry.Value);
-            content = content.ToLower(cultureInfo);
+            content = Regex.Replace(content, @"<[^>]+>|&nbsp;", "");
+            content = linkParser.Replace(content, "");
             return content;
         }
     }

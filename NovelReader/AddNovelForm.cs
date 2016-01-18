@@ -14,7 +14,10 @@ namespace NovelReader
     public partial class AddNovelForm : Form
     {
 
-
+        private SourceLocation sourceLocation;
+        private string sourceID;
+        private string novelTitle;
+        private Source.Source source;
         public AddNovelForm()
         {
             InitializeComponent();
@@ -24,9 +27,6 @@ namespace NovelReader
 
         private void btnConfirm_Click(object sender, EventArgs e)
         {
-            string newNovelTitle = null;
-            SourceLocation source;
-            int sourceID = -1;
             
 
             if(inputNovelTitle.Text.Length == 0)
@@ -35,19 +35,20 @@ namespace NovelReader
                 return;
             }
 
-            if (!Int32.TryParse(inputSourceID.Text, out sourceID))
+            if (inputSourceID.Text.Length == 0)
             {
-                MessageBox.Show("Invalid Novel Source ID", "Novel Source ID must be a positive integer.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Invalid Novel Source ID", "Novel Source ID must not be empty", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            newNovelTitle = inputNovelTitle.Text;
-            source = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
-            Tuple<bool, string> result = BackgroundService.Instance.AddNovel(newNovelTitle, source, sourceID);
+            novelTitle = inputNovelTitle.Text;
+            sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
+            Tuple<bool, string> result = BackgroundService.Instance.AddNovel(novelTitle, sourceLocation, sourceID);
 
             if (!result.Item1)
             {
                 MessageBox.Show("Add Novel Failed", result.Item2, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
             this.Close();
@@ -57,5 +58,105 @@ namespace NovelReader
         {
             this.Close();
         }
+
+        private void inputSourceID_TextChanged(object sender, EventArgs e)
+        {
+            labelStatus.Text = "";
+            labelStatus.ForeColor = Color.Black;
+            if (inputSourceID.Text.Length > 0)
+            {
+                if (textCheckerTimer.Enabled)
+                    textCheckerTimer.Stop();
+                textCheckerTimer.Start();
+            }
+            else
+            {
+                textCheckerTimer.Stop();
+                labelStatus.Text = "";
+            }
+        }
+
+        private void sourceSelector_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            InitiateValidation();
+        }
+
+        private void sourceChecker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            source = SourceManager.GetSource(sourceLocation, sourceID);
+            Tuple<bool, string> result = source.VerifySource();
+            e.Result = result;
+            
+        }
+
+        private void sourceChecker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Tuple<bool, string> result = (Tuple<bool, string>)e.Result;
+            if (result.Item1)
+            {
+                labelStatus.Text = "Valid ID.";
+                labelStatus.ForeColor = Color.Green;
+                inputNovelTitle.Text = result.Item2;
+            }
+            else
+            {
+                labelStatus.Text = "Invalid ID";
+                labelStatus.ForeColor = Color.Red;
+                inputNovelTitle.Text = "";
+            }
+            networkTimeoutTimer.Stop();
+        }
+
+        private void networkTimer_Tick(object sender, EventArgs e)
+        {
+            if (sourceChecker.IsBusy)
+            {
+                labelStatus.Text = "Network Timeout";
+                sourceChecker.Dispose();
+            }
+            networkTimeoutTimer.Stop();
+        }
+
+        private void textCheckerTimer_Tick(object sender, EventArgs e)
+        {
+            InitiateValidation();
+        }
+
+        /*============Private Function======*/
+        private void InitiateValidation()
+        {
+            if (inputSourceID.Text.Length == 0)
+                return;
+
+            string novelId = inputSourceID.Text;
+            textCheckerTimer.Stop();
+
+            if (!sourceChecker.IsBusy)
+            {
+                sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
+                sourceID = inputSourceID.Text;
+                labelStatus.Text = "Checking Source ID.....";
+                labelStatus.ForeColor = Color.Black;
+                networkTimeoutTimer.Start();
+                sourceChecker.RunWorkerAsync();
+            }
+        }
+
+        private void AddNovelForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void sourceLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
+            string url = SourceManager.GetSourceURL(sourceLocation);
+            if (url != null)
+            {
+                System.Diagnostics.ProcessStartInfo sourceWebProcess = new System.Diagnostics.ProcessStartInfo(url);
+                System.Diagnostics.Process.Start(sourceWebProcess);
+            }
+        }
+
     }
 }

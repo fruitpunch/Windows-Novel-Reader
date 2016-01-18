@@ -81,7 +81,22 @@ namespace NovelReader
             if (Int32.TryParse(parts[0], out fileIndex) && fileIndex >= 0 && fileIndex < currentReadingNovel.Chapters.Count)
             {
                 if (e.FullPath.Equals(currentReadingNovel.Chapters[fileIndex].GetAudioFileLocation()) || e.FullPath.Equals(currentReadingNovel.Chapters[fileIndex].GetTextFileLocation()))
+                {
                     ModifyCellStyle(fileIndex);
+                    if (currentReadingChapter != null && fileIndex == currentReadingChapter.Index)
+                    {
+                        if (this.InvokeRequired)
+                        {
+                            this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                            {
+                                ReadChapter(currentReadingChapter);
+                            }));
+                        }
+                        else
+                            ReadChapter(currentReadingChapter);
+                    }
+                }
+                
             }
 
         }
@@ -280,10 +295,17 @@ namespace NovelReader
             
             if (chapter.HasText)
             {
-                using (StreamReader sr = new StreamReader(chapter.GetTextFileLocation()))
+                try
                 {
-                    string chapterText = sr.ReadToEnd();
-                    rtbChapterTextBox.Text = chapterText;
+                    using (StreamReader sr = new StreamReader(chapter.GetTextFileLocation()))
+                    {
+                        string chapterText = sr.ReadToEnd();
+                        rtbChapterTextBox.Text = chapterText;
+                    }
+                }
+                catch (Exception e)
+                {
+                    rtbChapterTextBox.Text = "Please Reload.";
                 }
             }
             else
@@ -307,13 +329,10 @@ namespace NovelReader
         {
             Chapter chapter = (Chapter)chapterObj;
             currentReadingNovel.DownloadChapterContent(chapter);
-            if (this.InvokeRequired)
+            this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
             {
-                this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                {
-                    ReadChapter(chapter);
-                }));
-            }
+                ReadChapter(chapter);
+            }));
             
         }
 
@@ -345,8 +364,9 @@ namespace NovelReader
 
         private void ModifyCellStyle(int rowIndex)
         {
-            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count)
+            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count || rowIndex >= currentReadingNovel.Chapters.Count)
                 return;
+            
             DataGridViewRow row = dgvChapterList.Rows[rowIndex];
             Chapter chapter = currentReadingNovel.Chapters[rowIndex];
             row.DefaultCellStyle.SelectionForeColor = Color.DimGray;

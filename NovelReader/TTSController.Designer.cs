@@ -47,25 +47,27 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvTTS.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvTTS.Location = new System.Drawing.Point(54, 49);
+            this.dgvTTS.Location = new System.Drawing.Point(40, 40);
+            this.dgvTTS.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dgvTTS.MultiSelect = false;
             this.dgvTTS.Name = "dgvTTS";
             this.dgvTTS.RowHeadersVisible = false;
             this.dgvTTS.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvTTS.Size = new System.Drawing.Size(1066, 677);
+            this.dgvTTS.Size = new System.Drawing.Size(800, 550);
             this.dgvTTS.TabIndex = 0;
             // 
             // udThreadCount
             // 
             this.udThreadCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.udThreadCount.Location = new System.Drawing.Point(57, 757);
+            this.udThreadCount.Location = new System.Drawing.Point(43, 615);
+            this.udThreadCount.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.udThreadCount.Maximum = new decimal(new int[] {
             4,
             0,
             0,
             0});
             this.udThreadCount.Name = "udThreadCount";
-            this.udThreadCount.Size = new System.Drawing.Size(63, 22);
+            this.udThreadCount.Size = new System.Drawing.Size(47, 20);
             this.udThreadCount.TabIndex = 1;
             this.udThreadCount.ValueChanged += new System.EventHandler(this.udThreadCount_ValueChanged);
             // 
@@ -73,9 +75,10 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(54, 738);
+            this.label1.Location = new System.Drawing.Point(40, 600);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(128, 16);
+            this.label1.Size = new System.Drawing.Size(105, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Thread Count(0 to 4)";
             // 
@@ -83,9 +86,10 @@
             // 
             this.btnResetList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnResetList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnResetList.Location = new System.Drawing.Point(499, 738);
+            this.btnResetList.Location = new System.Drawing.Point(374, 600);
+            this.btnResetList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnResetList.Name = "btnResetList";
-            this.btnResetList.Size = new System.Drawing.Size(155, 45);
+            this.btnResetList.Size = new System.Drawing.Size(116, 37);
             this.btnResetList.TabIndex = 14;
             this.btnResetList.Text = "Reset List";
             this.btnResetList.UseVisualStyleBackColor = true;
@@ -94,7 +98,8 @@
             // udTTSSpeed
             // 
             this.udTTSSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.udTTSSpeed.Location = new System.Drawing.Point(246, 757);
+            this.udTTSSpeed.Location = new System.Drawing.Point(184, 615);
+            this.udTTSSpeed.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.udTTSSpeed.Maximum = new decimal(new int[] {
             8,
             0,
@@ -106,7 +111,7 @@
             0,
             -2147483648});
             this.udTTSSpeed.Name = "udTTSSpeed";
-            this.udTTSSpeed.Size = new System.Drawing.Size(63, 22);
+            this.udTTSSpeed.Size = new System.Drawing.Size(47, 20);
             this.udTTSSpeed.TabIndex = 15;
             this.udTTSSpeed.ValueChanged += new System.EventHandler(this.udTTSSpeed_ValueChanged);
             // 
@@ -114,15 +119,16 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(242, 738);
+            this.label2.Location = new System.Drawing.Point(182, 600);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(122, 16);
+            this.label2.Size = new System.Drawing.Size(98, 13);
             this.label2.TabIndex = 16;
             this.label2.Text = "TTS Speed(-8 to 8)";
             // 
             // TTSController
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.label2);
             this.Controls.Add(this.udTTSSpeed);
@@ -130,9 +136,10 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.udThreadCount);
             this.Controls.Add(this.dgvTTS);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "TTSController";
-            this.Size = new System.Drawing.Size(1294, 800);
+            this.Size = new System.Drawing.Size(970, 650);
             this.Load += new System.EventHandler(this.TTSController_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvTTS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udThreadCount)).EndInit();

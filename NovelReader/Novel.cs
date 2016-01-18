@@ -171,10 +171,10 @@ namespace NovelReader
 
         /*============Constructor===========*/
 
-        public Novel(string novelTitle, SourceLocation sourceLocation, int sourceId, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
+        public Novel(string novelTitle, SourceLocation sourceLocation, string sourceId, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
         {
             this._novelTitle = novelTitle;
-            this._novelSource = SourceManager.GetSource(novelTitle, sourceId, sourceLocation);
+            this._novelSource = SourceManager.GetSource(sourceLocation, sourceId);
             this._state = state;
             this._rank = rank;
             this._newChaptersNotReadCount = 0;
@@ -271,6 +271,8 @@ namespace NovelReader
         public Request GetTTSRequest(int speed)
         {
             Request request = null;
+            if (_chapters == null)
+                return null;
             for (requestIndex = 0; requestIndex < _chapters.Count; requestIndex++)
             {
                 Chapter c = _chapters[requestIndex];
@@ -289,7 +291,6 @@ namespace NovelReader
                 requestIndex = 0;
             }
 
-
             return request;
         }
 
@@ -304,14 +305,11 @@ namespace NovelReader
                 }
             }
             requestIndex = 0;
-            Console.WriteLine(_novelTitle + " " + queuedTTSChapters.Count);
         }
 
         public void FinishRequest(Chapter c)
         {
-            Console.WriteLine(_novelTitle + " Remove Request");
             queuedTTSChapters.Remove(c);
-            Console.WriteLine(_novelTitle + " " + queuedTTSChapters.Count);
         }
 
         public bool ShouldMakeAudio(Chapter chapter)

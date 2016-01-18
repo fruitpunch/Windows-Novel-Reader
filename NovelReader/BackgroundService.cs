@@ -14,8 +14,12 @@ namespace NovelReader
 
         private static BackgroundService instance;
         private Thread workerThread;
+        private Thread scheduleTTSThread;
+        private Thread updateThread;
         private System.Timers.Timer updateTimer;
         public Scheduler ttsScheduler;
+
+        private bool shutDown;
 
         public TTSController ttsController;
         public NovelListController novelListController;
@@ -46,25 +50,35 @@ namespace NovelReader
 
         public void StartService()
         {
+            this.shutDown = false;
+            this.updateThread = new Thread(Update);
+            this.workerThread = new Thread(DoWork);
             this.ttsScheduler = new Scheduler(Configuration.Instance.TTSThreadCount);
             this.ttsScheduler.ttsCompleteEventHandler += TTSProgress;
             this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
             this.updateTimer.Enabled = true;
             this.updateTimer.Elapsed += new ElapsedEventHandler(OnUpdateTimer);
+            
+            this.scheduleTTSThread = new Thread(ScheduleTTS);
             //this.updateTimer.Interval = Configuration.Instance.UpdateInterval;
 
             Console.WriteLine("update interval " + Configuration.Instance.UpdateInterval); 
             
             this.updateTimer.Start();
+            this.scheduleTTSThread.Start();
+            this.workerThread.Start();
             this.ttsScheduler.StartTTSService();
-
+            this.updateThread.Start();
         }
 
         public void CloseService()
         {
+            //this.scheduleTTSThread.
+            this.shutDown = true;
             this.updateTimer.Stop();
             this.updateTimer = null;
             this.workerThread = null;
+            //this.scheduleTTSThread = null;
             this.ttsScheduler.ShutdownService();
         }
 
@@ -73,8 +87,8 @@ namespace NovelReader
 
         private void OnUpdateTimer(Object source, ElapsedEventArgs e)
         {
-            //Console.WriteLine("Call update");
-
+            if (!updateThread.IsAlive)
+                updateThread.Start();
         }
 
         private void TTSProgress(Object sender, TTSProgressEventArgs e)
@@ -85,7 +99,7 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Tuple<bool, string> AddNovel(string novelTitle, SourceLocation source, int sourceID)
+        public Tuple<bool, string> AddNovel(string novelTitle, SourceLocation source, string sourceID)
         {
             return NovelLibrary.Instance.AddNovel(novelTitle, source, sourceID);
         }
@@ -102,8 +116,8 @@ namespace NovelReader
 
         public void UpdateTTSTest()
         {
-            Thread t = new Thread(Test);
-            t.Start();
+            if (!updateThread.IsAlive)
+                updateThread.Start();
         }
 
         public void UpdateTimerInterval(int minutes)
@@ -126,32 +140,43 @@ namespace NovelReader
 
         /*============Private Function======*/
 
-        private void Test()
+        private void DoWork()
+        {
+            while (!shutDown)
+            {
+
+                Thread.Sleep(1000);
+            }
+        }
+
+        private void Update()
         {
             CheckUpdates();
-            
             DownloadUpdates();
-            ScheduleTTS();
-            
         }
 
         private void ScheduleTTS()
         {
             int roundRobin = 0;
             Dictionary<string, int> position = new Dictionary<string, int>();
-            while (true)
+            while (!shutDown)
             {
-                Novel n = NovelLibrary.Instance.NovelList[roundRobin%NovelLibrary.Instance.GetNovelCount()];
-                roundRobin++;
-                Request request = n.GetTTSRequest(Configuration.Instance.TTSSpeed);
-                if (request == null)
-                    continue;
-                ttsScheduler.AddRequest(request);
-                Thread.Sleep(5000);
-                
+                if (NovelLibrary.Instance.GetNovelCount() > 0)
+                {
+                    Novel n = NovelLibrary.Instance.NovelList[roundRobin % NovelLibrary.Instance.GetNovelCount()];
+                    roundRobin++;
+                    Request request = n.GetTTSRequest(Configuration.Instance.TTSSpeed);
+                    if (request == null)
+                        continue;
+                    ttsScheduler.AddRequest(request);
+                    Thread.Sleep(5000);
+                }
+                else
+                {
+                    Thread.Sleep(1000);
+                }
             }
         }
-
 
         private bool CheckUpdates()
         {

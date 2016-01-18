@@ -8,8 +8,21 @@ namespace Source
 {
     public interface Source
     {
-        string GetNovelTitle(); //Return title of the novel.
-        bool IsValidID(string novelTitle, int sourceID); //Check and see if the title and souceID refers to the same novel
+        SourceLocation SourceLocation
+        {
+            get;
+        }
+        string NovelID
+        {
+            get;
+        }
+        string NovelTitle
+        {
+            get;
+            set;
+        }
+
+        Tuple<bool, string> VerifySource(); //Check and see if the title and souceID refers to the same novel
         Tuple<string, string>[] GetMenuURLs(); //Returns a array of tuple of chapter title and url. 
         string[] GetChapterContent(string chapterTitle, string url); //Returns the title of the chapter with the extracted contents.
     }

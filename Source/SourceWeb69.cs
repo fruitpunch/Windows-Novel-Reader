@@ -10,9 +10,10 @@ namespace Source
 {
     public class SourceWeb69 : Source
     {
-        string baseURL = "http://www.69shu.com";
-        string novelTitle;
-        int novelID;
+        public static readonly string BaseURL = "http://www.69shu.com";
+        string _novelTitle;
+        string _novelID;
+        Regex linkParser;
         CultureInfo cultureInfo;
 
         public SourceLocation SourceLocation
@@ -20,9 +21,15 @@ namespace Source
             get { return SourceLocation.Web69; }
         }
 
-        public int NovelID
+        public string NovelID
         {
-            get { return this.novelID; }
+            get { return this._novelID; }
+        }
+
+        public string NovelTitle
+        {
+            get { return this._novelTitle; }
+            set { this._novelTitle = value; }
         }
 
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
@@ -33,29 +40,40 @@ namespace Source
                 {"<br />", "\n"}
             };
 
-        public SourceWeb69(string novelTitle, int novelID)
+        public SourceWeb69(string novelID)
         {
-            this.novelTitle = novelTitle;
-            this.novelID = novelID;
+            this._novelID = novelID;
             cultureInfo = new CultureInfo("en-US", false);
         }
 
-        public string GetNovelTitle()
+        public Tuple<bool, string> VerifySource()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool IsValidID(string novelTitle, int sourceID)
-        {
-            throw new NotImplementedException();
+            string url = BaseURL + "/" + _novelID.ToString() + "/";
+            string[] lines = WebUtil.GetUrlContents(url);
+            string title = null;
+            foreach (string line in lines)
+            {
+                if (line.Contains("69书吧_404"))
+                    return new Tuple<bool, string>(false, null);
+            }
+            foreach (string line in lines)
+            {
+                if (line.Contains("<div class=\"mu_h1\"><h1>"))
+                {
+                    title = line.Replace("\t<div class=\"mu_h1\"><h1>", "");
+                    title = title.Replace("最新章节列表</h1></div>", "");
+                    break;
+                }
+            }
+            return new Tuple<bool, string>(true, title);
         }
 
         public Tuple<string, string>[] GetMenuURLs()
         {
             List<Tuple<string, string>> chapterURLs = new List<Tuple<string, string>>();
 
-            string url = baseURL + "/" + novelID.ToString() + "/";
-            string chapterMatchingSubstring = "<li><a href=\"/txt/" + novelID.ToString() + "/";
+            string url = BaseURL + "/" + _novelID.ToString() + "/";
+            string chapterMatchingSubstring = "<li><a href=\"/txt/" + _novelID.ToString() + "/";
             string[] lines = WebUtil.GetUrlContents(url);
             string title, chURL;
 
@@ -72,7 +90,6 @@ namespace Source
                     chURL = chURL.Replace("\"", "");
                     chapterURLs.Add(new Tuple<string, string>(title, chURL));
                 }
-
             }
             chapterURLs.RemoveRange(0, 6);
             return chapterURLs.ToArray();
@@ -80,11 +97,9 @@ namespace Source
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
-            //Console.WriteLine(baseURL + url);
-
-            string[] lines = WebUtil.GetUrlContents(baseURL + url);
+            string[] lines = WebUtil.GetUrlContents(BaseURL + url);
             List<string> novelContent = new List<string>();
-
+            linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             novelContent.Add(chapterTitle);
             novelContent.Add("\n\n");
             foreach (string line in lines)
@@ -92,7 +107,6 @@ namespace Source
                 if (line.Contains("&nbsp;"))
                     novelContent.Add(NovelContentCleanup(line));
             }
-
             return novelContent.ToArray();
         }
 
@@ -106,11 +120,10 @@ namespace Source
         //Clean up each line of the novel content.
         private string NovelContentCleanup(string content)
         {
-            //content = Util.GeneralNovelContentCleanup(content);
-
             foreach (KeyValuePair<string, string> entry in replaceRegex)
                 content = content.Replace(entry.Key, entry.Value);
-            content = content.ToLower(cultureInfo);
+            content = Regex.Replace(content, @"<[^>]+>|&nbsp;", "");
+            content = linkParser.Replace(content, "");
             return content;
         }
     }

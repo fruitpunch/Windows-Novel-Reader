@@ -17,14 +17,16 @@ namespace NovelReader
         public static void LoadComponents()
         {
             Configuration.LoadConfiguration();
-            BackgroundService.Instance.StartService();
             NovelLibrary.Instance.LoadNovelLibrary();
+            BackgroundService.Instance.StartService();
+            
         }
 
         public static void SaveComponents()
         {
-            NovelLibrary.Instance.SaveNovelLibrary();
+            
             BackgroundService.Instance.CloseService();
+            NovelLibrary.Instance.SaveNovelLibrary();
             Configuration.SaveConfiguration();
         }
 
