@@ -159,6 +159,7 @@ namespace NovelReader
         {
             CheckUpdates();
             DownloadUpdates();
+            //NovelLibrary.Instance.SaveNovelLibrary();
         }
 
         private void ScheduleTTS()
@@ -167,7 +168,7 @@ namespace NovelReader
             Dictionary<string, int> position = new Dictionary<string, int>();
             while (!shutDown)
             {
-                if (NovelLibrary.Instance.GetNovelCount() > 0)
+                if (NovelLibrary.Instance.GetNovelCount() > 0 && ttsScheduler.Threads > 0)
                 {
                     Novel n = NovelLibrary.Instance.NovelList[roundRobin % NovelLibrary.Instance.GetNovelCount()];
                     roundRobin++;
@@ -191,7 +192,9 @@ namespace NovelReader
             foreach (Novel n in updateNovels)
             {
                 n.CheckForUpdate();
+                NovelLibrary.Instance.db.Store(n);
             }
+            NovelLibrary.Instance.db.Commit();
             return newChapterAvailable;
         }
 
@@ -200,10 +203,13 @@ namespace NovelReader
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
             foreach (Novel n in updateNovels)
             {
-                if(n.UpdateState == Novel.UpdateStates.UpdateAvailable)
+                if (n.UpdateState == Novel.UpdateStates.UpdateAvailable)
+                {
                     n.DownloadUpdate();
+                    NovelLibrary.Instance.db.Store(n);
+                }
             }
-
+            NovelLibrary.Instance.db.Commit();
             Configuration.Instance.LastFullUpdateTime = DateTime.Now;
         }
 

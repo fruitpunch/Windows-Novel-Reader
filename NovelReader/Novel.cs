@@ -563,7 +563,7 @@ namespace NovelReader
         {
             if (_chapters.Contains(chapter))
             {
-                if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
+                if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
                 {
                     BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                     {
@@ -609,7 +609,7 @@ namespace NovelReader
         {
             if (_chapters.Contains(chapter))
                 return;
-            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
+            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
             {
                 System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false);
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
@@ -628,7 +628,7 @@ namespace NovelReader
 
         private void InsertNewChapter(Chapter chapter, int pos)
         {
-            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
+            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
             {
                 System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false);
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
@@ -647,7 +647,7 @@ namespace NovelReader
 
         private void VeryifyAndCorrectChapterIndexing()
         {
-            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
+            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
             {
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
@@ -743,7 +743,7 @@ namespace NovelReader
                     break;
             }
             _updateState = updateState;
-            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequired)
+            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
             {
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {

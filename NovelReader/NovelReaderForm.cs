@@ -70,6 +70,20 @@ namespace NovelReader
 
         }
 
+        public bool InvokeRequiredForNovel(Novel n)
+        {
+            if (currentReadingNovel != null && currentReadingNovel.NovelTitle == n.NovelTitle)
+                return true;
+            return false;
+        }
+
+        public bool InvokeRequiredForChapter(Chapter c)
+        {
+            if (currentReadingNovel != null && currentReadingNovel.NovelTitle == c.NovelTitle)
+                return true;
+            return false;
+        }
+
         /*============EventHandler==========*/
 
         private void cbAutoPlay_CheckedChanged(object sender, EventArgs e)

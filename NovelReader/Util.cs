@@ -27,6 +27,7 @@ namespace NovelReader
             
             BackgroundService.Instance.CloseService();
             NovelLibrary.Instance.SaveNovelLibrary();
+            NovelLibrary.Instance.CloseNovelLibrary();
             Configuration.SaveConfiguration();
         }
 

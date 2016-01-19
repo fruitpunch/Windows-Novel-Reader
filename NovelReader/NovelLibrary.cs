@@ -81,7 +81,11 @@ namespace NovelReader
             catch(Exception e)
             {
             }
-            
+           
+        }
+
+        public void CloseNovelLibrary()
+        {
             db.Close();
         }
 
