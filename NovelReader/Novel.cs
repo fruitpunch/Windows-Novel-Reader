@@ -217,6 +217,11 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
+        public string GetNovelDirectory()
+        {
+            return System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, _novelTitle);
+        }
+
         public void LoadChapterFromDB()
         {
             _dbRequest++;
@@ -276,7 +281,7 @@ namespace NovelReader
             for (requestIndex = 0; requestIndex < _chapters.Count; requestIndex++)
             {
                 Chapter c = _chapters[requestIndex];
-                if(ShouldMakeAudio(c))
+                if(ShouldMakeAudio(c, false))
                 {
                     if (!queuedTTSChapters.ContainsKey(c))
                     {
@@ -289,6 +294,24 @@ namespace NovelReader
             if (requestIndex >= _chapterCount || request == null)
             {
                 requestIndex = 0;
+            }
+
+            //Make a secondary pass incase the novel does not have anything to be made.
+            if (request == null)
+            {
+                for (requestIndex = 0; requestIndex < _chapters.Count; requestIndex++)
+                {
+                    Chapter c = _chapters[requestIndex];
+                    if (ShouldMakeAudio(c, true))
+                    {
+                        if (!queuedTTSChapters.ContainsKey(c))
+                        {
+                            request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
+                            queuedTTSChapters.Add(c, request);
+                            break;
+                        }
+                    }
+                }
             }
 
             return request;
@@ -312,11 +335,11 @@ namespace NovelReader
             queuedTTSChapters.Remove(c);
         }
 
-        public bool ShouldMakeAudio(Chapter chapter)
+        public bool ShouldMakeAudio(Chapter chapter, bool secondaryPass)
         {
             if (_chapters == null || _chapters.Count == 0)
                 return false;
-            if (_lastReadChapter != null && _lastReadChapter.Index > chapter.Index)
+            if (_lastReadChapter != null && _lastReadChapter.Index > chapter.Index && !secondaryPass)
                 return false;
             //Do not make audio for novel not selected
             if (!_makeAudio)
@@ -347,7 +370,7 @@ namespace NovelReader
             
             int lastReadChapterIndex = 0;
             //Higher rank gets higher priority
-            priority += NovelLibrary.Instance.GetNovelCount() - _rank;
+            priority += (NovelLibrary.Instance.GetNovelCount() - _rank) * 5;
 
             //State also changes priority
             switch (_state)
@@ -373,32 +396,30 @@ namespace NovelReader
             {
                 lastReadChapterIndex = _lastViewedChapter.Index;
             }
-            int chapterBuffer = 0;
+            int chapterBuffer = chapter.Index - lastReadChapterIndex;
 
-            if (chapter.Index >= lastReadChapterIndex)
+            if (chapterBuffer > 0)
             {
-                for (int i = lastReadChapterIndex; i < chapter.Index; i++)
-                {
-                    if (_chapters[i].HasAudio)
-                        chapterBuffer++;
-                }
-                if (chapterBuffer == 0)
-                    chapterBuffer = 1;
-                priority += 100 / chapterBuffer;
-                priority -= (chapter.Index - lastReadChapterIndex - chapterBuffer);
+                priority += 100.0f / chapterBuffer;
             }
-            else
+            else if (chapterBuffer == 0)
             {
-                priority -= (lastReadChapterIndex - chapter.Index);
+                priority += 150.0f;
+            }
+            else if (chapterBuffer < 0)
+            {
+                priority -= 100;
             }
 
             //Increase priority if is reading
             if (_isReading)
-                priority *= 2;
+                priority *= 1.5;
 
             //Decrease priority if chapter has been read
-            if (!chapter.Read)
+            if (chapter.Read)
                 priority /= 2;
+
+            priority = (double)Math.Round((decimal)priority, 1);
 
             return priority;
         }

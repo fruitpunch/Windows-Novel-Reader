@@ -180,6 +180,7 @@ namespace NovelReader
                 Configuration.Instance.NovelReaderMaximized = false;
             if (currentReadingNovel != null)
                 currentReadingNovel.StopReading();
+            BackgroundService.Instance.novelReaderForm = null;
         }
 
         private void dgvChapterList_CurrentCellDirtyStateChanged(object sender, EventArgs e)
@@ -321,8 +322,6 @@ namespace NovelReader
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             };
 
-
-
             dgvChapterList.Columns.Add(titleColumn);
             dgvChapterList.Columns.Add(indexColumn);
             dgvChapterList.Columns.Add(makeAudioColumn);
@@ -330,7 +329,7 @@ namespace NovelReader
 
         private void ReadChapter(Chapter chapter)
         {
-            if (chapter == null)
+            if (chapter == null || chapter.NovelTitle != currentReadingNovel.NovelTitle)
                 return;
             labelTitle.DataBindings.Clear();
             labelTitle.DataBindings.Add(new Binding("Text", chapter, "ChapterTitle", false, DataSourceUpdateMode.OnPropertyChanged));
@@ -378,7 +377,9 @@ namespace NovelReader
             if (chapter.HasAudio)
             {
                 Console.WriteLine("play " + chapter.Index);
-                mp3Player.URL = new Uri(chapter.GetAudioFileLocation()).ToString();
+                string tempMp3FileLocation = Path.Combine(currentReadingNovel.GetNovelDirectory(), "play.mp3");
+                File.Copy(chapter.GetAudioFileLocation(), tempMp3FileLocation, true);
+                mp3Player.URL = new Uri(tempMp3FileLocation).ToString();
                 Console.WriteLine("URI Set");
                 mp3Player.Ctlcontrols.play();
                 Console.WriteLine("Play Set");

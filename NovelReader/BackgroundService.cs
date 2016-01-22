@@ -176,7 +176,7 @@ namespace NovelReader
                     if (request == null)
                         continue;
                     ttsScheduler.AddRequest(request);
-                    Thread.Sleep(500 * ttsScheduler.RequestCount / ttsScheduler.Threads);
+                    Thread.Sleep(750 * ttsScheduler.RequestCount / ttsScheduler.Threads);
                 }
                 else
                 {

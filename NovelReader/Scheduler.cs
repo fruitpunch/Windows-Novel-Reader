@@ -349,7 +349,7 @@ namespace NovelReader
                         _requestList.Remove(request);
                         for (int i = 0; i < _requestList.Count; i++)
                         {
-                            _requestList[i].Priority++;
+                            _requestList[i].Priority += 3;
                         }
                     }));
                 }
