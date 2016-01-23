@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Source
 {
+    //This class contains the utility function used for getting source for novels.
     public static class WebUtil
     {
         //Download the webpage and write each line into string array.

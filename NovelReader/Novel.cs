@@ -23,7 +23,6 @@ namespace NovelReader
          *              X = No          O = Yes             D = If specified
          */
 
-
         public enum UpdateStates { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped };
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -297,7 +296,7 @@ namespace NovelReader
             }
 
             //Make a secondary pass incase the novel does not have anything to be made.
-            if (request == null)
+            if (request == null && Util.random.Next(4) % 4 == 0)
             {
                 for (requestIndex = 0; requestIndex < _chapters.Count; requestIndex++)
                 {
@@ -390,7 +389,6 @@ namespace NovelReader
 
             /*
              * The more chapters buffered, the lower the priority. 
-             * The more chapters pasted the buffer, lower the priority.
              */
             if (_lastReadChapter != null)
             {
@@ -400,7 +398,7 @@ namespace NovelReader
 
             if (chapterBuffer > 0)
             {
-                priority += 100.0f / chapterBuffer;
+                priority += 150.0f / chapterBuffer;
             }
             else if (chapterBuffer == 0)
             {
@@ -412,11 +410,11 @@ namespace NovelReader
             }
 
             //Increase priority if is reading
-            if (_isReading)
+            if (_isReading && priority > 0)
                 priority *= 1.5;
 
             //Decrease priority if chapter has been read
-            if (chapter.Read)
+            if (chapter.Read && priority > 0)
                 priority /= 2;
 
             priority = (double)Math.Round((decimal)priority, 1);
@@ -451,7 +449,7 @@ namespace NovelReader
 
             int updateCount = 0;
             foreach (Chapter c in _chapters)
-                if (c.SourceURL != null && !c.HasAudio)
+                if (c.SourceURL != null && !c.HasText)
                     updateCount++;
 
             SaveChapterToDB();

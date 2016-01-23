@@ -83,7 +83,7 @@
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnNext.Location = new System.Drawing.Point(588, 673);
+            this.btnNext.Location = new System.Drawing.Point(589, 670);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(80, 37);
             this.btnNext.TabIndex = 3;
@@ -95,7 +95,7 @@
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnEdit.Location = new System.Drawing.Point(856, 19);
+            this.btnEdit.Location = new System.Drawing.Point(853, 12);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(128, 37);
             this.btnEdit.TabIndex = 4;
@@ -107,7 +107,7 @@
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPlay.Location = new System.Drawing.Point(704, 673);
+            this.btnPlay.Location = new System.Drawing.Point(704, 670);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(75, 37);
             this.btnPlay.TabIndex = 5;
@@ -143,7 +143,7 @@
             // 
             this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPrevious.Location = new System.Drawing.Point(380, 673);
+            this.btnPrevious.Location = new System.Drawing.Point(382, 670);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(79, 37);
             this.btnPrevious.TabIndex = 2;
@@ -155,7 +155,7 @@
             // 
             this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnRedownload.Location = new System.Drawing.Point(987, 19);
+            this.btnRedownload.Location = new System.Drawing.Point(987, 12);
             this.btnRedownload.Name = "btnRedownload";
             this.btnRedownload.Size = new System.Drawing.Size(135, 37);
             this.btnRedownload.TabIndex = 10;
@@ -167,7 +167,7 @@
             // 
             this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDeleteChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnDeleteChapter.Location = new System.Drawing.Point(1128, 18);
+            this.btnDeleteChapter.Location = new System.Drawing.Point(1128, 12);
             this.btnDeleteChapter.Name = "btnDeleteChapter";
             this.btnDeleteChapter.Size = new System.Drawing.Size(135, 37);
             this.btnDeleteChapter.TabIndex = 11;
@@ -179,7 +179,7 @@
             // 
             this.btnAddChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAddChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnAddChapter.Location = new System.Drawing.Point(15, 673);
+            this.btnAddChapter.Location = new System.Drawing.Point(15, 670);
             this.btnAddChapter.Name = "btnAddChapter";
             this.btnAddChapter.Size = new System.Drawing.Size(135, 37);
             this.btnAddChapter.TabIndex = 12;
@@ -191,7 +191,7 @@
             // 
             this.btnFinishReading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnFinishReading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnFinishReading.Location = new System.Drawing.Point(466, 673);
+            this.btnFinishReading.Location = new System.Drawing.Point(467, 670);
             this.btnFinishReading.Name = "btnFinishReading";
             this.btnFinishReading.Size = new System.Drawing.Size(116, 37);
             this.btnFinishReading.TabIndex = 13;
@@ -231,6 +231,7 @@
             this.Controls.Add(this.rtbChapterTextBox);
             this.Controls.Add(this.dgvChapterList);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "NovelReaderForm";
             this.Text = "NovelReaderForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NovelReaderForm_FormClosing);

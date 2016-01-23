@@ -66,7 +66,7 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvNovelList.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvNovelList.Location = new System.Drawing.Point(40, 40);
-            this.dgvNovelList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dgvNovelList.Margin = new System.Windows.Forms.Padding(2);
             this.dgvNovelList.MultiSelect = false;
             this.dgvNovelList.Name = "dgvNovelList";
             this.dgvNovelList.RowHeadersVisible = false;
@@ -85,7 +85,7 @@
             // 
             this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnTest.Location = new System.Drawing.Point(145, 604);
-            this.btnTest.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnTest.Margin = new System.Windows.Forms.Padding(2);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(99, 37);
             this.btnTest.TabIndex = 1;
@@ -97,7 +97,7 @@
             // 
             this.btnRankUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRankUp.Location = new System.Drawing.Point(865, 245);
-            this.btnRankUp.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnRankUp.Margin = new System.Windows.Forms.Padding(2);
             this.btnRankUp.Name = "btnRankUp";
             this.btnRankUp.Size = new System.Drawing.Size(75, 37);
             this.btnRankUp.TabIndex = 2;
@@ -109,7 +109,7 @@
             // 
             this.btnRankDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRankDown.Location = new System.Drawing.Point(865, 314);
-            this.btnRankDown.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnRankDown.Margin = new System.Windows.Forms.Padding(2);
             this.btnRankDown.Name = "btnRankDown";
             this.btnRankDown.Size = new System.Drawing.Size(75, 37);
             this.btnRankDown.TabIndex = 3;
@@ -121,7 +121,7 @@
             // 
             this.btnAddNovel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAddNovel.Location = new System.Drawing.Point(40, 604);
-            this.btnAddNovel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnAddNovel.Margin = new System.Windows.Forms.Padding(2);
             this.btnAddNovel.Name = "btnAddNovel";
             this.btnAddNovel.Size = new System.Drawing.Size(75, 37);
             this.btnAddNovel.TabIndex = 4;
@@ -148,7 +148,7 @@
             0,
             0});
             this.upUpdateFreq.Location = new System.Drawing.Point(172, 11);
-            this.upUpdateFreq.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.upUpdateFreq.Margin = new System.Windows.Forms.Padding(2);
             this.upUpdateFreq.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -192,7 +192,7 @@
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.dgvNovelList);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "NovelListController";
             this.Size = new System.Drawing.Size(970, 650);
             this.Load += new System.EventHandler(this.NovelListController_Load);

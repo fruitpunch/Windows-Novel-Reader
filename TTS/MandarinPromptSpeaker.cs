@@ -37,8 +37,7 @@ namespace TTS
             this.defaultRate = rate;
 
             this.replacementDictionary = new Dictionary<string, string>();
-            try
-            {
+            if(File.Exists(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "MandarinSoundReplacement.txt"))){
                 using (StreamReader sr = new StreamReader(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "MandarinSoundReplacement.txt")))
                 {
                     string line;
@@ -52,14 +51,9 @@ namespace TTS
                     }
                 }
             }
-            catch (Exception e)
-            {
-                //Console.WriteLine("Invalid replacement file location");
-                //return;
-            }
 
             this.deleteDictionary = new Dictionary<string, DeleteOperation>();
-            try
+            if(File.Exists(deleteSpecificationLocation))
             {
                 using (StreamReader sr = new StreamReader(deleteSpecificationLocation))
                 {
@@ -77,11 +71,7 @@ namespace TTS
                     }
                 }
             }
-            catch (Exception e)
-            {
-                //Console.WriteLine("Invalid delete file location");
-                //return;
-            }
+
 
             this.synth = new SpeechSynthesizer();
             this.synth.SelectVoice(voiceName);
@@ -96,12 +86,11 @@ namespace TTS
 
         }
 
-
+        //Parse the text input.
         public void ParseText(string text)
         {
             inputText = text.ToLower(new CultureInfo("en-US", false));
             inputText = TextReplace(inputText);
-            //this.inputText = inputText.Replace("\n", "/");
             inputText = inputText.Replace("“", "\"");
             inputText = inputText.Replace("”", "\"");
             string[] lines = Regex.Split(inputText, "\n");
@@ -109,9 +98,8 @@ namespace TTS
             List<string> sentences = new List<string>();
             List<string> symbols = new List<string>();
             List<bool> quotes = new List<bool>();
-            
 
-
+            //First split the text by sentences.
             foreach (string line in lines)
             {
 
@@ -120,6 +108,7 @@ namespace TTS
                 else if (line.Length == 0)
                     continue;
 
+                //If specified string exist in the string, delete the line or break off all.
                 DeleteOperation operation = DeleteOperation.None;
                 foreach (KeyValuePair<string, DeleteOperation> kvp in deleteDictionary)
                 {
@@ -129,15 +118,13 @@ namespace TTS
                         break;
                     }
                 }
-
                 if (operation == DeleteOperation.DeleteAllAfter)
                     break;
                 else if (operation == DeleteOperation.DeleteLine)
                     continue;
 
-
                 string[] quoteSplit = Regex.Split(line, "\"");
-
+                //Split each line by quote and non quote.
                 for (int q = 0; q < quoteSplit.Length; q++)
                 {
                     bool quoted = q % 2 == 1 ? true : false;
@@ -145,8 +132,7 @@ namespace TTS
 
                     string sentence = "";
                     string symbol = "";
-                    
-                    //Console.WriteLine("======" + parts.Length);
+                    //Split each quote/nonquote strings by specified punctuation.
                     for (int i = 0; i < parts.Length; i++)
                     {
                         if (parts[i].Length == 0)
@@ -155,7 +141,6 @@ namespace TTS
 
                         while (i + 1 < parts.Length)
                         {
-                            //Console.WriteLine("Symbol " + parts[i + 1] + " " + parts[i + 1].GetHashCode());
                             if (parts[i + 1].GetHashCode() == 757602046)
                             {
                                 i++;
@@ -172,7 +157,6 @@ namespace TTS
                         if (symbol.Length == 0)
                             symbol = "。";
 
-                        //BuildPrompt(sentence, symbol, quoted);
                         sentences.Add(sentence);
                         symbols.Add(symbol);
                         quotes.Add(quoted);
@@ -183,11 +167,11 @@ namespace TTS
                 }
             }
 
+            //Build prompt for each string.
             for (int i = 0; i < sentences.Count; i++)
             {
                 BuildPrompt(sentences[i], symbols[i], quotes[i]);
                 int percent = (int)(100.0f * (float)(i + 1) / (float)sentences.Count);
-                //Console.Write("\r " + fileName + " Progress: {0}%   ", percent);
                 Console.WriteLine(percent);
             }
 
@@ -204,6 +188,8 @@ namespace TTS
             }
         }
 
+        //Takes the string, punctuation and boolean of whether the string is in quote.
+        //Use the punctuation and quote to determine how each string is spoken(speed and volume) and the length of break between each string.
         private void BuildPrompt(string sentence, string symbol, bool quoted)
         {
             string distinct = new String(sentence.Distinct().ToArray());
@@ -266,6 +252,7 @@ namespace TTS
             }
         }
 
+        //Speak the string with the specified rate and volume.
         private void Speak(string str, PromptRate rate, PromptVolume volume, bool quoted)
         {
             int speakRate = defaultRate;
@@ -336,6 +323,7 @@ namespace TTS
             synth.Speak(str);
         }
 
+        //Append a break between each string.
         private void AppendBreak(int ms)
         {
             int ns = ms * 10000;
@@ -344,39 +332,9 @@ namespace TTS
             synth.Speak(pb);
             pb.ClearContent();
         }
-        /*
-        public void Speak(string voiceName, int rate, string outputFileLocation)
-        {
-            using (System.Speech.Synthesis.SpeechSynthesizer synth = new System.Speech.Synthesis.SpeechSynthesizer())
-            {
-                synth.SelectVoice(voiceName);
-                synth.Rate = rate;
-                synth.Volume = 100;
 
-                if (outputFileLocation != null)
-                {
-                    MemoryStream ms = new MemoryStream();
-                    synth.SetOutputToWaveStream(ms);
-                    synth.Speak(pb);
-                    Console.WriteLine("\r " + fileName + " Progress: 100%                                 ");
-                    ms.Seek(0, SeekOrigin.Begin);
-
-                    //Convert from wav to mp3 to save space
-                    using (var rdr = new WaveFileReader(ms))
-                    using (var wtr = new LameMP3FileWriter(outputFileLocation, rdr.WaveFormat, LAMEPreset.VBR_90))
-                    {
-                        rdr.CopyTo(wtr);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Speaking");
-                    synth.SetOutputToDefaultAudioDevice();
-                    synth.Speak(pb);
-                }
-            }
-        }
-        */
+        //Replace each string with the specific string specified.
+        //Replace the longest string first to reduce conflict.
         private string TextReplace(string input)
         {
             List<Tuple<string, string>> sortedReplacement = new List<Tuple<string, string>>();

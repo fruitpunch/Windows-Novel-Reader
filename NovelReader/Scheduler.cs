@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace NovelReader
 {
+    //Represent an TTS request with the necessary information to create an audio file.
     public class Request : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -133,6 +134,7 @@ namespace NovelReader
         }
     }
 
+    //Notify the other class of progress in TTS Scheduler.
     public class TTSProgressEventArgs : EventArgs
     {
         public enum ProgressType { RequestComplete, RequestRemoved};
@@ -142,6 +144,7 @@ namespace NovelReader
 
     public delegate void TTSCompleteEventHandler(Object sender, TTSProgressEventArgs e);
 
+    //Schedule TTS request.
     public class Scheduler
     {
         public event TTSCompleteEventHandler ttsCompleteEventHandler;
@@ -229,6 +232,7 @@ namespace NovelReader
             idleMRE.Set();
         }
 
+        //Clear all request not being processed.
         public void ClearRequests()
         {
             lock (requestListLock)
@@ -257,6 +261,7 @@ namespace NovelReader
             }
         }
 
+        //Initiate the TTS Service thread.
         public void StartTTSService()
         {
             if (backgroundThread.IsAlive)
@@ -265,17 +270,18 @@ namespace NovelReader
             backgroundThread.Start();
         }
 
+        //Shuts downt he TTS Service thread.
         public void ShutdownService()
         {
             shutDown = true;
             idleMRE.Set();
         }
 
+        //Runs the TTS thread. Create the specified number of sub thread where each thread runs a speech synthesizer.
         private void Run()
         {
             int threadCount = 0;
 
-            //while (_requestList.Count > 0)
             while (!shutDown)
             {
                 if (threadCount < _setThreadCount && UntakenRequestCount() > 0)
@@ -304,6 +310,7 @@ namespace NovelReader
             }
         }
 
+        //Each sub thread do speech synthesis.
         private void DoWork(Object threadContext)
         {
             int threadId = (int)threadContext;
@@ -319,6 +326,7 @@ namespace NovelReader
             } while (threadId < _setThreadCount && !shutDown);
         }
 
+        //Get the top request not taken by a thread.
         private Request GetTopRequest(int threadID)
         {
             Request request = null;
@@ -338,6 +346,7 @@ namespace NovelReader
             return request;
         }
 
+        //Remove the top request after it has been finished.
         private void RemoveTop(Request request)
         {
             lock (requestListLock)
@@ -357,6 +366,7 @@ namespace NovelReader
             }
         }
 
+        //Returns the number active sub thread.
         private int ActiveThreadCount()
         {
             int count = 0;
@@ -368,6 +378,7 @@ namespace NovelReader
             return count;
         }
 
+        //Get number of request that is waiting in queue.
         private int UntakenRequestCount()
         {
             int count = 0;
@@ -382,6 +393,7 @@ namespace NovelReader
             return count;
         }
 
+        //Launch an TTS executable with all the request's information.
         private void LaunchSubProcess(Request request)
         {
             string specifiedOutputAudioLocation = request.OutputAudioFile;
@@ -418,6 +430,7 @@ namespace NovelReader
                 File.Move(specifiedOutputAudioLocation, request.OutputAudioFile);
         }
 
+        //Update the TTS progress.
         private void TTSProgress(Request request, TTSProgressEventArgs.ProgressType type)
         {
             TTSProgressEventArgs args = new TTSProgressEventArgs();

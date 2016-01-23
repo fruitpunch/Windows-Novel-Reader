@@ -37,8 +37,6 @@ namespace NovelReader
             this.novelDirectoryWatcher.Created += new FileSystemEventHandler(OnFileChange);
             this.novelDirectoryWatcher.Deleted += new FileSystemEventHandler(OnFileChange);
             this.novelDirectoryWatcher.IncludeSubdirectories = true;
-            
-            //novelDirectoryWatcher.NotifyFilter = NotifyFilters.
         }
 
         public void SetReadingNovel(Novel novel)
@@ -333,7 +331,6 @@ namespace NovelReader
                 return;
             labelTitle.DataBindings.Clear();
             labelTitle.DataBindings.Add(new Binding("Text", chapter, "ChapterTitle", false, DataSourceUpdateMode.OnPropertyChanged));
-            //labelTitle.Text = currentReadingNovel.NovelTitle + " - " + chapter.ChapterTitle;
             currentReadingNovel.StartReadingChapter(chapter);
             currentReadingChapter = chapter;
             rtbChapterTextBox.Select(0, 0);
@@ -369,20 +366,23 @@ namespace NovelReader
                     row.Selected = false;
                 }
             }
-            //dgvChapterList.Rows[chapter.Index].Selected = true;
         }
 
         private void PlayAudio(Chapter chapter)
         {
             if (chapter.HasAudio)
             {
-                Console.WriteLine("play " + chapter.Index);
-                string tempMp3FileLocation = Path.Combine(currentReadingNovel.GetNovelDirectory(), "play.mp3");
-                File.Copy(chapter.GetAudioFileLocation(), tempMp3FileLocation, true);
+                if (mp3Player != null)
+                {
+                    mp3Player.Ctlcontrols.stop();
+                    mp3Player.currentPlaylist.clear();
+                    mp3Player.URL = null;
+                }
+                //Console.WriteLine("play " + chapter.Index);
+                string tempMp3FileLocation = chapter.GetAudioFileLocation();
+                //File.Copy(chapter.GetAudioFileLocation(), tempMp3FileLocation, true);
                 mp3Player.URL = new Uri(tempMp3FileLocation).ToString();
-                Console.WriteLine("URI Set");
                 mp3Player.Ctlcontrols.play();
-                Console.WriteLine("Play Set");
             }
         }
 
@@ -434,51 +434,28 @@ namespace NovelReader
             if (chapter.Equals(currentReadingChapter))
             {
                 row.DefaultCellStyle.BackColor = Color.Orange;
-                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
-                //row.DefaultCellStyle.SelectionBackColor = Color.LightPink;
-                
                 row.DefaultCellStyle.SelectionBackColor = Color.Orange;
             }
             else if (!chapter.HasText)
             {
-
                 row.DefaultCellStyle.BackColor = Color.LightPink;
-                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
                 row.DefaultCellStyle.SelectionBackColor = Color.LightPink;
-                //row.DefaultCellStyle.SelectionBackColor = Color.Firebrick;
             }
             else if (!chapter.Read && chapter.HasText && chapter.HasAudio)
             {
-
                 row.DefaultCellStyle.BackColor = Color.LightBlue;
-                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
                 row.DefaultCellStyle.SelectionBackColor = Color.LightBlue;
-
-                //row.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
-
             }
             else if (!chapter.Read && chapter.HasText && !chapter.HasAudio)
             {
-
                 row.DefaultCellStyle.BackColor = Color.Cornsilk;
-                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
                 row.DefaultCellStyle.SelectionBackColor = Color.Cornsilk;
-
-                //row.DefaultCellStyle.SelectionBackColor = Color.BurlyWood;
-
             }
             else if (chapter.Read && chapter.HasText)
             {
-
                 row.DefaultCellStyle.BackColor = Color.LightGreen;
-                //row.DefaultCellStyle.ForeColor = Color.DarkSlateGray;
                 row.DefaultCellStyle.SelectionBackColor = Color.LightGreen;
-
-                //row.DefaultCellStyle.SelectionBackColor = Color.Green;
             }
         }
-
-
-
     }
 }

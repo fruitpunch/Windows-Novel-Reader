@@ -13,6 +13,7 @@ namespace NovelReader
     class Util
     {
         private static readonly Regex ValidFileRegex = new Regex("[\\/:*?\"<>|]");
+        public static readonly Random random = new Random();
 
         public static void LoadComponents()
         {

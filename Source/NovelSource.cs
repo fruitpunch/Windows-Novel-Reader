@@ -8,22 +8,25 @@ namespace Source
 {
     public interface NovelSource
     {
+        //Returns the SourceLocation of the type extending this class.
         SourceLocation SourceLocation
         {
             get;
         }
+        //Returns the novel ID.
         string NovelID
         {
             get;
         }
+        //Returns the Novel Title.
         string NovelTitle
         {
             get;
             set;
         }
 
-        Tuple<bool, string> VerifySource(); //Check and see if the title and souceID refers to the same novel
-        Tuple<string, string>[] GetMenuURLs(); //Returns a array of tuple of chapter title and url. 
-        string[] GetChapterContent(string chapterTitle, string url); //Returns the title of the chapter with the extracted contents.
+        Tuple<bool, string> VerifySource(); //Checks the ID of the source. Return true and the novel title if the novel found is valid.
+        Tuple<string, string>[] GetMenuURLs(); //Returns an array of tuple of chapter title and url. 
+        string[] GetChapterContent(string chapterTitle, string url); //Returns the novel content of the URL.
     }
 }

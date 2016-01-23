@@ -148,18 +148,19 @@ namespace NovelReader
 
         private void DoWork()
         {
+            /*
             while (!shutDown)
             {
-
                 Thread.Sleep(1000);
             }
+             * */
         }
 
         private void Update()
         {
             CheckUpdates();
             DownloadUpdates();
-            //NovelLibrary.Instance.SaveNovelLibrary();
+            NovelLibrary.Instance.SaveNovelLibrary();
         }
 
         private void ScheduleTTS()
@@ -176,7 +177,7 @@ namespace NovelReader
                     if (request == null)
                         continue;
                     ttsScheduler.AddRequest(request);
-                    Thread.Sleep(750 * ttsScheduler.RequestCount / ttsScheduler.Threads);
+                    Thread.Sleep(1000 * ttsScheduler.RequestCount / ttsScheduler.Threads);
                 }
                 else
                 {

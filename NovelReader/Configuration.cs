@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace NovelReader
 {
+    //This class saves the setting of the program.
     class Configuration : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -184,7 +185,7 @@ namespace NovelReader
         private void init()
         {
             SetNovelFolderLocation();
-            this._ttsThreadCount = 1;
+            this._ttsThreadCount = 0;
             this._ttsSpeed = 0;
             this._applicationFormRect = new Rectangle(0, 0, 1075, 788);
             this._novelReaderFormRect = new Rectangle(0, 0, 1200, 768);
