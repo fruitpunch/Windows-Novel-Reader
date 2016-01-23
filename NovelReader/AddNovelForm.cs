@@ -21,7 +21,7 @@ namespace NovelReader
         public AddNovelForm()
         {
             InitializeComponent();
-
+            
             sourceSelector.DataSource = Enum.GetValues(typeof(SourceLocation));
         }
 
@@ -122,6 +122,17 @@ namespace NovelReader
             InitiateValidation();
         }
 
+        private void btnSourceLink_Click(object sender, EventArgs e)
+        {
+            sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
+            string url = SourceManager.GetSourceURL(sourceLocation);
+            if (url != null)
+            {
+                System.Diagnostics.ProcessStartInfo sourceWebProcess = new System.Diagnostics.ProcessStartInfo(url);
+                System.Diagnostics.Process.Start(sourceWebProcess);
+            }
+        }
+
         /*============Private Function======*/
         private void InitiateValidation()
         {
@@ -142,21 +153,7 @@ namespace NovelReader
             }
         }
 
-        private void AddNovelForm_Load(object sender, EventArgs e)
-        {
 
-        }
-
-        private void sourceLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
-            string url = SourceManager.GetSourceURL(sourceLocation);
-            if (url != null)
-            {
-                System.Diagnostics.ProcessStartInfo sourceWebProcess = new System.Diagnostics.ProcessStartInfo(url);
-                System.Diagnostics.Process.Start(sourceWebProcess);
-            }
-        }
 
     }
 }

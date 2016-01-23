@@ -457,5 +457,10 @@ namespace NovelReader
                 row.DefaultCellStyle.SelectionBackColor = Color.LightGreen;
             }
         }
+
+        private void NovelReaderForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

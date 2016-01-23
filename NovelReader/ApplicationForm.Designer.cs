@@ -30,9 +30,9 @@
         {
             this.tabControl = new System.Windows.Forms.TabControl();
             this.novelListTab = new System.Windows.Forms.TabPage();
-            this.novelListController = new NovelReader.NovelListController();
             this.ttsListTab = new System.Windows.Forms.TabPage();
-            this.ttsController = new NovelReader.TTSController();
+            this.novelListController = new NovelReader.NovelListController();
+            this.ttsController1 = new NovelReader.TTSController();
             this.tabControl.SuspendLayout();
             this.novelListTab.SuspendLayout();
             this.ttsListTab.SuspendLayout();
@@ -45,62 +45,71 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.novelListTab);
             this.tabControl.Controls.Add(this.ttsListTab);
+            this.tabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControl.HotTrack = true;
+            this.tabControl.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.tabControl.Location = new System.Drawing.Point(25, 25);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl.Name = "tabControl";
+            this.tabControl.Padding = new System.Drawing.Point(0, 0);
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(1155, 783);
+            this.tabControl.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
             this.tabControl.TabIndex = 0;
             // 
             // novelListTab
             // 
+            this.novelListTab.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.novelListTab.Controls.Add(this.novelListController);
-            this.novelListTab.Location = new System.Drawing.Point(4, 22);
+            this.novelListTab.Location = new System.Drawing.Point(4, 25);
             this.novelListTab.Name = "novelListTab";
             this.novelListTab.Padding = new System.Windows.Forms.Padding(3);
-            this.novelListTab.Size = new System.Drawing.Size(1147, 757);
+            this.novelListTab.Size = new System.Drawing.Size(1147, 754);
             this.novelListTab.TabIndex = 0;
             this.novelListTab.Text = "Novel List";
-            this.novelListTab.UseVisualStyleBackColor = true;
+            // 
+            // ttsListTab
+            // 
+            this.ttsListTab.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.ttsListTab.Controls.Add(this.ttsController1);
+            this.ttsListTab.Location = new System.Drawing.Point(4, 25);
+            this.ttsListTab.Name = "ttsListTab";
+            this.ttsListTab.Padding = new System.Windows.Forms.Padding(3);
+            this.ttsListTab.Size = new System.Drawing.Size(1147, 754);
+            this.ttsListTab.TabIndex = 1;
+            this.ttsListTab.Text = "TTS List";
             // 
             // novelListController
             // 
             this.novelListController.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.novelListController.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.novelListController.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.novelListController.Location = new System.Drawing.Point(10, 10);
+            this.novelListController.Location = new System.Drawing.Point(0, 0);
             this.novelListController.Margin = new System.Windows.Forms.Padding(2);
             this.novelListController.Name = "novelListController";
-            this.novelListController.Size = new System.Drawing.Size(1125, 735);
+            this.novelListController.Size = new System.Drawing.Size(1147, 754);
             this.novelListController.TabIndex = 0;
             // 
-            // ttsListTab
+            // ttsController1
             // 
-            this.ttsListTab.Controls.Add(this.ttsController);
-            this.ttsListTab.Location = new System.Drawing.Point(4, 22);
-            this.ttsListTab.Name = "ttsListTab";
-            this.ttsListTab.Padding = new System.Windows.Forms.Padding(3);
-            this.ttsListTab.Size = new System.Drawing.Size(1147, 757);
-            this.ttsListTab.TabIndex = 1;
-            this.ttsListTab.Text = "TTS List";
-            this.ttsListTab.UseVisualStyleBackColor = true;
-            // 
-            // ttsController
-            // 
-            this.ttsController.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.ttsController1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ttsController.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ttsController.Location = new System.Drawing.Point(10, 10);
-            this.ttsController.Margin = new System.Windows.Forms.Padding(2);
-            this.ttsController.Name = "ttsController";
-            this.ttsController.Size = new System.Drawing.Size(1125, 735);
-            this.ttsController.TabIndex = 0;
+            this.ttsController1.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.ttsController1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ttsController1.Location = new System.Drawing.Point(0, 0);
+            this.ttsController1.Margin = new System.Windows.Forms.Padding(2);
+            this.ttsController1.Name = "ttsController1";
+            this.ttsController1.Size = new System.Drawing.Size(1147, 754);
+            this.ttsController1.TabIndex = 0;
             // 
             // ApplicationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.ClientSize = new System.Drawing.Size(1214, 833);
             this.Controls.Add(this.tabControl);
             this.Name = "ApplicationForm";
@@ -122,7 +131,7 @@
         private System.Windows.Forms.TabPage novelListTab;
         private NovelListController novelListController;
         private System.Windows.Forms.TabPage ttsListTab;
-        private TTSController ttsController;
+        private TTSController ttsController1;
 
     }
 }
