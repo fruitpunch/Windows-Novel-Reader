@@ -38,7 +38,7 @@ namespace NovelReader
 
         private void TTSController_Load(object sender, EventArgs e)
         {
-            //dgvTTS.DataSource = BackgroundService.Instance.ttsScheduler.RequestList;
+            dgvTTS.DataSource = BackgroundService.Instance.ttsScheduler.RequestList;
         }
 
         private void btnResetList_Click(object sender, EventArgs e)

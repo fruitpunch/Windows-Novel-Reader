@@ -177,9 +177,9 @@
             this.btnPrevious.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnPrevious.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnPrevious.Location = new System.Drawing.Point(360, 0);
+            this.btnPrevious.Location = new System.Drawing.Point(355, 0);
             this.btnPrevious.Name = "btnPrevious";
-            this.btnPrevious.Size = new System.Drawing.Size(80, 45);
+            this.btnPrevious.Size = new System.Drawing.Size(85, 45);
             this.btnPrevious.TabIndex = 2;
             this.btnPrevious.Text = "Prev";
             this.btnPrevious.UseVisualStyleBackColor = false;
