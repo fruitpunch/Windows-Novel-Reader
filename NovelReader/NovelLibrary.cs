@@ -123,7 +123,7 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Tuple<bool, string> AddNovel(string novelTitle, SourceLocation source, string sourceID)
+        public Tuple<bool, string> AddNovel(string novelTitle, NovelSource novelSource)
         {
             foreach (Novel n in _novelList)
             {
@@ -159,7 +159,7 @@ namespace NovelReader
                     File.Create(Path.Combine(newNovelLocation, Configuration.Instance.DeleteSpecification));
             }
 
-            Novel newNovel = new Novel(novelTitle, source, sourceID);
+            Novel newNovel = new Novel(novelTitle, novelSource);
             _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
 
             try
@@ -174,6 +174,39 @@ namespace NovelReader
             UpdateNovelRanking();
             Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");
             return successfulReturn;
+
+        }
+
+        public void DeleteNovel(string novelTitle, bool deleteData)
+        {
+            Novel deleteNovel = GetNovel(novelTitle);
+            if (deleteNovel == null)
+                return;
+            try
+            {
+                deleteNovel.DeleteChapterFromDB();
+                db.Delete(deleteNovel);
+                if (deleteData)
+                {
+                    Directory.Delete(deleteNovel.GetNovelDirectory(), true);
+                }
+                if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
+                {
+                    BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                    {
+                        _novelList.Remove(deleteNovel);
+                    }));
+                }
+                else
+                {
+                    _novelList.Remove(deleteNovel);
+                }
+                deleteNovel = null;
+            }
+            catch (Exception e)
+            {
+
+            }
 
         }
 

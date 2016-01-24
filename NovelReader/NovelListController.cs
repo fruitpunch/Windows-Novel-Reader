@@ -177,6 +177,24 @@ namespace NovelReader
             BackgroundService.Instance.UpdateTimerInterval((int)upUpdateFreq.Value);
         }
 
+
+        private void btnDeleteNovel_Click(object sender, EventArgs e)
+        {
+            if (dgvNovelList.SelectedRows.Count > 0)
+            {
+                string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
+                DialogResult deleteResult = MessageBox.Show("Are you sure you want to delete " + novelTitle + "?", "Delete Novel", MessageBoxButtons.YesNo);
+                if (deleteResult == DialogResult.No)
+                    return;
+
+                DialogResult blackListResult = MessageBox.Show("Do you want to delete the data also? ", "Delete All Data", MessageBoxButtons.YesNo);
+                if (blackListResult == DialogResult.Yes)
+                    BackgroundService.Instance.DeleteNovel(novelTitle, true);
+                else
+                    BackgroundService.Instance.DeleteNovel(novelTitle, false);
+            }
+        }
+
         /*============PrivateFunction=======*/
 
         private void SetControl()
@@ -299,5 +317,6 @@ namespace NovelReader
             foreach (Novel n in NovelLibrary.Instance.NovelList)
                 n.Reading = false;
         }
+
     }
 }

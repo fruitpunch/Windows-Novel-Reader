@@ -18,6 +18,7 @@ namespace NovelReader
         private string sourceID;
         private string novelTitle;
         private NovelSource source;
+        private bool validSource = false;
         public AddNovelForm()
         {
             InitializeComponent();
@@ -41,13 +42,19 @@ namespace NovelReader
                 return;
             }
 
+            if (!validSource)
+            {
+                MessageBox.Show("Please validate novel source first", "Invalid Novel Source ID", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             novelTitle = inputNovelTitle.Text;
             sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
-            Tuple<bool, string> result = BackgroundService.Instance.AddNovel(novelTitle, sourceLocation, sourceID);
+            Tuple<bool, string> result = BackgroundService.Instance.AddNovel(novelTitle, source);
 
             if (!result.Item1)
             {
-                MessageBox.Show("Add Novel Failed", result.Item2, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(result.Item2, "Add Novel Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -61,6 +68,7 @@ namespace NovelReader
 
         private void inputSourceID_TextChanged(object sender, EventArgs e)
         {
+            validSource = false;
             labelStatus.Text = "";
             labelStatus.ForeColor = Color.Black;
             if (inputSourceID.Text.Length > 0)
@@ -97,12 +105,14 @@ namespace NovelReader
                 labelStatus.Text = "Valid ID.";
                 labelStatus.ForeColor = Color.Green;
                 inputNovelTitle.Text = result.Item2;
+                validSource = true;
             }
             else
             {
                 labelStatus.Text = "Invalid ID";
                 labelStatus.ForeColor = Color.Red;
                 inputNovelTitle.Text = "";
+                validSource = false;
             }
             networkTimeoutTimer.Stop();
         }

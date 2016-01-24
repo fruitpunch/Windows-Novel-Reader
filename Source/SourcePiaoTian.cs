@@ -32,6 +32,11 @@ namespace Source
             set { this._novelTitle = value; }
         }
 
+        public string NovelLanguage
+        {
+            get { return "zh-CN"; }
+        }
+
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
             {
                 {"<script>txttopshow7();</script><!--章节内容结束-->", ""},
@@ -50,6 +55,8 @@ namespace Source
         {
             string url = BaseURL + "/read/" + _novelID.ToString() + "/index.html";
             string[] lines = WebUtil.GetUrlContents(url);
+            if (lines == null)
+                return new Tuple<bool, string>(false, "");
             string title = null;
             foreach (string line in lines)
             {
@@ -75,6 +82,7 @@ namespace Source
             string url = BaseURL + "/read/" + _novelID.ToString() + "/index.html";
             string chapterMatchingSubstring = "<a href=\"/read/" + _novelID.ToString() + "/";
             string[] lines = WebUtil.GetUrlContents(url);
+
             string title, chURL;
             
             foreach (string line in lines)

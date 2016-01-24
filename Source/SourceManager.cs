@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public enum SourceLocation { Web69, WebPiaoTian };
+    public enum SourceLocation { Web69, WebPiaoTian, WuxiaWorld };
 
     public class SourceManager
     {
@@ -21,6 +21,9 @@ namespace Source
                     break;
                 case SourceLocation.WebPiaoTian:
                     rtnSource = new SourcePiaoTian(sourceID);
+                    break;
+                case SourceLocation.WuxiaWorld:
+                    rtnSource = new SourceWuxiaWorld(sourceID);
                     break;
                 default:
                     rtnSource = null;
@@ -37,6 +40,8 @@ namespace Source
                     return new SourceWeb69(null).BaseURL;
                 case SourceLocation.WebPiaoTian:
                     return new SourcePiaoTian(null).BaseURL;
+                case SourceLocation.WuxiaWorld:
+                    return new SourceWuxiaWorld(null).BaseURL;
                 default:
                     return null;
             }

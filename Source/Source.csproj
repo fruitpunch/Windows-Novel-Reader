@@ -47,6 +47,7 @@
     <Compile Include="SourceManager.cs" />
     <Compile Include="SourcePiaoTian.cs" />
     <Compile Include="SourceWeb69.cs" />
+    <Compile Include="SourceWuxiaWorld.cs" />
     <Compile Include="WebUtil.cs" />
   </ItemGroup>
   <ItemGroup>
