@@ -37,6 +37,9 @@ namespace NovelReader
 
         private void NovelListController_Load(object sender, EventArgs e)
         {
+            int updateInterval = Configuration.Instance.UpdateInterval;
+            refreshUpdateLabelTimer.Interval = updateInterval;
+            upUpdateFreq.Value = updateInterval / (1000 * 60);
             refreshUpdateLabelTimer.Start();
         }
 

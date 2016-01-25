@@ -180,7 +180,10 @@ namespace NovelReader
                     roundRobin++;
                     Request request = n.GetTTSRequest(Configuration.Instance.TTSSpeed);
                     if (request == null)
+                    {
+                        Thread.Sleep(500);
                         continue;
+                    }
                     ttsScheduler.AddRequest(request);
                     Thread.Sleep(1000 * ttsScheduler.RequestCount / ttsScheduler.Threads);
                 }

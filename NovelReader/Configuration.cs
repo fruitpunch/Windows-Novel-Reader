@@ -22,7 +22,7 @@ namespace NovelReader
         private string _novelFolderLocation { get; set; }
         private string _metaFileLocation { get; set; }
         private int _ttsThreadCount { get; set; }
-        private int _updateInterval = 1000;
+        private int _updateInterval;
         private int _ttsSpeed { get; set; }
         private bool _autoPlay { get; set; }
         private bool _makeTTSForChaptersAlreadyRead { get; set; }
@@ -187,6 +187,7 @@ namespace NovelReader
             SetNovelFolderLocation();
             this._ttsThreadCount = 0;
             this._ttsSpeed = 0;
+            this._updateInterval = 300000;
             this._applicationFormRect = new Rectangle(0, 0, 1075, 788);
             this._novelReaderFormRect = new Rectangle(0, 0, 1200, 768);
         }

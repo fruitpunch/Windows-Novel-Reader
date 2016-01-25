@@ -285,12 +285,20 @@ namespace NovelReader
 
         public Request GetTTSRequest(int speed)
         {
-            Request request = null;
+            double novelCount = NovelLibrary.Instance.GetNovelCount();
+            double sum = (novelCount * (novelCount + 1)) / 2;
+            double position = novelCount - _rank - 1;
+            int maxCount = (int)Math.Round(50 * position / sum);
+            if (queuedTTSChapters.Count > maxCount)
+                return null;
+
             if (_chapters == null)
                 return null;
+            Request request = null;
+            Chapter c = null;
             for (requestIndex = 0; requestIndex < _chapters.Count; requestIndex++)
             {
-                Chapter c = _chapters[requestIndex];
+                c = _chapters[requestIndex];
                 if(ShouldMakeAudio(c, false))
                 {
                     if (!queuedTTSChapters.ContainsKey(c))
@@ -304,14 +312,9 @@ namespace NovelReader
             if (requestIndex >= _chapterCount || request == null)
             {
                 requestIndex = 0;
-            }
-
-            //Make a secondary pass incase the novel does not have anything to be made.
-            if (request == null && Util.random.Next(4) % 4 == 0)
-            {
                 for (requestIndex = 0; requestIndex < _chapters.Count; requestIndex++)
                 {
-                    Chapter c = _chapters[requestIndex];
+                    c = _chapters[requestIndex];
                     if (ShouldMakeAudio(c, true))
                     {
                         if (!queuedTTSChapters.ContainsKey(c))
@@ -323,7 +326,6 @@ namespace NovelReader
                     }
                 }
             }
-
             return request;
         }
 
@@ -639,11 +641,14 @@ namespace NovelReader
         {
             if (_chapters.Contains(chapter))
                 return;
+            
             if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
             {
                 System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false);
+                Console.WriteLine("Got here");
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
+                    
                     _chapters.Add(chapter);
                     mre.Set();
                 }));
