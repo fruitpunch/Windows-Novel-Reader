@@ -224,7 +224,7 @@ namespace NovelReader
         public void LoadChapterFromDB()
         {
             _dbRequest++;
-            Console.WriteLine("Load Chapters for " + _novelTitle + " " + _dbRequest);
+            //Console.WriteLine("Load Chapters for " + _novelTitle + " " + _dbRequest);
             if (_dbRequest > 1)
                 return;
 
@@ -272,13 +272,14 @@ namespace NovelReader
         public void ClearChapters()
         {
             _dbRequest--;
-            Console.WriteLine("Clear Chapters for " + _novelTitle + " " + _dbRequest);
+            //Console.WriteLine("Clear Chapters for " + _novelTitle + " " + _dbRequest);
             if (_dbRequest > 0)
                 return;
             if (_chapters == null)
                 return;
             if (_updateState != UpdateStates.Checking || _updateState != UpdateStates.Fetching)
                 return;
+            SaveChapterToDB();
             _chapters.Clear();
             
         }
@@ -287,10 +288,11 @@ namespace NovelReader
         {
             double novelCount = NovelLibrary.Instance.GetNovelCount();
             double sum = (novelCount * (novelCount + 1)) / 2;
-            double position = novelCount - _rank - 1;
-            int maxCount = (int)Math.Round(50 * position / sum);
+            double position = novelCount - _rank + 1;
+            int maxCount = (int)Math.Ceiling(50 * position / sum) + 5;
             if (queuedTTSChapters.Count > maxCount)
                 return null;
+            //Console.WriteLine(NovelTitle + " mc:" + maxCount + " sum:" + sum + " pos:" + position);
 
             if (_chapters == null)
                 return null;
@@ -474,37 +476,39 @@ namespace NovelReader
             return updateCount > 0;
         }
 
-        //Download the new chapters.
-        public void DownloadUpdate()
+        public int DownloadNextUpdate(int startIdx, int index, int totalUpdateCount)
         {
-            LoadChapterFromDB();
-            int newlyAddedChapter = 0;
-            int index = _chapters.Count;
-            int updateCount = 0;
-            foreach (Chapter c in _chapters)
-                if (c.SourceURL != null && !c.HasAudio)
-                    updateCount++;
-
-            for (int i = 0; i < _chapters.Count; i++)
+            int lastUpdatedIdx = 0;
+            for (int i = startIdx; i < _chapters.Count; i++)
             {
                 if (!_chapters[i].HasText && _chapters[i].SourceURL != null)
                 {
-                    newlyAddedChapter++;
                     DownloadChapterContent(_chapters[i]);
-                    SetUpdateProgress(i, updateCount, UpdateStates.Fetching);
+                    lastUpdatedIdx = i;
+                    break;
                 }
             }
-            SaveChapterToDB();
-            ClearChapters();
+            SetUpdateProgress(index, totalUpdateCount, UpdateStates.Fetching);
+            return lastUpdatedIdx;
+        }
 
-            SetUpdateProgress(0, 0, UpdateStates.UpToDate);
-            if (BackgroundService.Instance.novelListController.InvokeRequired)
+        public int GetUpdateCount()
+        {
+            int updateCount = 0;
+            foreach (Chapter c in _chapters)
+                if (c.SourceURL != null && !c.HasText)
+                    updateCount++;
+            return updateCount;
+        }
+
+        public bool HasUpdate()
+        {
+            for (int i = 0; i < _chapters.Count; i++)
             {
-                BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                {
-                    NewChaptersNotReadCount = _newChaptersNotReadCount + newlyAddedChapter;
-                }));
+                if (!_chapters[i].HasText && _chapters[i].SourceURL != null)
+                    return true;
             }
+            return false;
         }
 
         public void DownloadChapterContent(Chapter chapter)
@@ -633,6 +637,93 @@ namespace NovelReader
             }
         }
 
+        //Set the progress to be displayed in NovelListControl.
+        public void SetUpdateProgress(int updatedItemCount = 0, int totalUpdateItemCount = 0, UpdateStates updateState = UpdateStates.Default)
+        {
+            int progress = 0;
+            string message = "";
+
+            if (totalUpdateItemCount > 0)
+                progress = (int)(100.0f * (float)updatedItemCount / (float)totalUpdateItemCount);
+
+            if (updateState == UpdateStates.Default)
+            {
+                switch (_state)
+                {
+                    case NovelState.Active:
+                        updateState = UpdateStates.Waiting;
+                        break;
+                    case NovelState.Completed:
+                        updateState = UpdateStates.Completed;
+                        break;
+                    case NovelState.Inactive:
+                        updateState = UpdateStates.Inactive;
+                        break;
+                    case NovelState.Dropped:
+                        updateState = UpdateStates.Dropped;
+                        break;
+
+                }
+            }
+
+            switch (updateState)
+            {
+                case UpdateStates.Waiting:
+                    progress = 0;
+                    message = "Waiting For Updates";
+                    break;
+                case UpdateStates.Checking:
+                    progress = 0;
+                    message = "Checking For Updates";
+                    break;
+                case UpdateStates.UpdateAvailable:
+                    progress = 0;
+                    if (updatedItemCount > 0)
+                        message = updatedItemCount + " Updates Available";
+                    else
+                        message = "Novel Up To Date";
+                    break;
+                case UpdateStates.Fetching:
+                    message = "Fetching Updates: " + updatedItemCount + " / " + totalUpdateItemCount;
+                    break;
+                case UpdateStates.UpToDate:
+                    if (_state == NovelState.Active)
+                        message = "Novel Up To Date";
+                    else if (_state == NovelState.Completed)
+                        message = "Complted Novel Up To Date";
+                    else if (_state == NovelState.Inactive)
+                        message = "Inactive Novel Up To Date";
+                    else if (_state == NovelState.Dropped)
+                        message = "Dropped Novel Up To Date";
+                    progress = 0;
+                    break;
+                case UpdateStates.Completed:
+                    progress = 0;
+                    message = "Novel Completed";
+                    break;
+                case UpdateStates.Inactive:
+                    progress = 0;
+                    message = "Novel Inactive";
+                    break;
+                case UpdateStates.Dropped:
+                    progress = 0;
+                    message = "Novel Dropped";
+                    break;
+            }
+            _updateState = updateState;
+            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
+            {
+                BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                {
+                    UpdateProgress = new Tuple<int, string>(progress, message);
+                }));
+            }
+            else
+            {
+                UpdateProgress = new Tuple<int, string>(progress, message);
+            }
+        }
+
         /*============Private Function======*/
         
 
@@ -645,7 +736,6 @@ namespace NovelReader
             if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
             {
                 System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false);
-                Console.WriteLine("Got here");
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
                     
@@ -704,92 +794,7 @@ namespace NovelReader
             ChapterCount = _chapters.Count;
         }
 
-        //Set the progress to be displayed in NovelListControl.
-        private void SetUpdateProgress(int updatedItemCount = 0, int totalUpdateItemCount = 0, UpdateStates updateState = UpdateStates.Default)
-        {
-            int progress = 0;
-            string message = "";
-
-            if (totalUpdateItemCount > 0)
-                progress = (int)(100.0f * (float)updatedItemCount / (float)totalUpdateItemCount);
-
-            if (updateState == UpdateStates.Default)
-            {
-                switch (_state)
-                {
-                    case NovelState.Active:
-                        updateState = UpdateStates.Waiting;
-                        break;
-                    case NovelState.Completed:
-                        updateState = UpdateStates.Completed;
-                        break;
-                    case NovelState.Inactive:
-                        updateState = UpdateStates.Inactive;
-                        break;
-                    case NovelState.Dropped:
-                        updateState = UpdateStates.Dropped;
-                        break;
-
-                }
-            }
-
-            switch (updateState)
-            {
-                case UpdateStates.Waiting:
-                    progress = 0;
-                    message = "Waiting For Updates";
-                    break;
-                case UpdateStates.Checking:
-                    progress = 0;
-                    message = "Checking For Updates";
-                    break;
-                case UpdateStates.UpdateAvailable:
-                    progress = 0;
-                    if (updatedItemCount > 0)
-                        message = updatedItemCount + " Updates Available";
-                    else
-                        message = "Novel Up To Date";
-                    break;
-                case UpdateStates.Fetching:
-                    message = "Fetching Updates: " + updatedItemCount + " / " + totalUpdateItemCount;
-                    break;
-                case UpdateStates.UpToDate:
-                    if (_state == NovelState.Active)
-                        message = "Novel Up To Date";
-                    else if(_state == NovelState.Completed)
-                        message = "Complted Novel Up To Date";
-                    else if (_state == NovelState.Inactive)
-                        message = "Inactive Novel Up To Date";
-                    else if (_state == NovelState.Dropped)
-                        message = "Dropped Novel Up To Date";
-                    progress = 0;
-                    break;
-                case UpdateStates.Completed:
-                    progress = 0;
-                    message = "Novel Completed";
-                    break;
-                case UpdateStates.Inactive:
-                    progress = 0;
-                    message = "Novel Inactive";
-                    break;
-                case UpdateStates.Dropped:
-                    progress = 0;
-                    message = "Novel Dropped";
-                    break;
-            }
-            _updateState = updateState;
-            if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
-            {
-                BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                {
-                    UpdateProgress = new Tuple<int, string>(progress, message);
-                }));
-            }
-            else
-            {
-                UpdateProgress = new Tuple<int, string>(progress, message);
-            }
-        }
+        
 
         private void NotifyPropertyChanged(string propertyName)
         {

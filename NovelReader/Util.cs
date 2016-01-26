@@ -7,6 +7,8 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Speech.Synthesis;
+using Microsoft.Speech.Synthesis;
 
 namespace NovelReader
 {
@@ -28,8 +30,8 @@ namespace NovelReader
             
             BackgroundService.Instance.CloseService();
             NovelLibrary.Instance.SaveNovelLibrary();
-            NovelLibrary.Instance.CloseNovelLibrary();
             Configuration.SaveConfiguration();
+            NovelLibrary.Instance.CloseNovelLibrary();
         }
 
         public static string CleanFileTitle(string input)
@@ -67,6 +69,11 @@ namespace NovelReader
                 str += secondAgo + " seconds ago";
 
             return str;
+        }
+
+        public static void PerformTTSCheck()
+        {
+
         }
 
     }

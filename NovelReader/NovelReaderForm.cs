@@ -43,7 +43,6 @@ namespace NovelReader
         {
             if (this.currentReadingNovel != null)
                 this.currentReadingNovel.StopReading();
-            Console.WriteLine("Set current reading novel: " + novel.NovelTitle);
             this.currentReadingNovel = novel;
             this.currentReadingNovel.StartReading();
             this.Text = novel.NovelTitle;
@@ -71,10 +70,8 @@ namespace NovelReader
 
         public bool InvokeRequiredForNovel(Novel n)
         {
-            //Console.WriteLine(n.NovelTitle + " " + currentReadingChapter.NovelTitle);
             if (currentReadingNovel != null && currentReadingNovel.NovelTitle == n.NovelTitle)
             {
-                Console.WriteLine("is the same, require invoke");
                 return this.InvokeRequired;
             }
             return false;
