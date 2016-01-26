@@ -33,7 +33,7 @@ namespace Source
 
         public string NovelLanguage
         {
-            get { return "en"; }
+            get { return "en-US"; }
         }
 
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()

@@ -51,9 +51,25 @@ namespace NovelReader
             BackgroundService.Instance.ResetTTSList();
             this.novelDirectoryWatcher.EnableRaisingEvents = true;
 
-            if (novel.LastViewedChapter != null)
+            if (novel.LastReadChapter != null)
             {
-                ReadChapter(novel.LastViewedChapter);
+                Chapter nextChapter = novel.GetChapter(novel.LastReadChapter.Index + 1);
+                //Console.WriteLine("last read chapter " + novel.LastReadChapter.ChapterTitle);
+                //Console.WriteLine("next chapter " + nextChapter.ChapterTitle);
+                if (nextChapter != null && !nextChapter.Read)
+                {
+                    ReadChapter(nextChapter);
+                    dgvChapterList.FirstDisplayedScrollingRowIndex = nextChapter.Index;
+                }
+                else
+                {
+                    ReadChapter(novel.LastReadChapter);
+                    dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
+                }
+            }
+            else if (novel.LastViewedChapter != null)
+            {
+                ReadChapter(novel.LastReadChapter);
                 dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
             }
             else if (currentReadingNovel.ChapterCount > 0)
@@ -337,8 +353,7 @@ namespace NovelReader
             labelTitle.DataBindings.Add(new Binding("Text", chapter, "ChapterTitle", false, DataSourceUpdateMode.OnPropertyChanged));
             currentReadingNovel.StartReadingChapter(chapter);
             currentReadingChapter = chapter;
-            rtbChapterTextBox.Select(0, 0);
-            rtbChapterTextBox.ScrollToCaret();
+            
             if (Configuration.Instance.AutoPlay)
                 PlayAudio(chapter);
             if (chapter.HasText)
@@ -349,6 +364,8 @@ namespace NovelReader
                     {
                         string chapterText = sr.ReadToEnd();
                         rtbChapterTextBox.Text = chapterText;
+                        rtbChapterTextBox.Select(0, 0);
+                        rtbChapterTextBox.ScrollToCaret();
                     }
                 }
                 catch (Exception e)

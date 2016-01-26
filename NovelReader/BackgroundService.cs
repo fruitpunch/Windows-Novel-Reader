@@ -181,19 +181,26 @@ namespace NovelReader
             hasTTSShutDown = false;
             int roundRobin = 0;
             Dictionary<string, int> position = new Dictionary<string, int>();
+            int idleCounter = 0;
             while (!shutDown)
             {
-                if (NovelLibrary.Instance.GetNovelCount() > 0 && ttsScheduler.Threads > 0)
+                if (ttsScheduler.Threads > 0 && NovelLibrary.Instance.GetNovelCount() > 0)
                 {
                     Novel n = NovelLibrary.Instance.NovelList[roundRobin % NovelLibrary.Instance.GetNovelCount()];
                     roundRobin++;
                     Request request = n.GetTTSRequest(Configuration.Instance.TTSSpeed);
                     if (request == null)
                     {
-                        //Thread.Sleep(500);
+                        //If no new chapter to synthesize, then sleep for 10 seconds before checking.
+                        if (idleCounter >= NovelLibrary.Instance.GetNovelCount())
+                        {
+                            Console.WriteLine("Idling TTS");
+                            Thread.Sleep(10000);
+                        }
                         continue;
                     }
                     ttsScheduler.AddRequest(request);
+                    idleCounter = 0;
                     Thread.Sleep(1000 * ttsScheduler.RequestCount / ttsScheduler.Threads);
                 }
                 else
@@ -209,10 +216,13 @@ namespace NovelReader
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
+                if (updateNovels[i] == null)
+                    continue;
                 updateNovels[i].CheckForUpdate();
                 NovelLibrary.Instance.db.Store(updateNovels[i]);
             }
             NovelLibrary.Instance.db.Commit();
+            Configuration.Instance.LastFullUpdateTime = DateTime.Now;
         }
 
         private void DownloadUpdates()
@@ -220,20 +230,23 @@ namespace NovelReader
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
+                if (updateNovels[i] == null)
+                    continue;
                 updateNovels[i].LoadChapterFromDB();
                 int updateCount = updateNovels[i].GetUpdateCount();
                 int idx = 0;
                 int lastUpdatedIdx = 0;
-                while(updateNovels[i].HasUpdate() && !shutDown){
+                while(updateNovels[i] != null && updateNovels[i].HasUpdate() && !shutDown){
                     idx++;
                     lastUpdatedIdx = updateNovels[i].DownloadNextUpdate(lastUpdatedIdx, idx, updateCount);
                 }
+                if (updateNovels[i] == null)
+                    continue;
                 updateNovels[i].NewChaptersNotReadCount = updateNovels[i].NewChaptersNotReadCount + idx;
                 updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
                 updateNovels[i].ClearChapters();
             }
             NovelLibrary.Instance.db.Commit();
-            Configuration.Instance.LastFullUpdateTime = DateTime.Now;
         }
 
 

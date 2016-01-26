@@ -19,6 +19,7 @@ namespace NovelReader
 
         public static void LoadComponents()
         {
+            PerformTTSCheck();
             Configuration.LoadConfiguration();
             NovelLibrary.Instance.LoadNovelLibrary();
             BackgroundService.Instance.StartService();
@@ -73,7 +74,24 @@ namespace NovelReader
 
         public static void PerformTTSCheck()
         {
-
+            Microsoft.Speech.Synthesis.SpeechSynthesizer msftSynth = new Microsoft.Speech.Synthesis.SpeechSynthesizer();
+            System.Speech.Synthesis.SpeechSynthesizer sysSynth = new System.Speech.Synthesis.SpeechSynthesizer();
+            foreach (Microsoft.Speech.Synthesis.InstalledVoice voice in msftSynth.GetInstalledVoices())
+            {
+                Microsoft.Speech.Synthesis.VoiceInfo info = voice.VoiceInfo;
+                Console.WriteLine("===================================");
+                Console.WriteLine(" Name:          " + info.Name);
+                Console.WriteLine(" Culture:       " + info.Culture);
+                Console.WriteLine(" ID:            " + info.Id);
+            }
+            foreach (System.Speech.Synthesis.InstalledVoice voice in sysSynth.GetInstalledVoices())
+            {
+                System.Speech.Synthesis.VoiceInfo info = voice.VoiceInfo;
+                Console.WriteLine("===================================");
+                Console.WriteLine(" Name:          " + info.Name);
+                Console.WriteLine(" Culture:       " + info.Culture);
+                Console.WriteLine(" ID:            " + info.Id);
+            }
         }
 
     }

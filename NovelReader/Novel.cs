@@ -263,7 +263,7 @@ namespace NovelReader
             LoadChapterFromDB();
             foreach (Chapter c in _chapters)
             {
-                NovelLibrary.Instance.db.Store(c);
+                NovelLibrary.Instance.db.Delete(c);
             }
             NovelLibrary.Instance.db.Commit();
             _dbRequest = 0;
@@ -798,6 +798,7 @@ namespace NovelReader
 
         private void NotifyPropertyChanged(string propertyName)
         {
+
             if (PropertyChanged != null)
             {
                 if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
