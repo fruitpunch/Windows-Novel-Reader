@@ -92,6 +92,7 @@ namespace NovelReader
                 Console.WriteLine(" Culture:       " + info.Culture);
                 Console.WriteLine(" ID:            " + info.Id);
             }
+
         }
 
     }

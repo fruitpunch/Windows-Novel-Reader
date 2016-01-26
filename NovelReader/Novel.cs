@@ -616,7 +616,7 @@ namespace NovelReader
                         invalidUrlIdSet.Add(chapter.SourceURL.GetHashCode());
                     validUrlIdSet.Remove(chapter.SourceURL.GetHashCode());
                 }
-
+                
                 
                 if (chapter.HasAudio)
                     File.Delete(chapter.GetAudioFileLocation());
