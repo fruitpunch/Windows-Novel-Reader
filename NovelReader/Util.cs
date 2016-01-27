@@ -19,7 +19,7 @@ namespace NovelReader
 
         public static void LoadComponents()
         {
-            PerformTTSCheck();
+            //PerformTTSCheck();
             Configuration.LoadConfiguration();
             NovelLibrary.Instance.LoadNovelLibrary();
             BackgroundService.Instance.StartService();

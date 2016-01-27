@@ -40,8 +40,8 @@ namespace NovelReader
         UpdateStates _updateState { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
         private int _dbRequest { get; set; }
-        [Transient] 
-        private BindingList<Chapter> _chapters;
+        [Transient]
+        private volatile BindingList<Chapter> _chapters;
 
         private HashSet<int> validUrlIdSet;
         private HashSet<int> invalidUrlIdSet;

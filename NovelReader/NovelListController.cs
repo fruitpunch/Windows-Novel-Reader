@@ -17,18 +17,11 @@ namespace NovelReader
     {
 
         private NovelReaderForm nrf;
-        private Pen redPen;
-        private Pen whitePen;
-        private readonly int penWidth = 2;
 
         public NovelListController()
         {
             InitializeComponent();
             SetControl();
-            this.redPen = new Pen(Color.Red);
-            this.redPen.Width = penWidth;
-            this.whitePen = new Pen(Color.FromArgb(0, Color.White.R, Color.White.G, Color.White.B));
-            this.whitePen.Width = penWidth;
             this.labelLastUpdateTime.Text = "";
             BackgroundService.Instance.novelListController = this;
         }
@@ -38,7 +31,6 @@ namespace NovelReader
         private void NovelListController_Load(object sender, EventArgs e)
         {
             int updateInterval = Configuration.Instance.UpdateInterval;
-            refreshUpdateLabelTimer.Interval = updateInterval;
             upUpdateFreq.Value = updateInterval / (1000 * 60);
             refreshUpdateLabelTimer.Start();
         }
@@ -154,20 +146,6 @@ namespace NovelReader
         private void dgvNovelList_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             
-            DataGridViewRow row = dgvNovelList.Rows[e.RowIndex];
-            Novel.NovelState state = (Novel.NovelState)Enum.Parse(typeof(Novel.NovelState), row.Cells["State"].Value.ToString());
-            bool isReading = NovelLibrary.Instance.GetNovel(row.Cells["NovelTitle"].Value.ToString()).Reading;
-            int x = e.RowBounds.Left + (penWidth / 2);
-            int y = e.RowBounds.Top + (penWidth / 2);
-            int width = e.RowBounds.Width - penWidth;
-            int height = e.RowBounds.Height - penWidth;
-            /*
-            if (isReading)
-                e.Graphics.DrawRectangle(redPen, x, y, width, height);
-            else
-                e.Graphics.DrawRectangle(whitePen, x, y, width, height);
-            Console.WriteLine("Drawing with " + e.RowIndex + " " + isReading);
-            */
         }
 
         private void refreshUpdateLabelTimer_Tick(object sender, EventArgs e)

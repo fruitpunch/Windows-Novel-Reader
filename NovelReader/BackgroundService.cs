@@ -19,13 +19,13 @@ namespace NovelReader
         private System.Timers.Timer updateTimer;
         public Scheduler ttsScheduler;
 
-        private bool shutDown;
-        private bool hasTTSShutDown;
-        private bool hasUpdateShutDown;
+        private volatile bool shutDown;
+        private volatile bool hasTTSShutDown;
+        private volatile bool hasUpdateShutDown;
 
-        public TTSController ttsController;
-        public NovelListController novelListController;
-        public NovelReaderForm novelReaderForm;
+        public volatile TTSController ttsController;
+        public volatile NovelListController novelListController;
+        public volatile NovelReaderForm novelReaderForm;
 
         /*============Properties============*/
 
@@ -58,7 +58,7 @@ namespace NovelReader
             this.updateThread = new Thread(Update);
             this.workerThread = new Thread(DoWork);
             this.ttsScheduler = new Scheduler(Configuration.Instance.TTSThreadCount);
-            this.ttsScheduler.ttsCompleteEventHandler += TTSProgress;
+            this.ttsScheduler.ttsProgressEventHandler += TTSProgress;
             this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
             this.updateTimer.Enabled = true;
             this.updateTimer.Elapsed += new ElapsedEventHandler(OnUpdateTimer);
@@ -192,6 +192,7 @@ namespace NovelReader
                     if (request == null)
                     {
                         //If no new chapter to synthesize, then sleep for 10 seconds before checking.
+                        idleCounter++;
                         if (idleCounter >= NovelLibrary.Instance.GetNovelCount())
                         {
                             Console.WriteLine("Idling TTS");

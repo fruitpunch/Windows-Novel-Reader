@@ -142,12 +142,12 @@ namespace NovelReader
         public ProgressType type { get; set; }
     }
 
-    public delegate void TTSCompleteEventHandler(Object sender, TTSProgressEventArgs e);
+    public delegate void TTSProgressEventHandler(Object sender, TTSProgressEventArgs e);
 
     //Schedule TTS request.
     public class Scheduler
     {
-        public event TTSCompleteEventHandler ttsCompleteEventHandler;
+        public event TTSProgressEventHandler ttsProgressEventHandler;
 
         private BindingList<Request> _requestList { get; set; }
         private int _setThreadCount { get; set; }
@@ -441,7 +441,7 @@ namespace NovelReader
 
         protected virtual void RaiseProgressEvent(TTSProgressEventArgs e)
         {
-            TTSCompleteEventHandler handler = ttsCompleteEventHandler;
+            TTSProgressEventHandler handler = ttsProgressEventHandler;
             if (handler != null)
             {
                 handler(this, e);
