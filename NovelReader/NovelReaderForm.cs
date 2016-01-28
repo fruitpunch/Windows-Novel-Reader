@@ -59,23 +59,23 @@ namespace NovelReader
                 if (nextChapter != null && !nextChapter.Read)
                 {
                     ReadChapter(nextChapter);
-                    dgvChapterList.FirstDisplayedScrollingRowIndex = nextChapter.Index;
+                    //dgvChapterList.FirstDisplayedScrollingRowIndex = nextChapter.Index;
                 }
                 else
                 {
                     ReadChapter(novel.LastReadChapter);
-                    dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
+                    //dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
                 }
             }
             else if (novel.LastViewedChapter != null)
             {
-                ReadChapter(novel.LastReadChapter);
-                dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
+                ReadChapter(novel.LastViewedChapter);
+                //dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
             }
             else if (currentReadingNovel.ChapterCount > 0)
             {
                 ReadChapter(novel.GetChapter(0));
-                dgvChapterList.FirstDisplayedScrollingRowIndex = 0;
+                //dgvChapterList.FirstDisplayedScrollingRowIndex = 0;
             }
             else
             {
@@ -101,6 +101,12 @@ namespace NovelReader
         }
 
         /*============EventHandler==========*/
+
+
+        private void NovelReaderForm_Load(object sender, EventArgs e)
+        {
+
+        }
 
         private void cbAutoPlay_CheckedChanged(object sender, EventArgs e)
         {
@@ -387,6 +393,13 @@ namespace NovelReader
                     row.Selected = false;
                 }
             }
+            try
+            {
+                dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
+            }
+            catch (Exception e)
+            {
+            }
         }
 
         private void PlayAudio(Chapter chapter)
@@ -479,9 +492,5 @@ namespace NovelReader
             }
         }
 
-        private void NovelReaderForm_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

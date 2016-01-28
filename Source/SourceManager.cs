@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Source
 {
     public enum SourceLocation { Web69, WebPiaoTian, WuxiaWorld };
-
+    /*
     public class PlugInFactory<T>
     {
         public T CreatePlugin(string path)
@@ -29,10 +29,10 @@ namespace Source
             return default(T);
         }
     }
-
+    */
     public class SourceManager
     {
-
+        /*
         //public static List<string> locations;
 
         public static void LoadSources()
@@ -41,7 +41,7 @@ namespace Source
             //PlugInFactory<NovelSource> loader = new PlugInFactory<NovelSource>();
             //NovelSource instance = loader.CreatePlugin(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SourceDLL"));
         }
-
+        */
         public static NovelSource GetSource(SourceLocation s, string sourceID)
         {
             NovelSource rtnSource;

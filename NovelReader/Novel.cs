@@ -355,8 +355,8 @@ namespace NovelReader
                 return false;
             if (_lastReadChapter != null && _lastReadChapter.Index > chapter.Index && !secondaryPass)
                 return false;
-            if (Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage].Equals("No Voice Selected"))
-                return false;
+            //if (Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage].Equals("No Voice Selected"))
+            //    return false;
             //Do not make audio for novel not selected
             if (!_makeAudio)
                 return false;
