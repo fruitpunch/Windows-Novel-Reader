@@ -27,6 +27,7 @@ namespace NovelReader
         private bool _autoPlay { get; set; }
         private bool _makeTTSForChaptersAlreadyRead { get; set; }
         private DateTime _lastFullUpdateTime { get; set; }
+        private Dictionary<string, string> _langaugeVoiceDictionary { get; set; }
 
         private Rectangle _novelReaderFormRect { get; set; }
         private bool _novelReaderMaximized { get; set; }
@@ -89,6 +90,12 @@ namespace NovelReader
         {
             get { return this._lastFullUpdateTime; }
             set { this._lastFullUpdateTime = value; }
+        }
+
+        public Dictionary<string, string> LanguageVoiceDictionary
+        {
+            get { return this._langaugeVoiceDictionary; }
+            set { this._langaugeVoiceDictionary = value; }
         }
 
         public bool MakeTTSForChapterAlreadyRead

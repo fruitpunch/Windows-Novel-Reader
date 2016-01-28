@@ -38,5 +38,6 @@ namespace NovelReader
                 Configuration.Instance.ApplicationMaximized = false;
             Util.SaveComponents();
         }
+
     }
 }

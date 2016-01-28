@@ -20,7 +20,10 @@ namespace Source
                 {
                     Type interfaceType = assemblyType.GetInterface(typeof(T).FullName);
                     if (interfaceType != null)
+                    {
+                        Console.WriteLine("Interface: " + assemblyType.FullName);
                         return (T)Activator.CreateInstance(assemblyType);
+                    }
                 }
             }
             return default(T);
@@ -29,6 +32,15 @@ namespace Source
 
     public class SourceManager
     {
+
+        //public static List<string> locations;
+
+        public static void LoadSources()
+        {
+            //locations = new List<string>();
+            //PlugInFactory<NovelSource> loader = new PlugInFactory<NovelSource>();
+            //NovelSource instance = loader.CreatePlugin(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SourceDLL"));
+        }
 
         public static NovelSource GetSource(SourceLocation s, string sourceID)
         {

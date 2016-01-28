@@ -27,6 +27,8 @@ namespace NovelReader
         public volatile NovelListController novelListController;
         public volatile NovelReaderForm novelReaderForm;
 
+        private volatile ManualResetEvent mre;
+
         /*============Properties============*/
 
         public static BackgroundService Instance
@@ -64,7 +66,7 @@ namespace NovelReader
             this.updateTimer.Elapsed += new ElapsedEventHandler(OnUpdateTimer);
             
             this.scheduleTTSThread = new Thread(ScheduleTTS);
-            //this.updateTimer.Interval = Configuration.Instance.UpdateInterval;
+            this.mre = new ManualResetEvent(false);
             
             this.updateTimer.Start();
             this.scheduleTTSThread.Start();
@@ -76,6 +78,7 @@ namespace NovelReader
         public void CloseService()
         {
             //this.scheduleTTSThread.
+            mre.Set();
             this.shutDown = true;
             this.updateTimer.Stop();
             this.updateTimer = null;
@@ -196,17 +199,17 @@ namespace NovelReader
                         if (idleCounter >= NovelLibrary.Instance.GetNovelCount())
                         {
                             Console.WriteLine("Idling TTS");
-                            Thread.Sleep(10000);
+                            mre.WaitOne(10000);
                         }
                         continue;
                     }
                     ttsScheduler.AddRequest(request);
                     idleCounter = 0;
-                    Thread.Sleep(1000 * ttsScheduler.RequestCount / ttsScheduler.Threads);
+                    mre.WaitOne(1000 * ttsScheduler.RequestCount / ttsScheduler.Threads);
                 }
                 else
                 {
-                    Thread.Sleep(1000);
+                    mre.WaitOne(1000);
                 }
             }
             hasTTSShutDown = true;

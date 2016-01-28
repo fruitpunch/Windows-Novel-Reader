@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.refreshUpdateLabelTimer = new System.Windows.Forms.Timer(this.components);
             this.dgvNovelList = new System.Windows.Forms.DataGridView();
             this.btnTest = new System.Windows.Forms.Button();
@@ -40,9 +40,9 @@
             this.upUpdateFreq = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnDeleteNovel = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnDeleteNovel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNovelList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.upUpdateFreq)).BeginInit();
             this.panel1.SuspendLayout();
@@ -66,14 +66,14 @@
             this.dgvNovelList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvNovelList.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.dgvNovelList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvNovelList.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvNovelList.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvNovelList.Location = new System.Drawing.Point(5, 50);
             this.dgvNovelList.Margin = new System.Windows.Forms.Padding(2);
             this.dgvNovelList.MultiSelect = false;
@@ -236,6 +236,21 @@
             this.panel1.Size = new System.Drawing.Size(900, 45);
             this.panel1.TabIndex = 8;
             // 
+            // btnDeleteNovel
+            // 
+            this.btnDeleteNovel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeleteNovel.FlatAppearance.BorderSize = 0;
+            this.btnDeleteNovel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDeleteNovel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDeleteNovel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnDeleteNovel.Location = new System.Drawing.Point(640, 0);
+            this.btnDeleteNovel.Name = "btnDeleteNovel";
+            this.btnDeleteNovel.Size = new System.Drawing.Size(130, 45);
+            this.btnDeleteNovel.TabIndex = 8;
+            this.btnDeleteNovel.Text = "Delete Novel";
+            this.btnDeleteNovel.UseVisualStyleBackColor = true;
+            this.btnDeleteNovel.Click += new System.EventHandler(this.btnDeleteNovel_Click);
+            // 
             // panel2
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -258,21 +273,6 @@
             this.label2.Size = new System.Drawing.Size(180, 39);
             this.label2.TabIndex = 6;
             this.label2.Text = "Novel List";
-            // 
-            // btnDeleteNovel
-            // 
-            this.btnDeleteNovel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteNovel.FlatAppearance.BorderSize = 0;
-            this.btnDeleteNovel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDeleteNovel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDeleteNovel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnDeleteNovel.Location = new System.Drawing.Point(640, 0);
-            this.btnDeleteNovel.Name = "btnDeleteNovel";
-            this.btnDeleteNovel.Size = new System.Drawing.Size(130, 45);
-            this.btnDeleteNovel.TabIndex = 8;
-            this.btnDeleteNovel.Text = "Delete Novel";
-            this.btnDeleteNovel.UseVisualStyleBackColor = true;
-            this.btnDeleteNovel.Click += new System.EventHandler(this.btnDeleteNovel_Click);
             // 
             // NovelListController
             // 

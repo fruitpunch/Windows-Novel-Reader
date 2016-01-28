@@ -20,6 +20,7 @@ namespace NovelReader
         public static void LoadComponents()
         {
             //PerformTTSCheck();
+            //Source.SourceManager.LoadSources();
             Configuration.LoadConfiguration();
             NovelLibrary.Instance.LoadNovelLibrary();
             BackgroundService.Instance.StartService();
@@ -28,7 +29,6 @@ namespace NovelReader
 
         public static void SaveComponents()
         {
-            
             BackgroundService.Instance.CloseService();
             NovelLibrary.Instance.SaveNovelLibrary();
             Configuration.SaveConfiguration();
@@ -72,10 +72,12 @@ namespace NovelReader
             return str;
         }
 
-        public static void PerformTTSCheck()
+        public static Tuple<List<string>, List<string>> GetLanguageVoice()
         {
             Microsoft.Speech.Synthesis.SpeechSynthesizer msftSynth = new Microsoft.Speech.Synthesis.SpeechSynthesizer();
             System.Speech.Synthesis.SpeechSynthesizer sysSynth = new System.Speech.Synthesis.SpeechSynthesizer();
+            List<string> languageList = new List<string>();
+            List<string> voiceList = new List<string>();
             foreach (Microsoft.Speech.Synthesis.InstalledVoice voice in msftSynth.GetInstalledVoices())
             {
                 Microsoft.Speech.Synthesis.VoiceInfo info = voice.VoiceInfo;
@@ -83,6 +85,10 @@ namespace NovelReader
                 Console.WriteLine(" Name:          " + info.Name);
                 Console.WriteLine(" Culture:       " + info.Culture);
                 Console.WriteLine(" ID:            " + info.Id);
+                if (!languageList.Contains(info.Culture.ToString()))
+                    languageList.Add(info.Culture.ToString());
+                if (!voiceList.Contains(info.Name))
+                    voiceList.Add(info.Name);
             }
             foreach (System.Speech.Synthesis.InstalledVoice voice in sysSynth.GetInstalledVoices())
             {
@@ -91,8 +97,13 @@ namespace NovelReader
                 Console.WriteLine(" Name:          " + info.Name);
                 Console.WriteLine(" Culture:       " + info.Culture);
                 Console.WriteLine(" ID:            " + info.Id);
+                if (!languageList.Contains(info.Culture.ToString()))
+                    languageList.Add(info.Culture.ToString());
+                if (!voiceList.Contains(info.Name))
+                    voiceList.Add(info.Name);
             }
 
+            return new Tuple<List<string>, List<string>>(languageList, voiceList);
         }
 
     }

@@ -321,7 +321,7 @@ namespace NovelReader
                     {
                         if (!queuedTTSChapters.ContainsKey(c))
                         {
-                            request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
+                            request = new Request(Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage], c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
                             queuedTTSChapters.Add(c, request);
                             break;
                         }
@@ -354,6 +354,8 @@ namespace NovelReader
             if (_chapters == null || _chapters.Count == 0)
                 return false;
             if (_lastReadChapter != null && _lastReadChapter.Index > chapter.Index && !secondaryPass)
+                return false;
+            if (Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage].Equals("No Voice Selected"))
                 return false;
             //Do not make audio for novel not selected
             if (!_makeAudio)
