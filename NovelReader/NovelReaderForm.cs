@@ -82,6 +82,17 @@ namespace NovelReader
                 rtbChapterTextBox.Text = "No chapters available";
             }
 
+            if (currentReadingChapter != null && dgvChapterList.Rows.Count > currentReadingChapter.Index)
+            {
+                try
+                {
+                    dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
+                }
+                catch (Exception e)
+                {
+                }
+            }
+
         }
 
         public bool InvokeRequiredForNovel(Novel n)
@@ -393,13 +404,7 @@ namespace NovelReader
                     row.Selected = false;
                 }
             }
-            try
-            {
-                dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
-            }
-            catch (Exception e)
-            {
-            }
+            
         }
 
         private void PlayAudio(Chapter chapter)

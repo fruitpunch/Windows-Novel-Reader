@@ -299,7 +299,8 @@ namespace NovelReader
                 }
                 else
                 {
-                    Thread.Sleep(1000);
+                    idleMRE.Reset();
+                    idleMRE.WaitOne(-1);
                 }
                 threadCount = ActiveThreadCount();
                 if (_requestList.Count == 0)
@@ -317,6 +318,7 @@ namespace NovelReader
             Request request;
             do
             {
+                
                 request = GetTopRequest(threadId);
                 if (request == null)
                     break;

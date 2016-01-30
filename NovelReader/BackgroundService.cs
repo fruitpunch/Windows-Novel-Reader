@@ -156,6 +156,7 @@ namespace NovelReader
             {
                 n.ResetTTSRequest();
             }
+            mre.Set();
         }
 
         /*============Private Function======*/
@@ -198,8 +199,9 @@ namespace NovelReader
                         idleCounter++;
                         if (idleCounter >= NovelLibrary.Instance.GetNovelCount())
                         {
-                            Console.WriteLine("Idling TTS");
-                            mre.WaitOne(10000);
+                            idleCounter = 0;
+                            mre.Reset();
+                            mre.WaitOne(15000);
                         }
                         continue;
                     }
@@ -209,7 +211,8 @@ namespace NovelReader
                 }
                 else
                 {
-                    mre.WaitOne(1000);
+                    mre.Reset();
+                    mre.WaitOne(15000);
                 }
             }
             hasTTSShutDown = true;
