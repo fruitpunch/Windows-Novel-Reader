@@ -82,9 +82,10 @@ namespace Source
             string url = BaseURL + "/read/" + _novelID.ToString() + "/index.html";
             string chapterMatchingSubstring = "<a href=\"/read/" + _novelID.ToString() + "/";
             string[] lines = WebUtil.GetUrlContents(url);
+            if (lines == null)
+                return null;
 
             string title, chURL;
-            
             foreach (string line in lines)
             {
                 if (line.Contains(chapterMatchingSubstring))
@@ -105,6 +106,9 @@ namespace Source
         public string[] GetChapterContent(string chapterTitle, string url)
         {
             string[] lines = WebUtil.GetUrlContents(BaseURL + url);
+            if (lines == null)
+                return null;
+
             List<string> novelContent = new List<string>();
             bool contentFound = false;
             //linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);

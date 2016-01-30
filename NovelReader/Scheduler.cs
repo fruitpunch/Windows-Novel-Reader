@@ -297,17 +297,17 @@ namespace NovelReader
                         }
                     }
                 }
+                else if(UntakenRequestCount() == 0)
+                {
+                    idleMRE.Reset();
+                    idleMRE.WaitOne(-1);
+                }
                 else
                 {
                     idleMRE.Reset();
-                    idleMRE.WaitOne(-1);
+                    idleMRE.WaitOne(1000);
                 }
                 threadCount = ActiveThreadCount();
-                if (_requestList.Count == 0)
-                {
-                    idleMRE.Reset();
-                    idleMRE.WaitOne(-1);
-                }
             }
         }
 

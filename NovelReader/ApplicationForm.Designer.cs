@@ -33,9 +33,12 @@
             this.novelListController = new NovelReader.NovelListController();
             this.ttsListTab = new System.Windows.Forms.TabPage();
             this.ttsController1 = new NovelReader.TTSController();
+            this.settingTab = new System.Windows.Forms.TabPage();
+            this.settingControl1 = new NovelReader.SettingControl();
             this.tabControl.SuspendLayout();
             this.novelListTab.SuspendLayout();
             this.ttsListTab.SuspendLayout();
+            this.settingTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -45,6 +48,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.novelListTab);
             this.tabControl.Controls.Add(this.ttsListTab);
+            this.tabControl.Controls.Add(this.settingTab);
             this.tabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControl.HotTrack = true;
             this.tabControl.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -105,6 +109,26 @@
             this.ttsController1.Size = new System.Drawing.Size(1147, 754);
             this.ttsController1.TabIndex = 0;
             // 
+            // settingTab
+            // 
+            this.settingTab.Controls.Add(this.settingControl1);
+            this.settingTab.Location = new System.Drawing.Point(4, 25);
+            this.settingTab.Name = "settingTab";
+            this.settingTab.Padding = new System.Windows.Forms.Padding(3);
+            this.settingTab.Size = new System.Drawing.Size(1147, 754);
+            this.settingTab.TabIndex = 2;
+            this.settingTab.Text = "Setting";
+            this.settingTab.UseVisualStyleBackColor = true;
+            // 
+            // settingControl1
+            // 
+            this.settingControl1.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.settingControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.settingControl1.Location = new System.Drawing.Point(3, 3);
+            this.settingControl1.Name = "settingControl1";
+            this.settingControl1.Size = new System.Drawing.Size(1141, 748);
+            this.settingControl1.TabIndex = 0;
+            // 
             // ApplicationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -119,6 +143,7 @@
             this.tabControl.ResumeLayout(false);
             this.novelListTab.ResumeLayout(false);
             this.ttsListTab.ResumeLayout(false);
+            this.settingTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -132,7 +157,8 @@
         private NovelListController novelListController;
         private System.Windows.Forms.TabPage ttsListTab;
         private TTSController ttsController1;
-
+        private System.Windows.Forms.TabPage settingTab;
+        private SettingControl settingControl1;
     }
 }
 

@@ -29,6 +29,8 @@ namespace NovelReader
 
         private volatile ManualResetEvent mre;
 
+        public static Chapter lastUpdatedChapter = null;
+
         /*============Properties============*/
 
         public static BackgroundService Instance
@@ -174,8 +176,8 @@ namespace NovelReader
         private void Update()
         {
             hasUpdateShutDown = false;
-            CheckUpdates();
-            DownloadUpdates();
+            DoUpdate();
+            //DownloadUpdates();
             NovelLibrary.Instance.SaveNovelLibrary();
             hasUpdateShutDown = true;
         }
@@ -188,6 +190,7 @@ namespace NovelReader
             int idleCounter = 0;
             while (!shutDown)
             {
+                mre.Reset();
                 if (ttsScheduler.Threads > 0 && NovelLibrary.Instance.GetNovelCount() > 0)
                 {
                     Novel n = NovelLibrary.Instance.NovelList[roundRobin % NovelLibrary.Instance.GetNovelCount()];
@@ -200,7 +203,6 @@ namespace NovelReader
                         if (idleCounter >= NovelLibrary.Instance.GetNovelCount())
                         {
                             idleCounter = 0;
-                            mre.Reset();
                             mre.WaitOne(15000);
                         }
                         continue;
@@ -211,45 +213,47 @@ namespace NovelReader
                 }
                 else
                 {
-                    mre.Reset();
                     mre.WaitOne(15000);
                 }
             }
             hasTTSShutDown = true;
         }
 
-        private void CheckUpdates()
+        private void DoUpdate()
         {
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
+            bool[] results = new bool[updateNovels.Length];
+
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
                 if (updateNovels[i] == null)
                     continue;
-                updateNovels[i].CheckForUpdate();
+                results[i] = updateNovels[i].CheckForUpdate();
                 NovelLibrary.Instance.db.Store(updateNovels[i]);
             }
             NovelLibrary.Instance.db.Commit();
             Configuration.Instance.LastFullUpdateTime = DateTime.Now;
-        }
 
-        private void DownloadUpdates()
-        {
-            Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
-                if (updateNovels[i] == null)
+                if (updateNovels[i] == null && results[i])
                     continue;
                 updateNovels[i].LoadChapterFromDB();
                 int updateCount = updateNovels[i].GetUpdateCount();
                 int idx = 0;
                 int lastUpdatedIdx = 0;
-                while(updateNovels[i] != null && updateNovels[i].HasUpdate() && !shutDown){
+                int failure = 0;
+                bool success;
+                while (updateNovels[i] != null && updateNovels[i].HasUpdate() && !shutDown)
+                {
                     idx++;
-                    lastUpdatedIdx = updateNovels[i].DownloadNextUpdate(lastUpdatedIdx, idx, updateCount);
+                    lastUpdatedIdx = updateNovels[i].DownloadNextUpdate(lastUpdatedIdx, idx, updateCount, out success);
+                    if (!success)
+                        failure++;
                 }
                 if (updateNovels[i] == null)
                     continue;
-                updateNovels[i].NewChaptersNotReadCount = updateNovels[i].NewChaptersNotReadCount + idx;
+                updateNovels[i].NewChaptersNotReadCount = updateNovels[i].NewChaptersNotReadCount + idx - failure;
                 updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
                 updateNovels[i].ClearChapters();
             }

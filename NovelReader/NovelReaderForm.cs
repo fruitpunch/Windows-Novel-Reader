@@ -193,6 +193,8 @@ namespace NovelReader
             FinishEditing();
             if (currentReadingNovel != null && currentReadingChapter != null)
             {
+                if (mp3Player.playState == WMPLib.WMPPlayState.wmppsPlaying)
+                    mp3Player.Ctlcontrols.stop();
                 currentReadingNovel.MarkOffChapter(currentReadingChapter);
                 Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
                 ReadChapter(nextChapter);

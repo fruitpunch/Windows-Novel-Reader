@@ -48,7 +48,7 @@ namespace Source
         public SourceWeb69(string novelID)
         {
             this._novelID = novelID;
-            cultureInfo = new CultureInfo("en-US", false);
+            cultureInfo = new CultureInfo("zh-CN", false);
         }
 
         public Tuple<bool, string> VerifySource()
@@ -82,8 +82,10 @@ namespace Source
             string url = BaseURL + "/" + _novelID.ToString() + "/";
             string chapterMatchingSubstring = "<li><a href=\"/txt/" + _novelID.ToString() + "/";
             string[] lines = WebUtil.GetUrlContents(url);
-            string title, chURL;
+            if (lines == null)
+                return null;
 
+            string title, chURL;
             foreach (string line in lines)
             {
                 if (line.Contains(chapterMatchingSubstring))
@@ -105,6 +107,9 @@ namespace Source
         public string[] GetChapterContent(string chapterTitle, string url)
         {
             string[] lines = WebUtil.GetUrlContents(BaseURL + url);
+            if (lines == null)
+                return null;
+
             List<string> novelContent = new List<string>();
             //linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             novelContent.Add(chapterTitle);

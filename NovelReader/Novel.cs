@@ -23,7 +23,7 @@ namespace NovelReader
          *              X = No          O = Yes             D = If specified
          */
 
-        public enum UpdateStates { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped };
+        public enum UpdateStates { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped, Error };
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -356,8 +356,8 @@ namespace NovelReader
                 return false;
             if (_lastReadChapter != null && _lastReadChapter.Index > chapter.Index && !secondaryPass)
                 return false;
-            //if (Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage].Equals("No Voice Selected"))
-            //    return false;
+            if (Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage].Equals("No Voice Selected"))
+                return false;
             //Do not make audio for novel not selected
             if (!_makeAudio)
                 return false;
@@ -448,6 +448,11 @@ namespace NovelReader
 
             SetUpdateProgress(0, 0, UpdateStates.Checking);
             Tuple<string, string>[] menuItems = _novelSource.GetMenuURLs();
+            if(menuItems == null)
+            {
+                SetUpdateProgress(0, 0, UpdateStates.Error);
+                return false;
+            }
             int chapterIndex = 0;
             for (int i = 0; i < menuItems.Length; i++)
             {
@@ -479,19 +484,23 @@ namespace NovelReader
             return updateCount > 0;
         }
 
-        public int DownloadNextUpdate(int startIdx, int index, int totalUpdateCount)
+        public int DownloadNextUpdate(int startIdx, int index, int totalUpdateCount, out bool success)
         {
             int lastUpdatedIdx = 0;
+            success = false;
             for (int i = startIdx; i < _chapters.Count; i++)
             {
                 if (!_chapters[i].HasText && _chapters[i].SourceURL != null)
                 {
-                    DownloadChapterContent(_chapters[i]);
+                    success = DownloadChapterContent(_chapters[i]);
                     lastUpdatedIdx = i;
                     break;
                 }
             }
-            SetUpdateProgress(index, totalUpdateCount, UpdateStates.Fetching);
+            if (success)
+                SetUpdateProgress(index, totalUpdateCount, UpdateStates.Fetching);
+            else
+                SetUpdateProgress(0, 0, UpdateStates.Error);
             return lastUpdatedIdx;
         }
 
@@ -509,17 +518,25 @@ namespace NovelReader
             for (int i = 0; i < _chapters.Count; i++)
             {
                 if (!_chapters[i].HasText && _chapters[i].SourceURL != null)
+                {
+                    if (_chapters[i].Equals(BackgroundService.lastUpdatedChapter))
+                        continue;                 
                     return true;
+                }  
             }
             return false;
         }
 
-        public void DownloadChapterContent(Chapter chapter)
+        public bool DownloadChapterContent(Chapter chapter)
         {
             if (chapter == null || chapter.SourceURL == null)
-                return;
+                return false;
+            BackgroundService.lastUpdatedChapter = chapter;
             string[] novelContent = _novelSource.GetChapterContent(chapter.ChapterTitle, chapter.SourceURL);
+            if (novelContent == null)
+                return false;
             System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
+            return true;
         }
 
         //Change the index of the chapter and change the file name of the text and audio file.
@@ -711,6 +728,10 @@ namespace NovelReader
                 case UpdateStates.Dropped:
                     progress = 0;
                     message = "Novel Dropped";
+                    break;
+                case UpdateStates.Error:
+                    progress = 0;
+                    message = "Network Error";
                     break;
             }
             _updateState = updateState;

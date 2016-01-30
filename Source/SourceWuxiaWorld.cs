@@ -86,6 +86,9 @@ namespace Source
             string url = BaseURL + "/" + _novelID.ToString();
             string chapterMatchingSubstring = url;
             string[] lines = WebUtil.GetUrlContents(url);
+            if (lines == null)
+                return null;
+
             string title, chURL;
             foreach (string line in lines)
             {
@@ -122,6 +125,9 @@ namespace Source
         public string[] GetChapterContent(string chapterTitle, string url)
         {
             string[] lines = WebUtil.GetUrlContentsEn(BaseURL + url);
+            if (lines == null)
+                return null;
+            Console.WriteLine(chapterTitle + " " + url);
             List<string> novelContent = new List<string>();
             bool contentFound = false;
             bool startFound = false;
