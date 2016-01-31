@@ -91,7 +91,7 @@
             // btnNext
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnNext.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnNext.BackColor = System.Drawing.Color.SteelBlue;
             this.btnNext.FlatAppearance.BorderSize = 0;
             this.btnNext.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
             this.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -108,7 +108,7 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnEdit.BackColor = System.Drawing.Color.SteelBlue;
             this.btnEdit.FlatAppearance.BorderSize = 0;
             this.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -124,7 +124,7 @@
             // btnPlay
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnPlay.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnPlay.BackColor = System.Drawing.Color.SteelBlue;
             this.btnPlay.FlatAppearance.BorderSize = 0;
             this.btnPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
             this.btnPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -141,7 +141,7 @@
             // cbAutoPlay
             // 
             this.cbAutoPlay.AutoSize = true;
-            this.cbAutoPlay.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.cbAutoPlay.BackColor = System.Drawing.Color.SteelBlue;
             this.cbAutoPlay.FlatAppearance.BorderSize = 0;
             this.cbAutoPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cbAutoPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -157,21 +157,20 @@
             // labelTitle
             // 
             this.labelTitle.AutoSize = true;
-            this.labelTitle.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.labelTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelTitle.BackColor = System.Drawing.Color.SteelBlue;
             this.labelTitle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.labelTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTitle.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.labelTitle.Location = new System.Drawing.Point(10, 6);
             this.labelTitle.Name = "labelTitle";
-            this.labelTitle.Size = new System.Drawing.Size(73, 33);
+            this.labelTitle.Size = new System.Drawing.Size(71, 31);
             this.labelTitle.TabIndex = 9;
             this.labelTitle.Text = "Title";
             // 
             // btnPrevious
             // 
             this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnPrevious.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnPrevious.BackColor = System.Drawing.Color.SteelBlue;
             this.btnPrevious.FlatAppearance.BorderSize = 0;
             this.btnPrevious.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
             this.btnPrevious.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -188,7 +187,7 @@
             // btnRedownload
             // 
             this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRedownload.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnRedownload.BackColor = System.Drawing.Color.SteelBlue;
             this.btnRedownload.FlatAppearance.BorderSize = 0;
             this.btnRedownload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -204,7 +203,7 @@
             // btnDeleteChapter
             // 
             this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteChapter.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnDeleteChapter.BackColor = System.Drawing.Color.SteelBlue;
             this.btnDeleteChapter.FlatAppearance.BorderSize = 0;
             this.btnDeleteChapter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDeleteChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -220,7 +219,7 @@
             // btnAddChapter
             // 
             this.btnAddChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddChapter.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnAddChapter.BackColor = System.Drawing.Color.SteelBlue;
             this.btnAddChapter.FlatAppearance.BorderSize = 0;
             this.btnAddChapter.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
             this.btnAddChapter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -237,7 +236,7 @@
             // btnFinishReading
             // 
             this.btnFinishReading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnFinishReading.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnFinishReading.BackColor = System.Drawing.Color.SteelBlue;
             this.btnFinishReading.FlatAppearance.BorderSize = 0;
             this.btnFinishReading.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
             this.btnFinishReading.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -255,7 +254,7 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.panel1.BackColor = System.Drawing.Color.SteelBlue;
             this.panel1.Controls.Add(this.labelTitle);
             this.panel1.Controls.Add(this.btnEdit);
             this.panel1.Controls.Add(this.btnRedownload);
@@ -268,7 +267,7 @@
             // panel2
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel2.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.panel2.BackColor = System.Drawing.Color.SteelBlue;
             this.panel2.Controls.Add(this.btnAddChapter);
             this.panel2.Controls.Add(this.btnPrevious);
             this.panel2.Controls.Add(this.btnFinishReading);
@@ -282,7 +281,7 @@
             // panel3
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel3.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.panel3.BackColor = System.Drawing.Color.SteelBlue;
             this.panel3.Controls.Add(this.cbAutoPlay);
             this.panel3.Location = new System.Drawing.Point(1155, 650);
             this.panel3.Name = "panel3";
@@ -306,7 +305,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.BackColor = System.Drawing.Color.LightSkyBlue;
             this.ClientSize = new System.Drawing.Size(1259, 700);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);

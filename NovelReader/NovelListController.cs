@@ -224,7 +224,8 @@ namespace NovelReader
                 DataPropertyName = "State",
                 DataSource = Enum.GetValues(typeof(Novel.NovelState)),
                 ValueType = typeof(Novel.NovelState),
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                FlatStyle = FlatStyle.Popup
                 //Width = 100
             };
 
@@ -234,7 +235,8 @@ namespace NovelReader
                 Name = "MakeAudio",
                 HeaderText = "Make Audio",
                 DataPropertyName = "MakeAudio",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                FlatStyle = FlatStyle.Popup
                 //Width = 100,
             };
 

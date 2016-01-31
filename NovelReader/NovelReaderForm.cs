@@ -356,7 +356,8 @@ namespace NovelReader
                 Name = "Read",
                 HeaderText = "Read",
                 DataPropertyName = "Read",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FlatStyle = FlatStyle.Popup
             };
 
             dgvChapterList.Columns.Add(titleColumn);

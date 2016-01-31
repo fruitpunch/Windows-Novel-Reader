@@ -28,20 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvTTS = new System.Windows.Forms.DataGridView();
             this.udThreadCount = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.btnResetList = new System.Windows.Forms.Button();
             this.udTTSSpeed = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.bottomPanel = new System.Windows.Forms.Panel();
+            this.topPanel = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTTS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udThreadCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTTSSpeed)).BeginInit();
-            this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this.bottomPanel.SuspendLayout();
+            this.topPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // dgvTTS
@@ -53,24 +54,35 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvTTS.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvTTS.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dgvTTS.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Sunken;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightSalmon;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(5);
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvTTS.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvTTS.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvTTS.Location = new System.Drawing.Point(5, 50);
+            this.dgvTTS.EnableHeadersVisualStyles = false;
+            this.dgvTTS.Location = new System.Drawing.Point(0, 50);
             this.dgvTTS.Margin = new System.Windows.Forms.Padding(2);
             this.dgvTTS.MultiSelect = false;
             this.dgvTTS.Name = "dgvTTS";
             this.dgvTTS.RowHeadersVisible = false;
             this.dgvTTS.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvTTS.Size = new System.Drawing.Size(900, 550);
+            this.dgvTTS.Size = new System.Drawing.Size(910, 550);
             this.dgvTTS.TabIndex = 0;
             // 
             // udThreadCount
             // 
             this.udThreadCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.udThreadCount.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.udThreadCount.BackColor = System.Drawing.Color.SteelBlue;
             this.udThreadCount.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.udThreadCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.udThreadCount.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.udThreadCount.Location = new System.Drawing.Point(177, 15);
+            this.udThreadCount.Location = new System.Drawing.Point(177, 20);
             this.udThreadCount.Margin = new System.Windows.Forms.Padding(2);
             this.udThreadCount.Maximum = new decimal(new int[] {
             4,
@@ -86,10 +98,10 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.label1.BackColor = System.Drawing.Color.SteelBlue;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label1.Location = new System.Drawing.Point(12, 15);
+            this.label1.Location = new System.Drawing.Point(12, 20);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(164, 16);
@@ -98,16 +110,17 @@
             // 
             // btnResetList
             // 
-            this.btnResetList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnResetList.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnResetList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnResetList.BackColor = System.Drawing.Color.SteelBlue;
             this.btnResetList.FlatAppearance.BorderSize = 0;
             this.btnResetList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnResetList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnResetList.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnResetList.Location = new System.Drawing.Point(780, 0);
+            this.btnResetList.Location = new System.Drawing.Point(790, 0);
             this.btnResetList.Margin = new System.Windows.Forms.Padding(2);
             this.btnResetList.Name = "btnResetList";
-            this.btnResetList.Size = new System.Drawing.Size(120, 45);
+            this.btnResetList.Size = new System.Drawing.Size(120, 50);
             this.btnResetList.TabIndex = 14;
             this.btnResetList.Text = "Reset List";
             this.btnResetList.UseVisualStyleBackColor = false;
@@ -116,11 +129,11 @@
             // udTTSSpeed
             // 
             this.udTTSSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.udTTSSpeed.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.udTTSSpeed.BackColor = System.Drawing.Color.SteelBlue;
             this.udTTSSpeed.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.udTTSSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.udTTSSpeed.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.udTTSSpeed.Location = new System.Drawing.Point(480, 15);
+            this.udTTSSpeed.Location = new System.Drawing.Point(480, 20);
             this.udTTSSpeed.Margin = new System.Windows.Forms.Padding(2);
             this.udTTSSpeed.Maximum = new decimal(new int[] {
             8,
@@ -141,42 +154,42 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.label2.BackColor = System.Drawing.Color.SteelBlue;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label2.Location = new System.Drawing.Point(320, 15);
+            this.label2.Location = new System.Drawing.Point(320, 20);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(156, 16);
             this.label2.TabIndex = 16;
             this.label2.Text = "TTS Speed ( -8 to 8 ):";
             // 
-            // panel1
+            // bottomPanel
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.bottomPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.panel1.Controls.Add(this.btnResetList);
-            this.panel1.Controls.Add(this.udThreadCount);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.udTTSSpeed);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Location = new System.Drawing.Point(5, 600);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(900, 45);
-            this.panel1.TabIndex = 17;
+            this.bottomPanel.BackColor = System.Drawing.Color.SteelBlue;
+            this.bottomPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.bottomPanel.Controls.Add(this.btnResetList);
+            this.bottomPanel.Controls.Add(this.udThreadCount);
+            this.bottomPanel.Controls.Add(this.label1);
+            this.bottomPanel.Controls.Add(this.udTTSSpeed);
+            this.bottomPanel.Controls.Add(this.label2);
+            this.bottomPanel.Location = new System.Drawing.Point(0, 600);
+            this.bottomPanel.Name = "bottomPanel";
+            this.bottomPanel.Size = new System.Drawing.Size(910, 50);
+            this.bottomPanel.TabIndex = 17;
             // 
-            // panel2
+            // topPanel
             // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.topPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.panel2.Controls.Add(this.label3);
-            this.panel2.Location = new System.Drawing.Point(5, 5);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(900, 45);
-            this.panel2.TabIndex = 18;
+            this.topPanel.BackColor = System.Drawing.Color.SteelBlue;
+            this.topPanel.Controls.Add(this.label3);
+            this.topPanel.Location = new System.Drawing.Point(0, 0);
+            this.topPanel.Name = "topPanel";
+            this.topPanel.Size = new System.Drawing.Size(910, 50);
+            this.topPanel.TabIndex = 18;
             // 
             // label3
             // 
@@ -194,8 +207,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.topPanel);
+            this.Controls.Add(this.bottomPanel);
             this.Controls.Add(this.dgvTTS);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -205,10 +218,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvTTS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udThreadCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTTSSpeed)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.bottomPanel.ResumeLayout(false);
+            this.bottomPanel.PerformLayout();
+            this.topPanel.ResumeLayout(false);
+            this.topPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -221,8 +234,8 @@
         private System.Windows.Forms.Button btnResetList;
         private System.Windows.Forms.NumericUpDown udTTSSpeed;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel bottomPanel;
+        private System.Windows.Forms.Panel topPanel;
         private System.Windows.Forms.Label label3;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace NovelReader
 {
-    partial class SettingControl
+    partial class SettingController
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,15 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvLanguageSelector = new System.Windows.Forms.DataGridView();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.BottomPanel = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.topPanel = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvLanguageSelector)).BeginInit();
-            this.panel1.SuspendLayout();
+            this.topPanel.SuspendLayout();
             this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -49,26 +50,37 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvLanguageSelector.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvLanguageSelector.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dgvLanguageSelector.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Sunken;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightSalmon;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(5);
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvLanguageSelector.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvLanguageSelector.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvLanguageSelector.Location = new System.Drawing.Point(460, 105);
+            this.dgvLanguageSelector.EnableHeadersVisualStyles = false;
+            this.dgvLanguageSelector.Location = new System.Drawing.Point(450, 100);
             this.dgvLanguageSelector.MultiSelect = false;
             this.dgvLanguageSelector.Name = "dgvLanguageSelector";
             this.dgvLanguageSelector.RowHeadersVisible = false;
-            this.dgvLanguageSelector.Size = new System.Drawing.Size(445, 490);
+            this.dgvLanguageSelector.Size = new System.Drawing.Size(460, 500);
             this.dgvLanguageSelector.TabIndex = 0;
             this.dgvLanguageSelector.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvLanguageSelector_CellClick);
             this.dgvLanguageSelector.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvLanguageSelector_CellValueChanged);
             this.dgvLanguageSelector.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvLanguageSelector_CurrentCellDirtyStateChanged);
             // 
-            // panel2
+            // BottomPanel
             // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.BottomPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.panel2.Location = new System.Drawing.Point(5, 600);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(900, 45);
-            this.panel2.TabIndex = 2;
+            this.BottomPanel.BackColor = System.Drawing.Color.SteelBlue;
+            this.BottomPanel.Location = new System.Drawing.Point(0, 600);
+            this.BottomPanel.Name = "BottomPanel";
+            this.BottomPanel.Size = new System.Drawing.Size(910, 50);
+            this.BottomPanel.TabIndex = 2;
             // 
             // label1
             // 
@@ -81,36 +93,36 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "Setting";
             // 
-            // panel1
+            // topPanel
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.topPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(5, 5);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(900, 45);
-            this.panel1.TabIndex = 1;
+            this.topPanel.BackColor = System.Drawing.Color.SteelBlue;
+            this.topPanel.Controls.Add(this.label1);
+            this.topPanel.Location = new System.Drawing.Point(0, 0);
+            this.topPanel.Name = "topPanel";
+            this.topPanel.Size = new System.Drawing.Size(910, 50);
+            this.topPanel.TabIndex = 1;
             // 
             // panel3
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel3.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.panel3.Location = new System.Drawing.Point(5, 55);
+            this.panel3.BackColor = System.Drawing.Color.LightBlue;
+            this.panel3.Location = new System.Drawing.Point(0, 50);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(450, 540);
+            this.panel3.Size = new System.Drawing.Size(450, 550);
             this.panel3.TabIndex = 3;
             // 
             // panel4
             // 
             this.panel4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel4.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.panel4.BackColor = System.Drawing.Color.SkyBlue;
             this.panel4.Controls.Add(this.label2);
-            this.panel4.Location = new System.Drawing.Point(460, 55);
+            this.panel4.Location = new System.Drawing.Point(450, 50);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(445, 45);
+            this.panel4.Size = new System.Drawing.Size(460, 50);
             this.panel4.TabIndex = 4;
             // 
             // label2
@@ -124,20 +136,20 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Text To Speech Language/Voice";
             // 
-            // SettingControl
+            // SettingController
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.BottomPanel);
+            this.Controls.Add(this.topPanel);
             this.Controls.Add(this.dgvLanguageSelector);
-            this.Name = "SettingControl";
+            this.Name = "SettingController";
             this.Size = new System.Drawing.Size(910, 650);
             ((System.ComponentModel.ISupportInitialize)(this.dgvLanguageSelector)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.topPanel.ResumeLayout(false);
+            this.topPanel.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.ResumeLayout(false);
@@ -147,9 +159,9 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dgvLanguageSelector;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel BottomPanel;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel topPanel;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Label label2;

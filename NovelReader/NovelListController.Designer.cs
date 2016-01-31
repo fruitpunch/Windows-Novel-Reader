@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.refreshUpdateLabelTimer = new System.Windows.Forms.Timer(this.components);
             this.dgvNovelList = new System.Windows.Forms.DataGridView();
             this.btnTest = new System.Windows.Forms.Button();
@@ -39,14 +40,14 @@
             this.labelLastUpdateTime = new System.Windows.Forms.Label();
             this.upUpdateFreq = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.bottomPanel = new System.Windows.Forms.Panel();
             this.btnDeleteNovel = new System.Windows.Forms.Button();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.topPanel = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNovelList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.upUpdateFreq)).BeginInit();
-            this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this.bottomPanel.SuspendLayout();
+            this.topPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // refreshUpdateLabelTimer
@@ -58,30 +59,39 @@
             // 
             this.dgvNovelList.AllowUserToAddRows = false;
             this.dgvNovelList.AllowUserToDeleteRows = false;
-            this.dgvNovelList.AllowUserToResizeRows = false;
             this.dgvNovelList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvNovelList.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvNovelList.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvNovelList.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            this.dgvNovelList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvNovelList.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Sunken;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightSalmon;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(5);
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvNovelList.DefaultCellStyle = dataGridViewCellStyle1;
-            this.dgvNovelList.Location = new System.Drawing.Point(5, 50);
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvNovelList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.dgvNovelList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvNovelList.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dgvNovelList.EnableHeadersVisualStyles = false;
+            this.dgvNovelList.Location = new System.Drawing.Point(0, 50);
             this.dgvNovelList.Margin = new System.Windows.Forms.Padding(2);
             this.dgvNovelList.MultiSelect = false;
             this.dgvNovelList.Name = "dgvNovelList";
             this.dgvNovelList.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Sunken;
             this.dgvNovelList.RowHeadersVisible = false;
             this.dgvNovelList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvNovelList.Size = new System.Drawing.Size(900, 550);
+            this.dgvNovelList.Size = new System.Drawing.Size(910, 550);
             this.dgvNovelList.TabIndex = 0;
             this.dgvNovelList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvNovelList_CellClick);
             this.dgvNovelList.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvNovelList_CellDoubleClick);
@@ -95,15 +105,15 @@
             // 
             this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTest.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnTest.BackColor = System.Drawing.Color.SteelBlue;
             this.btnTest.FlatAppearance.BorderSize = 0;
             this.btnTest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnTest.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnTest.Location = new System.Drawing.Point(770, 0);
+            this.btnTest.Location = new System.Drawing.Point(780, 0);
             this.btnTest.Margin = new System.Windows.Forms.Padding(2);
             this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(130, 45);
+            this.btnTest.Size = new System.Drawing.Size(130, 50);
             this.btnTest.TabIndex = 1;
             this.btnTest.Text = "Update Novels";
             this.btnTest.UseVisualStyleBackColor = false;
@@ -111,7 +121,9 @@
             // 
             // btnRankUp
             // 
-            this.btnRankUp.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnRankUp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRankUp.BackColor = System.Drawing.Color.SteelBlue;
             this.btnRankUp.FlatAppearance.BorderSize = 0;
             this.btnRankUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRankUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -119,7 +131,7 @@
             this.btnRankUp.Location = new System.Drawing.Point(0, 0);
             this.btnRankUp.Margin = new System.Windows.Forms.Padding(2);
             this.btnRankUp.Name = "btnRankUp";
-            this.btnRankUp.Size = new System.Drawing.Size(100, 45);
+            this.btnRankUp.Size = new System.Drawing.Size(100, 50);
             this.btnRankUp.TabIndex = 2;
             this.btnRankUp.Text = "Rank Up";
             this.btnRankUp.UseVisualStyleBackColor = false;
@@ -127,7 +139,9 @@
             // 
             // btnRankDown
             // 
-            this.btnRankDown.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnRankDown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRankDown.BackColor = System.Drawing.Color.SteelBlue;
             this.btnRankDown.FlatAppearance.BorderSize = 0;
             this.btnRankDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRankDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -135,7 +149,7 @@
             this.btnRankDown.Location = new System.Drawing.Point(100, 0);
             this.btnRankDown.Margin = new System.Windows.Forms.Padding(2);
             this.btnRankDown.Name = "btnRankDown";
-            this.btnRankDown.Size = new System.Drawing.Size(100, 45);
+            this.btnRankDown.Size = new System.Drawing.Size(100, 50);
             this.btnRankDown.TabIndex = 3;
             this.btnRankDown.Text = "Rank Down";
             this.btnRankDown.UseVisualStyleBackColor = false;
@@ -143,16 +157,17 @@
             // 
             // btnAddNovel
             // 
-            this.btnAddNovel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddNovel.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnAddNovel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddNovel.BackColor = System.Drawing.Color.SteelBlue;
             this.btnAddNovel.FlatAppearance.BorderSize = 0;
             this.btnAddNovel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAddNovel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAddNovel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnAddNovel.Location = new System.Drawing.Point(540, 0);
+            this.btnAddNovel.Location = new System.Drawing.Point(550, 0);
             this.btnAddNovel.Margin = new System.Windows.Forms.Padding(2);
             this.btnAddNovel.Name = "btnAddNovel";
-            this.btnAddNovel.Size = new System.Drawing.Size(100, 45);
+            this.btnAddNovel.Size = new System.Drawing.Size(100, 50);
             this.btnAddNovel.TabIndex = 4;
             this.btnAddNovel.Text = "Add Novel";
             this.btnAddNovel.UseVisualStyleBackColor = false;
@@ -162,10 +177,10 @@
             // 
             this.labelLastUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelLastUpdateTime.AutoSize = true;
-            this.labelLastUpdateTime.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.labelLastUpdateTime.BackColor = System.Drawing.Color.SteelBlue;
             this.labelLastUpdateTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelLastUpdateTime.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.labelLastUpdateTime.Location = new System.Drawing.Point(656, 17);
+            this.labelLastUpdateTime.Location = new System.Drawing.Point(666, 17);
             this.labelLastUpdateTime.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelLastUpdateTime.Name = "labelLastUpdateTime";
             this.labelLastUpdateTime.Size = new System.Drawing.Size(150, 16);
@@ -174,7 +189,9 @@
             // 
             // upUpdateFreq
             // 
-            this.upUpdateFreq.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.upUpdateFreq.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.upUpdateFreq.BackColor = System.Drawing.Color.SteelBlue;
             this.upUpdateFreq.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.upUpdateFreq.CausesValidation = false;
             this.upUpdateFreq.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -209,7 +226,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.label1.BackColor = System.Drawing.Color.SteelBlue;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label1.Location = new System.Drawing.Point(204, 15);
@@ -219,31 +236,32 @@
             this.label1.TabIndex = 7;
             this.label1.Text = "Update Frequency ( Minutes ):";
             // 
-            // panel1
+            // bottomPanel
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.bottomPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.panel1.Controls.Add(this.btnDeleteNovel);
-            this.panel1.Controls.Add(this.btnTest);
-            this.panel1.Controls.Add(this.upUpdateFreq);
-            this.panel1.Controls.Add(this.btnAddNovel);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.btnRankUp);
-            this.panel1.Controls.Add(this.btnRankDown);
-            this.panel1.Location = new System.Drawing.Point(5, 600);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(900, 45);
-            this.panel1.TabIndex = 8;
+            this.bottomPanel.BackColor = System.Drawing.Color.SteelBlue;
+            this.bottomPanel.Controls.Add(this.btnDeleteNovel);
+            this.bottomPanel.Controls.Add(this.btnTest);
+            this.bottomPanel.Controls.Add(this.upUpdateFreq);
+            this.bottomPanel.Controls.Add(this.btnAddNovel);
+            this.bottomPanel.Controls.Add(this.label1);
+            this.bottomPanel.Controls.Add(this.btnRankUp);
+            this.bottomPanel.Controls.Add(this.btnRankDown);
+            this.bottomPanel.Location = new System.Drawing.Point(0, 600);
+            this.bottomPanel.Name = "bottomPanel";
+            this.bottomPanel.Size = new System.Drawing.Size(910, 50);
+            this.bottomPanel.TabIndex = 8;
             // 
             // btnDeleteNovel
             // 
-            this.btnDeleteNovel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeleteNovel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDeleteNovel.FlatAppearance.BorderSize = 0;
             this.btnDeleteNovel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDeleteNovel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDeleteNovel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnDeleteNovel.Location = new System.Drawing.Point(640, 0);
+            this.btnDeleteNovel.Location = new System.Drawing.Point(650, 5);
             this.btnDeleteNovel.Name = "btnDeleteNovel";
             this.btnDeleteNovel.Size = new System.Drawing.Size(130, 45);
             this.btnDeleteNovel.TabIndex = 8;
@@ -251,17 +269,17 @@
             this.btnDeleteNovel.UseVisualStyleBackColor = true;
             this.btnDeleteNovel.Click += new System.EventHandler(this.btnDeleteNovel_Click);
             // 
-            // panel2
+            // topPanel
             // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.topPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.panel2.Controls.Add(this.label2);
-            this.panel2.Controls.Add(this.labelLastUpdateTime);
-            this.panel2.Location = new System.Drawing.Point(5, 5);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(900, 45);
-            this.panel2.TabIndex = 9;
+            this.topPanel.BackColor = System.Drawing.Color.SteelBlue;
+            this.topPanel.Controls.Add(this.label2);
+            this.topPanel.Controls.Add(this.labelLastUpdateTime);
+            this.topPanel.Location = new System.Drawing.Point(0, 0);
+            this.topPanel.Name = "topPanel";
+            this.topPanel.Size = new System.Drawing.Size(910, 50);
+            this.topPanel.TabIndex = 9;
             // 
             // label2
             // 
@@ -279,8 +297,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.topPanel);
+            this.Controls.Add(this.bottomPanel);
             this.Controls.Add(this.dgvNovelList);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -289,10 +307,10 @@
             this.Load += new System.EventHandler(this.NovelListController_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvNovelList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.upUpdateFreq)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.bottomPanel.ResumeLayout(false);
+            this.bottomPanel.PerformLayout();
+            this.topPanel.ResumeLayout(false);
+            this.topPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -308,8 +326,8 @@
         private System.Windows.Forms.Label labelLastUpdateTime;
         private System.Windows.Forms.NumericUpDown upUpdateFreq;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel bottomPanel;
+        private System.Windows.Forms.Panel topPanel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnDeleteNovel;
     }

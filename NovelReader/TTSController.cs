@@ -95,7 +95,7 @@ namespace NovelReader
                 Name = "ChapterIndex",
                 HeaderText = "Chapter Index",
                 DataPropertyName = "ChapterIndex",
-                Width = 100,
+                Width = 125,
                 ReadOnly = true
             };
 
@@ -105,7 +105,7 @@ namespace NovelReader
                 Name = "Priority",
                 HeaderText = "Priority",
                 DataPropertyName = "Priority",
-                Width = 100,
+                Width = 125,
                 ReadOnly = true
             };
 

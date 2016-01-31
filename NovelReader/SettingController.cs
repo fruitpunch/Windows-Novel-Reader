@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace NovelReader
 {
-    public partial class SettingControl : UserControl
+    public partial class SettingController : UserControl
     {
-        public SettingControl()
+        public SettingController()
         {
             InitializeComponent();
             SetControl();
@@ -53,6 +53,7 @@ namespace NovelReader
                 ValueType = typeof(string),
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
                 ReadOnly = false,
+                FlatStyle = FlatStyle.Popup
                 //Width = 100
             };
 

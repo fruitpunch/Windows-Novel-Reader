@@ -12,10 +12,26 @@ namespace NovelReader
 {
     public partial class ApplicationForm : Form
     {
+        public NovelListController novelListController;
+        public TTSController ttsController;
+        public SettingController settingController;
+         
         public ApplicationForm()
         {
             Util.LoadComponents();
             InitializeComponent();
+            novelListController = new NovelListController();
+            ttsController = new TTSController();
+            settingController = new SettingController();
+            novelListController.Dock = DockStyle.Fill;
+            ttsController.Dock = DockStyle.Fill;
+            settingController.Dock = DockStyle.Fill;
+            novelListController.Visible = true;
+            ttsController.Visible = false;
+            settingController.Visible = false;
+            controlContainerPanel.Controls.Add(novelListController);
+            controlContainerPanel.Controls.Add(ttsController);
+            controlContainerPanel.Controls.Add(settingController);
         }
 
         private void ApplicationForm_Load(object sender, EventArgs e)
@@ -39,5 +55,35 @@ namespace NovelReader
             Util.SaveComponents();
         }
 
+        private void btnNovelList_Click(object sender, EventArgs e)
+        {
+            btnNovelList.BackColor = this.BackColor;
+            btnTTSList.BackColor = Color.DarkSalmon;
+            btnSetting.BackColor = Color.DarkSalmon;
+            novelListController.Visible = true;
+            ttsController.Visible = false;
+            settingController.Visible = false;
+        }
+
+        private void btnTTSList_Click(object sender, EventArgs e)
+        {
+            btnNovelList.BackColor = Color.DarkSalmon;
+            btnTTSList.BackColor = this.BackColor;
+            btnSetting.BackColor = Color.DarkSalmon;
+            novelListController.Visible = false;
+            ttsController.Visible = true;
+            settingController.Visible = false;
+        }
+
+        private void btnSetting_Click(object sender, EventArgs e)
+        {
+            btnNovelList.BackColor = Color.DarkSalmon;
+            btnTTSList.BackColor = Color.DarkSalmon;
+            btnSetting.BackColor = this.BackColor;
+            novelListController.Visible = false;
+            ttsController.Visible = false;
+            settingController.Visible = true;
+
+        }
     }
 }
