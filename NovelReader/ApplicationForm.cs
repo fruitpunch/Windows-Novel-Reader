@@ -29,6 +29,9 @@ namespace NovelReader
             novelListController.Visible = true;
             ttsController.Visible = false;
             settingController.Visible = false;
+            btnNovelList.BackColor = this.BackColor;
+            btnTTSList.BackColor = buttonContainerPanel.BackColor;
+            btnSetting.BackColor = buttonContainerPanel.BackColor;
             controlContainerPanel.Controls.Add(novelListController);
             controlContainerPanel.Controls.Add(ttsController);
             controlContainerPanel.Controls.Add(settingController);
@@ -58,8 +61,8 @@ namespace NovelReader
         private void btnNovelList_Click(object sender, EventArgs e)
         {
             btnNovelList.BackColor = this.BackColor;
-            btnTTSList.BackColor = Color.DarkSalmon;
-            btnSetting.BackColor = Color.DarkSalmon;
+            btnTTSList.BackColor = buttonContainerPanel.BackColor;
+            btnSetting.BackColor = buttonContainerPanel.BackColor;
             novelListController.Visible = true;
             ttsController.Visible = false;
             settingController.Visible = false;
@@ -67,9 +70,9 @@ namespace NovelReader
 
         private void btnTTSList_Click(object sender, EventArgs e)
         {
-            btnNovelList.BackColor = Color.DarkSalmon;
+            btnNovelList.BackColor = buttonContainerPanel.BackColor;
             btnTTSList.BackColor = this.BackColor;
-            btnSetting.BackColor = Color.DarkSalmon;
+            btnSetting.BackColor = buttonContainerPanel.BackColor;
             novelListController.Visible = false;
             ttsController.Visible = true;
             settingController.Visible = false;
@@ -77,8 +80,8 @@ namespace NovelReader
 
         private void btnSetting_Click(object sender, EventArgs e)
         {
-            btnNovelList.BackColor = Color.DarkSalmon;
-            btnTTSList.BackColor = Color.DarkSalmon;
+            btnNovelList.BackColor = buttonContainerPanel.BackColor;
+            btnTTSList.BackColor = buttonContainerPanel.BackColor;
             btnSetting.BackColor = this.BackColor;
             novelListController.Visible = false;
             ttsController.Visible = false;

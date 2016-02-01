@@ -51,6 +51,7 @@ namespace NovelReader
             set { 
                 this._hasRead = value;
                 NotifyPropertyChanged("Read");
+                NovelLibrary.Instance.db.Store(this);
             }
         }
 
@@ -133,6 +134,7 @@ namespace NovelReader
                     return;
                 }
             }
+            NovelLibrary.Instance.db.Store(this);
         }
 
 
@@ -168,6 +170,7 @@ namespace NovelReader
                     return;
                 }
             }
+            NovelLibrary.Instance.db.Store(this);
         }
 
         public void NotifyPropertyChanged(string propertyName)

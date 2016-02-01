@@ -28,7 +28,7 @@ namespace NovelReader
         public static void SaveComponents()
         {
             BackgroundService.Instance.CloseService();
-            NovelLibrary.Instance.SaveNovelLibrary();
+            //NovelLibrary.Instance.SaveNovelLibrary();
             Configuration.SaveConfiguration();
             NovelLibrary.Instance.CloseNovelLibrary();
         }

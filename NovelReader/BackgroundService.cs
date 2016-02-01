@@ -13,7 +13,6 @@ namespace NovelReader
     {
 
         private static BackgroundService instance;
-        private Thread workerThread;
         private Thread scheduleTTSThread;
         private Thread updateThread;
         private System.Timers.Timer updateTimer;
@@ -60,7 +59,6 @@ namespace NovelReader
             this.hasTTSShutDown = true;
             this.hasUpdateShutDown = true;
             this.updateThread = new Thread(Update);
-            this.workerThread = new Thread(DoWork);
             this.ttsScheduler = new Scheduler(Configuration.Instance.TTSThreadCount);
             this.ttsScheduler.ttsProgressEventHandler += TTSProgress;
             this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
@@ -72,7 +70,6 @@ namespace NovelReader
             
             this.updateTimer.Start();
             this.scheduleTTSThread.Start();
-            this.workerThread.Start();
             this.ttsScheduler.StartTTSService();
             this.updateThread.Start();
         }
@@ -84,7 +81,6 @@ namespace NovelReader
             this.shutDown = true;
             this.updateTimer.Stop();
             this.updateTimer = null;
-            this.workerThread = null;
             //this.scheduleTTSThread = null;
             this.ttsScheduler.ShutdownService();
             while (!hasTTSShutDown || !hasUpdateShutDown)
@@ -108,7 +104,10 @@ namespace NovelReader
         private void TTSProgress(Object sender, TTSProgressEventArgs e)
         {
             //Console.WriteLine(e.request.ChapterTitle + " complete.");
-            NovelLibrary.Instance.GetNovel(e.request.Chapter.NovelTitle).FinishRequest(e.request.Chapter);
+            if(e.type == TTSProgressEventArgs.ProgressType.RequestComplete)
+                NovelLibrary.Instance.GetNovel(e.request.Chapter.NovelTitle).FinishRequest(e.request.Chapter);
+            else if(e.type == TTSProgressEventArgs.ProgressType.RequestRemoved)
+                NovelLibrary.Instance.GetNovel(e.request.Chapter.NovelTitle).FinishRequest(e.request.Chapter);
         }
 
         /*============Public Function=======*/
@@ -163,16 +162,6 @@ namespace NovelReader
 
         /*============Private Function======*/
 
-        private void DoWork()
-        {
-            /*
-            while (!shutDown)
-            {
-                Thread.Sleep(1000);
-            }
-             * */
-        }
-
         private void Update()
         {
             hasUpdateShutDown = false;
@@ -209,7 +198,7 @@ namespace NovelReader
                     }
                     ttsScheduler.AddRequest(request);
                     idleCounter = 0;
-                    mre.WaitOne(1000 * ttsScheduler.RequestCount / ttsScheduler.Threads);
+                    mre.WaitOne(250 * ttsScheduler.RequestCount / ttsScheduler.Threads);
                 }
                 else
                 {

@@ -93,7 +93,11 @@ namespace NovelReader
 
         public string ChapterCountStatus
         {
-            get { return this._chapterCount.ToString() + "  ( " + this._newChaptersNotReadCount + " )"; }
+            get {
+                if(this._newChaptersNotReadCount > 0)
+                    return this._chapterCount.ToString() + "  ( " + this._newChaptersNotReadCount + " new chapters )";
+                return this._chapterCount.ToString() + "  ( " + this._newChaptersNotReadCount + " )";
+            }
         }
 
         public int Rank
@@ -286,6 +290,7 @@ namespace NovelReader
 
         public Request GetTTSRequest(int speed)
         {
+            /*
             double novelCount = NovelLibrary.Instance.GetNovelCount();
             double sum = (novelCount * (novelCount + 1)) / 2;
             double position = novelCount - _rank + 1;
@@ -293,7 +298,7 @@ namespace NovelReader
             if (queuedTTSChapters.Count > maxCount)
                 return null;
             //Console.WriteLine(NovelTitle + " mc:" + maxCount + " sum:" + sum + " pos:" + position);
-
+            */
             if (_chapters == null)
                 return null;
             Request request = null;
@@ -585,6 +590,7 @@ namespace NovelReader
                 chapter.NotifyPropertyChanged("Read");
                 _lastViewedChapter = chapter;
                 NewChaptersNotReadCount = 0;
+                NovelLibrary.Instance.db.Store(this);
             }
         }
 
@@ -593,6 +599,7 @@ namespace NovelReader
             if (_chapters.Contains(chapter))
             {
                 _lastViewedChapter = chapter;
+                NovelLibrary.Instance.db.Store(this);
             }
         }
 
@@ -603,6 +610,7 @@ namespace NovelReader
                 chapter.Read = true;
                 LastViewedChapter = chapter;
                 _lastReadChapter = chapter;
+                NovelLibrary.Instance.db.Store(this);
             }
         }
 
@@ -825,6 +833,8 @@ namespace NovelReader
 
             if (PropertyChanged != null)
             {
+                NovelLibrary.Instance.db.Store(this);
+                NovelLibrary.Instance.db.Commit();
                 if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
                 {
                     BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate

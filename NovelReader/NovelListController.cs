@@ -193,7 +193,7 @@ namespace NovelReader
                 Name = "NovelTitle",
                 HeaderText = "Novel Title",
                 DataPropertyName = "NovelTitle",
-                Width = 150,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                 ReadOnly = true
             };
 
@@ -211,9 +211,9 @@ namespace NovelReader
             {
                 CellTemplate = chapterCountStatusCell,
                 Name = "ChapterCountStatus",
-                HeaderText = "Chapters(New)",
+                HeaderText = "Chapters",
                 DataPropertyName = "ChapterCountStatus",
-                Width = 125,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                 ReadOnly = true
             };
 

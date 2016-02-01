@@ -157,6 +157,7 @@ namespace NovelReader
         private ManualResetEvent idleMRE;
         private bool shutDown;
         public static readonly int MAX_THREAD_COUNT = 4;
+        public static readonly int MAX_REQUEST_COUNT = 50;
 
         public BindingList<Request> RequestList
         {
@@ -219,6 +220,13 @@ namespace NovelReader
                     BackgroundService.Instance.ttsController.BeginInvoke(new MethodInvoker(delegate
                     {
                         _requestList.Insert(i, request);
+                        if (_requestList.Count > MAX_REQUEST_COUNT)
+                        {
+                            Request removeRequest = _requestList.Last();
+                            _requestList.Remove(removeRequest);
+                            TTSProgress(removeRequest, TTSProgressEventArgs.ProgressType.RequestRemoved);
+                        }
+                            
                         mre.Set();
                     }));
                     mre.WaitOne(-1);
@@ -226,8 +234,16 @@ namespace NovelReader
                 else
                 {
                     _requestList.Insert(i, request);
+                    if (_requestList.Count > MAX_REQUEST_COUNT)
+                    {
+                        Request removeRequest = _requestList.Last();
+                        _requestList.Remove(removeRequest);
+                        TTSProgress(removeRequest, TTSProgressEventArgs.ProgressType.RequestRemoved);
+                    }
                 }
             }
+
+            
             
             idleMRE.Set();
         }
