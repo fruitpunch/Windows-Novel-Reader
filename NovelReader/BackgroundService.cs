@@ -16,7 +16,7 @@ namespace NovelReader
         private Thread scheduleTTSThread;
         private Thread updateThread;
         private System.Timers.Timer updateTimer;
-        public Scheduler ttsScheduler;
+        public TTSScheduler ttsScheduler;
 
         private volatile bool shutDown;
         private volatile bool hasTTSShutDown;
@@ -38,7 +38,6 @@ namespace NovelReader
             {
                 if (instance == null)
                 {
-                    Console.WriteLine("Create instance of PlayListScheduler");
                     instance = new BackgroundService();
                 }
                 return instance;
@@ -59,7 +58,7 @@ namespace NovelReader
             this.hasTTSShutDown = true;
             this.hasUpdateShutDown = true;
             this.updateThread = new Thread(Update);
-            this.ttsScheduler = new Scheduler(Configuration.Instance.TTSThreadCount);
+            this.ttsScheduler = new TTSScheduler(Configuration.Instance.TTSThreadCount);
             this.ttsScheduler.ttsProgressEventHandler += TTSProgress;
             this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
             this.updateTimer.Enabled = true;
@@ -166,7 +165,6 @@ namespace NovelReader
         {
             hasUpdateShutDown = false;
             DoUpdate();
-            //DownloadUpdates();
             NovelLibrary.Instance.SaveNovelLibrary();
             hasUpdateShutDown = true;
         }
@@ -187,7 +185,7 @@ namespace NovelReader
                     Request request = n.GetTTSRequest(Configuration.Instance.TTSSpeed);
                     if (request == null)
                     {
-                        //If no new chapter to synthesize, then sleep for 10 seconds before checking.
+                        //If no new chapter to synthesize, then sleep for 15 seconds before checking.
                         idleCounter++;
                         if (idleCounter >= NovelLibrary.Instance.GetNovelCount())
                         {
@@ -198,7 +196,7 @@ namespace NovelReader
                     }
                     ttsScheduler.AddRequest(request);
                     idleCounter = 0;
-                    mre.WaitOne(250 * ttsScheduler.RequestCount / ttsScheduler.Threads);
+                    mre.WaitOne(500 * ttsScheduler.RequestCount / ttsScheduler.Threads);
                 }
                 else
                 {
@@ -222,7 +220,7 @@ namespace NovelReader
             }
             NovelLibrary.Instance.db.Commit();
             Configuration.Instance.LastFullUpdateTime = DateTime.Now;
-
+            bool newUpdate = false;
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
                 if (updateNovels[i] == null && results[i])
@@ -242,11 +240,14 @@ namespace NovelReader
                 }
                 if (updateNovels[i] == null)
                     continue;
+                if (idx > 0)
+                    newUpdate = true;
                 updateNovels[i].NewChaptersNotReadCount = updateNovels[i].NewChaptersNotReadCount + idx - failure;
                 updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
                 updateNovels[i].ClearChapters();
             }
-            NovelLibrary.Instance.db.Commit();
+            if (newUpdate)
+                mre.Set();
         }
 
 

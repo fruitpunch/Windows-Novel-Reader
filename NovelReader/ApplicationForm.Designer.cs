@@ -30,8 +30,8 @@
         {
             this.buttonContainerPanel = new System.Windows.Forms.Panel();
             this.btnSetting = new System.Windows.Forms.Button();
-            this.btnTTSList = new System.Windows.Forms.Button();
             this.btnNovelList = new System.Windows.Forms.Button();
+            this.btnTTSList = new System.Windows.Forms.Button();
             this.controlContainerPanel = new System.Windows.Forms.Panel();
             this.buttonContainerPanel.SuspendLayout();
             this.SuspendLayout();
@@ -64,21 +64,6 @@
             this.btnSetting.UseVisualStyleBackColor = true;
             this.btnSetting.Click += new System.EventHandler(this.btnSetting_Click);
             // 
-            // btnTTSList
-            // 
-            this.btnTTSList.FlatAppearance.BorderSize = 0;
-            this.btnTTSList.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.WindowFrame;
-            this.btnTTSList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTTSList.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTTSList.ForeColor = System.Drawing.Color.Black;
-            this.btnTTSList.Location = new System.Drawing.Point(0, 65);
-            this.btnTTSList.Name = "btnTTSList";
-            this.btnTTSList.Size = new System.Drawing.Size(200, 65);
-            this.btnTTSList.TabIndex = 2;
-            this.btnTTSList.Text = "TTS List";
-            this.btnTTSList.UseVisualStyleBackColor = true;
-            this.btnTTSList.Click += new System.EventHandler(this.btnTTSList_Click);
-            // 
             // btnNovelList
             // 
             this.btnNovelList.FlatAppearance.BorderSize = 0;
@@ -93,6 +78,21 @@
             this.btnNovelList.Text = "Novel List";
             this.btnNovelList.UseVisualStyleBackColor = true;
             this.btnNovelList.Click += new System.EventHandler(this.btnNovelList_Click);
+            // 
+            // btnTTSList
+            // 
+            this.btnTTSList.FlatAppearance.BorderSize = 0;
+            this.btnTTSList.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnTTSList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTTSList.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTTSList.ForeColor = System.Drawing.Color.Black;
+            this.btnTTSList.Location = new System.Drawing.Point(0, 65);
+            this.btnTTSList.Name = "btnTTSList";
+            this.btnTTSList.Size = new System.Drawing.Size(200, 65);
+            this.btnTTSList.TabIndex = 2;
+            this.btnTTSList.Text = "TTS List";
+            this.btnTTSList.UseVisualStyleBackColor = true;
+            this.btnTTSList.Click += new System.EventHandler(this.btnTTSList_Click);
             // 
             // controlContainerPanel
             // 

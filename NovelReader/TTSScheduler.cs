@@ -145,7 +145,7 @@ namespace NovelReader
     public delegate void TTSProgressEventHandler(Object sender, TTSProgressEventArgs e);
 
     //Schedule TTS request.
-    public class Scheduler
+    public class TTSScheduler
     {
         public event TTSProgressEventHandler ttsProgressEventHandler;
 
@@ -179,7 +179,7 @@ namespace NovelReader
             get { return this._requestList.Count; }
         }
 
-        public Scheduler(int threadCount)
+        public TTSScheduler(int threadCount)
         {
             this._requestList = new BindingList<Request>();
             this.requestListLock = new Object();
@@ -334,7 +334,6 @@ namespace NovelReader
             Request request;
             do
             {
-                
                 request = GetTopRequest(threadId);
                 if (request == null)
                     break;
@@ -376,7 +375,7 @@ namespace NovelReader
                         _requestList.Remove(request);
                         for (int i = 0; i < _requestList.Count; i++)
                         {
-                            _requestList[i].Priority += 3;
+                            _requestList[i].Priority++;
                         }
                     }));
                 }
