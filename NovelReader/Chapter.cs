@@ -34,6 +34,7 @@ namespace NovelReader
             }
         }
 
+
         public string NovelTitle
         {
             get { return this._novelTitle; }
