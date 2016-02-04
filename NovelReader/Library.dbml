@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Class="LibraryDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="" Member="Novels">
+    <Type Name="Novel">
+      <Column Member="NovelTitle" Type="System.String" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Member="Rank" Type="System.Int32" CanBeNull="false" />
+      <Column Member="StateID" Type="System.Int32" CanBeNull="false" />
+      <Column Member="SourceID" Type="System.Int32" CanBeNull="false" />
+      <Column Member="LastReadChapterID" Type="System.Int32" CanBeNull="false" />
+      <Column Member="ChaptersNotReadCount" Type="System.Int32" CanBeNull="false" />
+      <Association Name="Novel_Source" Member="Sources" ThisKey="SourceID" OtherKey="ID" Type="Source" />
+      <Association Name="Novel_Chapter" Member="Chapters" ThisKey="NovelTitle" OtherKey="NovelTitle" Type="Chapter" />
+    </Type>
+  </Table>
+  <Table Name="" Member="Chapters">
+    <Type Name="Chapter">
+      <Column Member="ID" Type="System.Int32" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Member="NovelTitle" Type="System.String" CanBeNull="false" />
+      <Column Member="ChapterTitle" Type="System.String" CanBeNull="false" />
+      <Column Member="Index" Type="System.Int32" CanBeNull="false" />
+      <Column Member="Read" Type="System.Boolean" CanBeNull="false" />
+      <Association Name="Chapter_ChapterUrl" Member="ChapterUrls" ThisKey="ID" OtherKey="ChapterID" Type="ChapterUrl" />
+      <Association Name="Novel_Chapter" Member="Novel" ThisKey="NovelTitle" OtherKey="NovelTitle" Type="Novel" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="" Member="ChapterUrls">
+    <Type Name="ChapterUrl">
+      <Column Member="Url" Type="System.String" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Member="Valid" Type="System.Boolean" CanBeNull="false" />
+      <Column Member="ChapterID" Type="System.Int32" CanBeNull="false" />
+      <Association Name="Chapter_ChapterUrl" Member="Chapter" ThisKey="ChapterID" OtherKey="ID" Type="Chapter" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="" Member="Sources">
+    <Type Name="Source">
+      <Column Member="ID" Type="System.Int32" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Member="SourceNovelLocation" Type="System.String" CanBeNull="false" />
+      <Column Member="SourceNovelID" Type="System.String" CanBeNull="false" />
+      <Association Name="Novel_Source" Member="Novel" ThisKey="ID" OtherKey="SourceID" Type="Novel" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

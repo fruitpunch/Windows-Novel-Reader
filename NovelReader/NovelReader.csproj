@@ -103,6 +103,11 @@
     <Compile Include="ApplicationForm.Designer.cs">
       <DependentUpon>ApplicationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Library.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Library.dbml</DependentUpon>
+    </Compile>
     <Compile Include="Novel.cs" />
     <Compile Include="NovelLibrary.cs" />
     <Compile Include="NovelListController.cs">
@@ -141,6 +146,9 @@
     <EmbeddedResource Include="ApplicationForm.resx">
       <DependentUpon>ApplicationForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Library.dbml.layout">
+      <DependentUpon>Library.dbml</DependentUpon>
+    </None>
     <EmbeddedResource Include="NovelListController.resx">
       <DependentUpon>NovelListController.cs</DependentUpon>
     </EmbeddedResource>
@@ -162,6 +170,11 @@
     <EmbeddedResource Include="TTSController.resx">
       <DependentUpon>TTSController.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Library.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>Library.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

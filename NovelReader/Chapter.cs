@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace NovelReader
 {
-    public class Chapter : INotifyPropertyChanged
+    public partial class Chapter : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
         private string _chapterTitle{ get; set; }
         private string _novelTitle{ get; set; }
@@ -33,7 +33,6 @@ namespace NovelReader
                 NotifyPropertyChanged("ChapterTitle");
             }
         }
-
 
         public string NovelTitle
         {

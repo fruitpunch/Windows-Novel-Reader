@@ -9,7 +9,7 @@ using Db4objects.Db4o;
 
 namespace NovelReader
 {
-    public class Novel : INotifyPropertyChanged
+    public partial class Novel : INotifyPropertyChanged
     {
         public enum NovelState : int { Active = 0, Inactive = 1, Completed = 2, Dropped = 3 };
 
@@ -25,7 +25,7 @@ namespace NovelReader
 
         public enum UpdateStates { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped, Error };
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
         private string _novelTitle { get; set; }
         private NovelState _state { get; set; }
@@ -189,6 +189,7 @@ namespace NovelReader
             this._dbRequest = 0;
             this.queuedTTSChapters = new Dictionary<Chapter, Request>();
             SetUpdateProgress();
+
         }
 
         public void Init()
