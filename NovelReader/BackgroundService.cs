@@ -233,7 +233,7 @@ namespace NovelReader
 
                 int failure = 0;
                 bool success;
-                for(int j = 0; j < downloadChapters.Length; j++)
+                for(int j = 0; j < downloadChapters.Length && !shutDown; j++)
                 {
                     success = updateNovels[i].DownloadChapter(downloadChapters[j], j+1, downloadChapters.Length);
                     if (!success)

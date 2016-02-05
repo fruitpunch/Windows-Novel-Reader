@@ -46,7 +46,7 @@ namespace NovelReader
             this.currentReadingNovel = novel;
             this.currentReadingNovel.StartReading();
             this.Text = novel.NovelTitle;
-            this.dgvChapterList.DataSource = novel.Chapters;
+            this.dgvChapterList.DataSource = novel.NovelChapters;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
             BackgroundService.Instance.ResetTTSList();
             this.novelDirectoryWatcher.EnableRaisingEvents = true;
@@ -245,12 +245,12 @@ namespace NovelReader
             }
             if (currentReadingNovel != null)
             {
-                if (currentReadingChapter != null && currentReadingChapter.SourceURL != null)
+                if (currentReadingChapter != null && currentReadingChapter.ChapterUrl != null)
                 {
                     Thread t = new Thread(new ParameterizedThreadStart(DownloadAndReadChapter));
                     t.Start(currentReadingChapter);
                 }
-                else if (currentReadingChapter != null && currentReadingChapter.SourceURL == null)
+                else if (currentReadingChapter != null && currentReadingChapter.ChapterUrl == null)
                 {
                     MessageBox.Show("This chapter does not contain a source link to download from.", "No Source Link", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -266,7 +266,7 @@ namespace NovelReader
                 DialogResult deleteResult = MessageBox.Show("Are you sure you want to delete " + currentReadingChapter.ChapterTitle, "Delete Chapter", MessageBoxButtons.YesNo);
                 if (deleteResult == DialogResult.No)
                     return;
-                if (currentReadingChapter.SourceURL != null)
+                if (currentReadingChapter.ChapterUrl != null)
                 {
                     DialogResult blackListResult = MessageBox.Show("Do you want to blacklist " + currentReadingChapter.ChapterTitle + "'s Source Link?", "Blacklist Link.", MessageBoxButtons.YesNo);
                     if (blackListResult == DialogResult.Yes)

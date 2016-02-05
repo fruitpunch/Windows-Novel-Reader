@@ -1,5 +1,4 @@
-﻿
-using Db4objects.Db4o;
+﻿using Db4objects.Db4o;
 using Db4objects.Db4o.Config;
 using Source;
 using System;
@@ -17,8 +16,7 @@ namespace NovelReader
 
         private static NovelLibrary instance;
 
-        private BindingList<Novel> _novelList { get; set; }
-        public volatile IObjectContainer db;
+        private List<Novel> novelList { get; set; }
         public volatile static LibraryDataContext libraryData;
         
 
@@ -37,57 +35,35 @@ namespace NovelReader
             }
         }
 
-        public BindingList<Novel> NovelList
+        public List<Novel> NovelList
         {
-            get { return this._novelList; }
+            get { return this.novelList; }
         }
 
         /*============Constructor===========*/
 
         private NovelLibrary()
         {
-            this._novelList = new BindingList<Novel>();
+            this.novelList = new List<Novel>();
+            
         }
 
         public void LoadNovelLibrary()
         {
             libraryData = new LibraryDataContext(Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName));
-            try
-            {
-                IEmbeddedConfiguration config = Db4oEmbedded.NewConfiguration();
-                config.Common.ObjectClass(typeof(Novel)).CascadeOnUpdate(true);
-                config.Common.ObjectClass(typeof(Chapter)).CascadeOnUpdate(true);
-                config.Common.ObjectClass(typeof(NovelSource)).CascadeOnUpdate(true);
-                db = Db4oEmbedded.OpenFile(config, Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.NovelListDBName));
-                IObjectSet novels = db.QueryByExample(typeof(Novel));
-                InsertNovels(novels);
-            }
-            catch (FileNotFoundException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            this.novelList = (from novel in libraryData.Novels
+                              orderby novel.Rank ascending
+                              select novel).ToList<Novel>();
         }
 
         public void SaveNovelLibrary()
         {
-            try
-            {
-                foreach (Novel n in _novelList)
-                {
-                    n.SaveChapterToDB();
-                    db.Store(n);
-                }
-                db.Commit();
-            }
-            catch(Exception e)
-            {
-            }
            
         }
 
         public void CloseNovelLibrary()
         {
-            db.Close();
+            //libraryData.Connection.Close();
         }
 
         /*============Getter/Setter=========*/
@@ -102,14 +78,14 @@ namespace NovelReader
 
         public int GetNovelCount()
         {
-            return _novelList.Count;
+            return novelList.Count;
         }
 
         public Novel[] GetUpdatingNovel()
         {
             List<Novel> updatingNovels = new List<Novel>();
 
-            var results = from novel in _novelList
+            var results = from novel in novelList
                           where novel.State == Novel.NovelState.Active || novel.State == Novel.NovelState.Inactive
                           orderby novel.Rank ascending
                           select novel;
@@ -124,7 +100,7 @@ namespace NovelReader
 
         public Tuple<bool, string> AddNovel(string novelTitle, NovelSource novelSource)
         {
-            foreach (Novel n in _novelList)
+            foreach (Novel n in novelList)
             {
                 if (novelTitle.Equals(n.NovelTitle))
                 {
@@ -158,18 +134,21 @@ namespace NovelReader
                     File.Create(Path.Combine(newNovelLocation, Configuration.Instance.DeleteSpecification));
             }
 
-            Novel newNovel = new Novel(novelTitle, novelSource);
-            _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
+            Source newSource = new Source();
+            newSource.SourceNovelLocation = novelSource.SourceLocation.ToString();
+            newSource.SourceNovelID = novelSource.NovelID;
+            libraryData.Sources.InsertOnSubmit(newSource);
+            libraryData.SubmitChanges();
 
-            try
-            {
-                db.Store(newNovel);
-                db.Commit();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
+            Novel newNovel = new Novel();
+            newNovel.NovelTitle = novelTitle;
+            newNovel.LastReadChapterID = -1;
+            newNovel.SourceID = newSource.ID;
+            newNovel.State = Novel.NovelState.Active;
+            libraryData.Novels.InsertOnSubmit(newNovel);
+            libraryData.SubmitChanges();
+            novelList.Insert(GetNonDroppedNovelCount(), newNovel);
+
             UpdateNovelRanking();
             Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");
             return successfulReturn;
@@ -183,24 +162,24 @@ namespace NovelReader
                 return;
             try
             {
-                deleteNovel.DeleteChapterFromDB();
-                db.Delete(deleteNovel);
+                var deleteChapters = (from chapter in libraryData.Chapters
+                                      where chapter.NovelTitle == novelTitle
+                                      select chapter);
+                var deleteUrls = (from url in libraryData.ChapterUrls
+                                  where deleteChapters.Contains(url.Chapter)
+                                  select url);
+                var deleteSources = (from source in libraryData.Sources
+                                    where source.ID == deleteNovel.SourceID
+                                    select source);
+                libraryData.Chapters.DeleteAllOnSubmit(deleteChapters);
+                libraryData.ChapterUrls.DeleteAllOnSubmit(deleteUrls);
+                libraryData.Sources.DeleteAllOnSubmit(deleteSources);
+                libraryData.Novels.DeleteOnSubmit(deleteNovel);
                 if (deleteData)
                 {
                     Directory.Delete(deleteNovel.GetNovelDirectory(), true);
                 }
-                if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
-                {
-                    BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                    {
-                        _novelList.Remove(deleteNovel);
-                    }));
-                }
-                else
-                {
-                    _novelList.Remove(deleteNovel);
-                }
-                deleteNovel = null;
+                libraryData.SubmitChanges();
             }
             catch (Exception e)
             {
@@ -233,7 +212,7 @@ namespace NovelReader
         public void DropNovel(string novelTitle)
         {
             int pos = GetPosition(novelTitle);
-            Move(pos, _novelList.Count - 1);
+            Move(pos, novelList.Count - 1);
         }
 
         public void PickUpNovel(string novelTitle)
@@ -246,25 +225,25 @@ namespace NovelReader
 
         private bool Move(int oldPosition, int newPosition)
         {
-            if (oldPosition < 0 || oldPosition >= _novelList.Count)
+            if (oldPosition < 0 || oldPosition >= novelList.Count)
                 return false;
-            if (newPosition < 0 || newPosition >= _novelList.Count)
+            if (newPosition < 0 || newPosition >= novelList.Count)
                 return false;
             if (oldPosition == newPosition)
                 return false;
 
-            Novel tmp = _novelList[oldPosition];
-            _novelList.RemoveAt(oldPosition);
-            _novelList.Insert(newPosition, tmp);
+            Novel tmp = novelList[oldPosition];
+            novelList.RemoveAt(oldPosition);
+            novelList.Insert(newPosition, tmp);
             UpdateNovelRanking();
             return true;
         }
 
         private int GetPosition(string novelTitle)
         {
-            for (int i = 0; i < _novelList.Count; i++)
+            for (int i = 0; i < novelList.Count; i++)
             {
-                if (_novelList[i].NovelTitle.Equals(novelTitle))
+                if (novelList[i].NovelTitle.Equals(novelTitle))
                     return i;
             }
             return -1;
@@ -273,9 +252,9 @@ namespace NovelReader
         private int GetNonDroppedNovelCount()
         {
             int count = 0;
-            for (int i = 0; i < _novelList.Count; i++)
+            for (int i = 0; i < novelList.Count; i++)
             {
-                if (_novelList[i].State != Novel.NovelState.Dropped)
+                if (novelList[i].State != Novel.NovelState.Dropped)
                     count++;
             }
             return count;
@@ -283,49 +262,11 @@ namespace NovelReader
 
         private void UpdateNovelRanking()
         {
-            for (int i = 0; i < _novelList.Count; i++)
+            for (int i = 0; i < novelList.Count; i++)
             {
-                _novelList[i].Rank = i + 1;
+                novelList[i].Rank = i + 1;
             }
-        }
-
-        private void InsertNovels(IObjectSet novelSet)
-        {
-            Novel[] novels = new Novel[novelSet.Count];
-            for (int i = 0; i < novelSet.Count; i++)
-                novels[i] = (Novel)novelSet[i];
-
-            if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
-            {
-                BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                {
-                    foreach (Novel n in novels)
-                    {
-                        int i = 0;
-                        for (; i < _novelList.Count; i++)
-                        {
-                            if (n.Rank < _novelList[i].Rank)
-                                break;
-                        }
-                        _novelList.Insert(i, n);
-                        n.Init();
-                    }
-                }));
-            }
-            else
-            {
-                foreach (Novel n in novels)
-                {
-                    int i = 0;
-                    for (; i < _novelList.Count; i++)
-                    {
-                        if (n.Rank < _novelList[i].Rank)
-                            break;
-                    }
-                    _novelList.Insert(i, n);
-                    n.Init();
-                }
-            }   
+            libraryData.SubmitChanges();
         }
     }
 }

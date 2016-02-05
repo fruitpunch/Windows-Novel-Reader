@@ -10,30 +10,25 @@ namespace NovelReader
 {
     public partial class Chapter : INotifyPropertyChanged
     {
-        //public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _chapterTitle{ get; set; }
-        private string _novelTitle{ get; set; }
-        private bool _hasRead { get; set; }
-        private int _index { get; set; }
-        private ChapterUrl _chapterUrl { get; set; }
-
+        private ChapterUrl chapterUrl { get; set; }
+        
         /*============Properties============*/
 
         public ChapterUrl ChapterUrl
         {
             get {
-                if (_chapterUrl == null)
+                if (chapterUrl == null)
                 {
                     var result = from chapterUrl in NovelLibrary.libraryData.ChapterUrls
                                  where chapterUrl.ChapterID == this.ID
                                  select chapterUrl;
                     if (result.Any())
-                        this._chapterUrl = (ChapterUrl)result;
+                        this.chapterUrl = (ChapterUrl)result;
                     else
                         return null;
                 }
-                return _chapterUrl;
+                return chapterUrl;
             }
 
         }
@@ -52,24 +47,24 @@ namespace NovelReader
 
         public string GetAudioFileLocation()
         {
-            return Path.Combine(Configuration.Instance.NovelFolderLocation, _novelTitle, "audios", _index.ToString() + "_" + Util.CleanFileTitle(_chapterTitle) + ".mp3");
+            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "audios", Index.ToString() + "_" + Util.CleanFileTitle(ChapterTitle) + ".mp3");
         }
 
         public string GetTextFileLocation()
         {
-            return Path.Combine(Configuration.Instance.NovelFolderLocation, _novelTitle, "texts", _index.ToString() + "_" + Util.CleanFileTitle(_chapterTitle) + ".txt");
+            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "texts", Index.ToString() + "_" + Util.CleanFileTitle(ChapterTitle) + ".txt");
         }
 
         /*============Public Function=======*/
 
         public void ChangeIndex(int newIndex)
         {
-            Console.WriteLine("old index: " + _index + "  new index: " + newIndex);
-            if (newIndex == this._index)
+            Console.WriteLine("old index: " + Index + "  new index: " + newIndex);
+            if (newIndex == Index)
                 return;
             string oldAudioFileLocation = GetAudioFileLocation();
             string oldTextFileLocation = GetTextFileLocation();
-            this._index = newIndex;
+            Index = newIndex;
             string newAudioFileLocation = GetAudioFileLocation();
             string newTextFileLocation = GetTextFileLocation();
 
@@ -104,7 +99,7 @@ namespace NovelReader
         {
             string oldAudioFileLocation = GetAudioFileLocation();
             string oldTextFileLocation = GetTextFileLocation();
-            this._chapterTitle = newChapterTitle;
+            ChapterTitle = newChapterTitle;
             string newAudioFileLocation = GetAudioFileLocation();
             string newTextFileLocation = GetTextFileLocation();
 
