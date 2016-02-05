@@ -16,55 +16,26 @@ namespace NovelReader
         private string _novelTitle{ get; set; }
         private bool _hasRead { get; set; }
         private int _index { get; set; }
-        private string _sourceUrl { get; set; }
+        private ChapterUrl _chapterUrl { get; set; }
 
         /*============Properties============*/
 
-        public string ChapterTitle
+        public ChapterUrl ChapterUrl
         {
-            get { return this._chapterTitle; }
-            set {
-                if (value.Length == 0)
-                    return;
-                if (this._chapterTitle != value)
-                    ChangeChapterTitle(value);
-                else
-                    this._chapterTitle = value;
-                NotifyPropertyChanged("ChapterTitle");
+            get {
+                if (_chapterUrl == null)
+                {
+                    var result = from chapterUrl in NovelLibrary.Instance.libraryData.ChapterUrls
+                                 where chapterUrl.ChapterID == this.ID
+                                 select chapterUrl;
+                    if (result.Any())
+                        this._chapterUrl = (ChapterUrl)result;
+                    else
+                        return null;
+                }
+                return _chapterUrl;
             }
-        }
 
-        public string NovelTitle
-        {
-            get { return this._novelTitle; }
-        }
-
-        public string SourceURL
-        {
-            get { return this._sourceUrl; }
-            set { this._sourceUrl = value; }
-        }
-
-        public bool Read
-        {
-            get { return this._hasRead; }
-            set { 
-                this._hasRead = value;
-                NotifyPropertyChanged("Read");
-                NovelLibrary.Instance.db.Store(this);
-            }
-        }
-
-        public int Index
-        {
-            get { return this._index; }
-            set {
-                if (this._index != -1 && this._index != value)
-                    NovelLibrary.Instance.GetNovel(_novelTitle).ChangeIndex(this._index, value);
-                else
-                    this._index = value;
-                NotifyPropertyChanged("Index");
-            }
         }
 
         public bool HasAudio
@@ -79,11 +50,10 @@ namespace NovelReader
 
         /*============Constructor===========*/
 
-        public Chapter(string chapterTitle, string novelTitle, string sourceUrl, bool hasRead = false, int index = -1)
+        public Chapter(string chapterTitle, string novelTitle, bool hasRead = false, int index = -1)
         {
             this._chapterTitle = chapterTitle;
             this._novelTitle = novelTitle;
-            this._sourceUrl = sourceUrl;
             this._hasRead = hasRead;
             this._index = index;
         }

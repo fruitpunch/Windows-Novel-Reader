@@ -119,6 +119,11 @@ namespace NovelReader
             get { return "NovelList.db"; }
         }
 
+        public string LibraryDataName
+        {
+            get { return "LibraryData.mdf"; }
+        }
+
         public Rectangle NovelReaderRect
         {
             get { return this._novelReaderFormRect; }

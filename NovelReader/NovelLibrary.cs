@@ -19,6 +19,7 @@ namespace NovelReader
 
         private BindingList<Novel> _novelList { get; set; }
         public volatile IObjectContainer db;
+        public volatile LibraryDataContext libraryData;
         
 
         /*============Properties============*/
@@ -50,7 +51,7 @@ namespace NovelReader
 
         public void LoadNovelLibrary()
         {
-            
+            this.libraryData = new LibraryDataContext(Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName));
             try
             {
                 IEmbeddedConfiguration config = Db4oEmbedded.NewConfiguration();

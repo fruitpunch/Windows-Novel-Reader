@@ -53,11 +53,6 @@ namespace NovelReader
 
         /*============Properties============*/
 
-        public string NovelTitle
-        {
-            get { return this._novelTitle; }
-        }
-
         public NovelState State
         {
             get { return this._state; }
@@ -73,7 +68,12 @@ namespace NovelReader
 
         public int ChapterCount
         {
-            get { return this._chapterCount; }
+            get {
+                int count = (from chapters in NovelLibrary.Instance.libraryData.Chapters
+                             where chapters.NovelTitle == this.NovelTitle
+                             select chapters).Count();
+                return count;
+            }
             set
             {
                 this._chapterCount = value;
@@ -83,7 +83,12 @@ namespace NovelReader
 
         public int NewChaptersNotReadCount
         {
-            get { return this._newChaptersNotReadCount; }
+            get {
+                int newChaptersNotReadCount = (from novel in NovelLibrary.Instance.libraryData.Novels
+                             where novel.NovelTitle == this.NovelTitle
+                             select novel.ChaptersNotReadCount).First();
+                return newChaptersNotReadCount;
+            }
             set
             {
                 this._newChaptersNotReadCount = value;
@@ -97,15 +102,6 @@ namespace NovelReader
                 if(this._newChaptersNotReadCount > 0)
                     return this._chapterCount.ToString() + "  ( " + this._newChaptersNotReadCount + " new chapters )";
                 return this._chapterCount.ToString() + "  ( " + this._newChaptersNotReadCount + " )";
-            }
-        }
-
-        public int Rank
-        {
-            get { return this._rank; }
-            set { 
-                this._rank = value;
-                NotifyPropertyChanged("Rank");
             }
         }
 
@@ -133,9 +129,26 @@ namespace NovelReader
             }
         }
 
-        public BindingList<Chapter> Chapters
+        public IQueryable NovelChapters
         {
-            get { return this._chapters; }
+            get {
+                var novelChapter = (from chapter in NovelLibrary.Instance.libraryData.Chapters
+                                     where chapter.NovelTitle == this.NovelTitle
+                                     select chapter);
+
+                var joinedResult = (from chapter in novelChapter
+                                    join url in NovelLibrary.Instance.libraryData.ChapterUrls
+                                    on chapter.ID equals url.ChapterID into jr
+                                    from subChapterUrl in jr.DefaultIfEmpty()
+                                    select new { chapter, Url = (subChapterUrl == null ? null : subChapterUrl)});
+
+                var finalResult = (from result in joinedResult
+                                   where result.Url == null || result.Url.Valid
+                                   orderby result.chapter.Index
+                                   select result.chapter);
+                
+                return finalResult;
+            }
         }
 
         public bool Reading
@@ -466,7 +479,7 @@ namespace NovelReader
                     chapterIndex++;
                 else if (!invalidUrlIdSet.Contains(menuItems[i].Item2.GetHashCode()) && !validUrlIdSet.Contains(menuItems[i].Item2.GetHashCode()))
                 {
-                    Chapter newChapter = new Chapter(menuItems[i].Item1, _novelTitle, menuItems[i].Item2, false, chapterIndex);
+                    Chapter newChapter = new Chapter(menuItems[i].Item1, _novelTitle, false, chapterIndex);
                     if (i < chapterIndex)
                         InsertNewChapter(newChapter, i);
                     else
@@ -478,7 +491,7 @@ namespace NovelReader
 
             int updateCount = 0;
             foreach (Chapter c in _chapters)
-                if (c.SourceURL != null && !c.HasText)
+                if (c.ChapterUrl != null && !c.HasText)
                     updateCount++;
 
             SaveChapterToDB();
@@ -496,7 +509,7 @@ namespace NovelReader
             success = false;
             for (int i = startIdx; i < _chapters.Count; i++)
             {
-                if (!_chapters[i].HasText && _chapters[i].SourceURL != null)
+                if (!_chapters[i].HasText && _chapters[i].ChapterUrl != null)
                 {
                     success = DownloadChapterContent(_chapters[i]);
                     lastUpdatedIdx = i;
@@ -514,7 +527,7 @@ namespace NovelReader
         {
             int updateCount = 0;
             foreach (Chapter c in _chapters)
-                if (c.SourceURL != null && !c.HasText)
+                if (c.ChapterUrl != null && !c.HasText)
                     updateCount++;
             return updateCount;
         }
@@ -523,7 +536,7 @@ namespace NovelReader
         {
             for (int i = 0; i < _chapters.Count; i++)
             {
-                if (!_chapters[i].HasText && _chapters[i].SourceURL != null)
+                if (!_chapters[i].HasText && _chapters[i].ChapterUrl != null)
                 {
                     if (_chapters[i].Equals(BackgroundService.lastUpdatedChapter))
                         continue;                 
@@ -535,10 +548,10 @@ namespace NovelReader
 
         public bool DownloadChapterContent(Chapter chapter)
         {
-            if (chapter == null || chapter.SourceURL == null)
+            if (chapter == null || chapter.ChapterUrl == null)
                 return false;
             BackgroundService.lastUpdatedChapter = chapter;
-            string[] novelContent = _novelSource.GetChapterContent(chapter.ChapterTitle, chapter.SourceURL);
+            string[] novelContent = _novelSource.GetChapterContent(chapter.ChapterTitle, chapter.ChapterUrl.Url);
             if (novelContent == null)
                 return false;
             System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
@@ -617,7 +630,7 @@ namespace NovelReader
 
         public Chapter AddChapter()
         {
-            Chapter chapter = new Chapter("<Enter Chapter Title>", _novelTitle, null, false, _chapterCount);
+            Chapter chapter = new Chapter("<Enter Chapter Title>", _novelTitle, false, _chapterCount);
             AppendNewChapter(chapter);
             NovelLibrary.Instance.db.Store(chapter);
             NovelLibrary.Instance.db.Commit();
@@ -639,11 +652,11 @@ namespace NovelReader
                 {
                     _chapters.Remove(chapter);
                 }
-                if (chapter.SourceURL != null)
+                if (chapter.ChapterUrl != null)
                 {
                     if(blackList)
-                        invalidUrlIdSet.Add(chapter.SourceURL.GetHashCode());
-                    validUrlIdSet.Remove(chapter.SourceURL.GetHashCode());
+                        invalidUrlIdSet.Add(chapter.ChapterUrl.GetHashCode());
+                    validUrlIdSet.Remove(chapter.ChapterUrl.GetHashCode());
                 }
                 
                 
