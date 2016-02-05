@@ -118,6 +118,8 @@ namespace NovelReader
 		
 		private int _ChaptersNotReadCount;
 		
+		private bool _MakeAudio;
+		
 		private EntitySet<Source> _Sources;
 		
 		private EntitySet<Chapter> _Chapters;
@@ -138,6 +140,8 @@ namespace NovelReader
     partial void OnLastReadChapterIDChanged();
     partial void OnChaptersNotReadCountChanging(int value);
     partial void OnChaptersNotReadCountChanged();
+    partial void OnMakeAudioChanging(bool value);
+    partial void OnMakeAudioChanged();
     #endregion
 		
 		public Novel()
@@ -263,6 +267,26 @@ namespace NovelReader
 					this._ChaptersNotReadCount = value;
 					this.SendPropertyChanged("ChaptersNotReadCount");
 					this.OnChaptersNotReadCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MakeAudio")]
+		public bool MakeAudio
+		{
+			get
+			{
+				return this._MakeAudio;
+			}
+			set
+			{
+				if ((this._MakeAudio != value))
+				{
+					this.OnMakeAudioChanging(value);
+					this.SendPropertyChanging();
+					this._MakeAudio = value;
+					this.SendPropertyChanged("MakeAudio");
+					this.OnMakeAudioChanged();
 				}
 			}
 		}

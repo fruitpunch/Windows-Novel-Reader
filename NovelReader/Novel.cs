@@ -27,7 +27,6 @@ namespace NovelReader
 
         //public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _novelTitle { get; set; }
         private NovelState _state { get; set; }
         private int _chapterCount { get; set; }
         private int _newChaptersNotReadCount { get; set; }
@@ -41,7 +40,7 @@ namespace NovelReader
         private Tuple<int, string> _updateProgress { get; set; }
         private int _dbRequest { get; set; }
         [Transient]
-        private volatile BindingList<Chapter> _chapters;
+        //private volatile BindingList<Chapter> _chapters;
 
         private HashSet<int> validUrlIdSet;
         private HashSet<int> invalidUrlIdSet;
@@ -55,24 +54,22 @@ namespace NovelReader
 
         public NovelState State
         {
-            get { return this._state; }
+            get { return (NovelState)this.StateID; }
             set {
-                if (this._state != NovelState.Dropped && value == NovelState.Dropped)
-                    NovelLibrary.Instance.DropNovel(this._novelTitle);
-                else if (this._state == NovelState.Dropped && value != NovelState.Dropped)
-                    NovelLibrary.Instance.PickUpNovel(this._novelTitle);
-                this._state = value;
+                if (State != NovelState.Dropped && value == NovelState.Dropped)
+                    NovelLibrary.Instance.DropNovel(NovelTitle);
+                else if (State == NovelState.Dropped && value != NovelState.Dropped)
+                    NovelLibrary.Instance.PickUpNovel(NovelTitle);
+                StateID = (int)value;
                 SetUpdateProgress();
+                NovelLibrary.libraryData.SubmitChanges();
             }
         }
 
         public int ChapterCount
         {
             get {
-                int count = (from chapters in NovelLibrary.Instance.libraryData.Chapters
-                             where chapters.NovelTitle == this.NovelTitle
-                             select chapters).Count();
-                return count;
+                return NovelChapters.Count();
             }
             set
             {
@@ -84,7 +81,7 @@ namespace NovelReader
         public int NewChaptersNotReadCount
         {
             get {
-                int newChaptersNotReadCount = (from novel in NovelLibrary.Instance.libraryData.Novels
+                int newChaptersNotReadCount = (from novel in NovelLibrary.libraryData.Novels
                              where novel.NovelTitle == this.NovelTitle
                              select novel.ChaptersNotReadCount).First();
                 return newChaptersNotReadCount;
@@ -117,34 +114,22 @@ namespace NovelReader
             set { this._lastReadChapter = value; }
         }
 
-        public bool MakeAudio
-        {
-            get { return this._makeAudio; }
-            set { 
-                this._makeAudio = value;
-                if (this._makeAudio)
-                    LoadChapterFromDB();
-                else
-                    SaveChapterToDB();
-            }
-        }
-
-        public IQueryable NovelChapters
+        public IQueryable<Chapter> NovelChapters
         {
             get {
-                var novelChapter = (from chapter in NovelLibrary.Instance.libraryData.Chapters
+                var novelChapter = (from chapter in NovelLibrary.libraryData.Chapters
                                      where chapter.NovelTitle == this.NovelTitle
                                      select chapter);
 
                 var joinedResult = (from chapter in novelChapter
-                                    join url in NovelLibrary.Instance.libraryData.ChapterUrls
+                                    join url in NovelLibrary.libraryData.ChapterUrls
                                     on chapter.ID equals url.ChapterID into jr
                                     from subChapterUrl in jr.DefaultIfEmpty()
                                     select new { chapter, Url = (subChapterUrl == null ? null : subChapterUrl)});
 
                 var finalResult = (from result in joinedResult
-                                   where result.Url == null || result.Url.Valid
-                                   orderby result.chapter.Index
+                                   where result.Url.Valid || result.Url == null
+                                   orderby result.chapter.Index ascending
                                    select result.chapter);
                 
                 return finalResult;
@@ -189,14 +174,13 @@ namespace NovelReader
 
         public Novel(string novelTitle, NovelSource novelSource, NovelState state = NovelState.Active, int rank = 0, bool isReading = false)
         {
-            this._novelTitle = novelTitle;
             this._novelSource = novelSource;
             this._state = state;
             this._rank = rank;
             this._newChaptersNotReadCount = 0;
             this._isReading = isReading;
 
-            this._chapters = new BindingList<Chapter>();
+            //this._chapters = new BindingList<Chapter>();
             this.validUrlIdSet = new HashSet<int>();
             this.invalidUrlIdSet = new HashSet<int>();
             this._dbRequest = 0;
@@ -218,7 +202,7 @@ namespace NovelReader
 
         public string GetDeleteSpecificationLocation()
         {
-            string path = System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, _novelTitle, Configuration.Instance.DeleteSpecification);
+            string path = System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, Configuration.Instance.DeleteSpecification);
             if (File.Exists(path))
                 return path;
             return null;
@@ -226,7 +210,7 @@ namespace NovelReader
 
         public string GetReplaceSpecificationLocation()
         {
-            string path = System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, _novelTitle, Configuration.Instance.ReplaceSpecification);
+            string path = System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, Configuration.Instance.ReplaceSpecification);
             if (File.Exists(path))
                 return path;
             return null;
@@ -236,11 +220,12 @@ namespace NovelReader
 
         public string GetNovelDirectory()
         {
-            return System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, _novelTitle);
+            return System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle);
         }
 
         public void LoadChapterFromDB()
         {
+            /*
             _dbRequest++;
             //Console.WriteLine("Load Chapters for " + _novelTitle + " " + _dbRequest);
             if (_dbRequest > 1)
@@ -262,7 +247,7 @@ namespace NovelReader
                 if (_lastReadChapter != null && _lastReadChapter.Index == chapter.Index)
                     _lastReadChapter = chapter;
             }
-            
+            */
         }
 
         public void SaveChapterToDB()
@@ -463,7 +448,7 @@ namespace NovelReader
         //Check and see if there is new chapter available for download.
         public bool CheckForUpdate()
         {
-            LoadChapterFromDB();
+            //LoadChapterFromDB();
 
             SetUpdateProgress(0, 0, UpdateStates.Checking);
             Tuple<string, string>[] menuItems = _novelSource.GetMenuURLs();
@@ -472,30 +457,31 @@ namespace NovelReader
                 SetUpdateProgress(0, 0, UpdateStates.Error);
                 return false;
             }
-            int chapterIndex = 0;
+            
+            List<string> urls = (from url in NovelLibrary.libraryData.ChapterUrls
+                                 select url.Url).ToList<string>();
+            int maxIndex = ChapterCount;
+
             for (int i = 0; i < menuItems.Length; i++)
             {
-                if (chapterIndex < _chapters.Count && validUrlIdSet.Contains(menuItems[i].Item2.GetHashCode()))
-                    chapterIndex++;
-                else if (!invalidUrlIdSet.Contains(menuItems[i].Item2.GetHashCode()) && !validUrlIdSet.Contains(menuItems[i].Item2.GetHashCode()))
+                if(!urls.Contains(menuItems[i].Item2))
                 {
-                    Chapter newChapter = new Chapter(menuItems[i].Item1, _novelTitle, false, chapterIndex);
-                    if (i < chapterIndex)
-                        InsertNewChapter(newChapter, i);
-                    else
-                        InsertNewChapter(newChapter, chapterIndex);
-                    validUrlIdSet.Add(menuItems[i].Item2.GetHashCode());
-                    chapterIndex++;
+                    Chapter newChapter = new Chapter();
+                    newChapter.ChapterTitle = menuItems[i].Item1;
+                    newChapter.NovelTitle = NovelTitle;
+                    newChapter.Index = maxIndex++;
+                    newChapter.Read = false;
+                    NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
+                    ChapterUrl newChapterUrl = new ChapterUrl();
+                    newChapterUrl.ChapterID = newChapter.ID;
+                    newChapterUrl.Url = menuItems[i].Item2;
+                    newChapterUrl.Valid = true;
+                    NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
                 }
             }
-
-            int updateCount = 0;
-            foreach (Chapter c in _chapters)
-                if (c.ChapterUrl != null && !c.HasText)
-                    updateCount++;
-
-            SaveChapterToDB();
-            ClearChapters();
+            int updateCount = (from chapter in NovelLibrary.libraryData.Chapters
+                               where chapter.NovelTitle == NovelTitle && !chapter.HasText
+                               select chapter).Count();
             if (updateCount == 0)
                 SetUpdateProgress(0, 0, UpdateStates.UpToDate);
             else
@@ -503,26 +489,19 @@ namespace NovelReader
             return updateCount > 0;
         }
 
-        public int DownloadNextUpdate(int startIdx, int index, int totalUpdateCount, out bool success)
+        public bool DownloadChapter(Chapter downloadChapter, int index, int totalUpdateCount)
         {
-            int lastUpdatedIdx = 0;
-            success = false;
-            for (int i = startIdx; i < _chapters.Count; i++)
-            {
-                if (!_chapters[i].HasText && _chapters[i].ChapterUrl != null)
-                {
-                    success = DownloadChapterContent(_chapters[i]);
-                    lastUpdatedIdx = i;
-                    break;
-                }
-            }
+            bool success = false;
+
+            success = DownloadChapterContent(downloadChapter);
+
             if (success)
                 SetUpdateProgress(index, totalUpdateCount, UpdateStates.Fetching);
             else
                 SetUpdateProgress(0, 0, UpdateStates.Error);
-            return lastUpdatedIdx;
+            return success;
         }
-
+        /*
         public int GetUpdateCount()
         {
             int updateCount = 0;
@@ -545,7 +524,7 @@ namespace NovelReader
             }
             return false;
         }
-
+        */
         public bool DownloadChapterContent(Chapter chapter)
         {
             if (chapter == null || chapter.ChapterUrl == null)
@@ -630,51 +609,49 @@ namespace NovelReader
 
         public Chapter AddChapter()
         {
-            Chapter chapter = new Chapter("<Enter Chapter Title>", _novelTitle, false, _chapterCount);
-            AppendNewChapter(chapter);
-            NovelLibrary.Instance.db.Store(chapter);
-            NovelLibrary.Instance.db.Commit();
-            return chapter;
+            int maxIndex = (from chapter in NovelLibrary.libraryData.Chapters
+                            where chapter.NovelTitle == NovelTitle
+                            orderby chapter.Index descending
+                            select chapter.Index).First();
+            Chapter newChapter = new Chapter();
+            newChapter.NovelTitle = NovelTitle;
+            newChapter.ChapterTitle = "<Enter Chapter Title>";
+            newChapter.Read = false;
+            newChapter.Index = maxIndex + 1;
+            NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
+            return newChapter;
         }
 
-        public void DeleteChapter(Chapter chapter, bool blackList)
+        public void DeleteChapter(Chapter deleteChapter, bool blackList)
         {
-            if (_chapters.Contains(chapter))
-            {
-                if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
+            if(NovelLibrary.libraryData.Chapters.Any(chapter => chapter.ID == deleteChapter.ID))
+            {   
+                if (deleteChapter.HasAudio)
+                    File.Delete(deleteChapter.GetAudioFileLocation());
+                if (deleteChapter.HasText)
+                    File.Delete(deleteChapter.GetTextFileLocation());
+                if (deleteChapter.Equals(_lastViewedChapter))
                 {
-                    BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                    {
-                        _chapters.Remove(chapter);
-                    }));
-                }
-                else
-                {
-                    _chapters.Remove(chapter);
-                }
-                if (chapter.ChapterUrl != null)
-                {
-                    if(blackList)
-                        invalidUrlIdSet.Add(chapter.ChapterUrl.GetHashCode());
-                    validUrlIdSet.Remove(chapter.ChapterUrl.GetHashCode());
-                }
-                
-                
-                if (chapter.HasAudio)
-                    File.Delete(chapter.GetAudioFileLocation());
-                if (chapter.HasText)
-                    File.Delete(chapter.GetTextFileLocation());
-                if (chapter.Equals(_lastViewedChapter))
-                {
-                    if (chapter.Index > 0)
-                        _lastViewedChapter = GetChapter(chapter.Index - 1);
-                    else if (chapter.Index == 0)
+                    if (deleteChapter.Index > 0)
+                        _lastViewedChapter = GetChapter(deleteChapter.Index - 1);
+                    else if (deleteChapter.Index == 0)
                         _lastViewedChapter = GetChapter(0);
                     else
                         _lastViewedChapter = null;
                 }
-                NovelLibrary.Instance.db.Delete(chapter);
-                NovelLibrary.Instance.db.Commit();
+
+                deleteChapter.Index = -1;
+                if (deleteChapter.ChapterUrl != null)
+                {
+                    if (blackList)
+                        deleteChapter.ChapterUrl.Valid = false;
+                    else
+                    {
+                        NovelLibrary.libraryData.Chapters.DeleteOnSubmit(deleteChapter);
+                        NovelLibrary.libraryData.ChapterUrls.DeleteOnSubmit(deleteChapter.ChapterUrl);
+                    }
+                }
+                NovelLibrary.libraryData.SubmitChanges();
                 VeryifyAndCorrectChapterIndexing();
             }
         }
@@ -772,7 +749,7 @@ namespace NovelReader
 
         /*============Private Function======*/
         
-
+        /*
         //Add a new chapter to the end of chapter list.
         private void AppendNewChapter(Chapter chapter)
         {
@@ -815,9 +792,16 @@ namespace NovelReader
             }
             VeryifyAndCorrectChapterIndexing();
         }
-
+        */
         private void VeryifyAndCorrectChapterIndexing()
         {
+            Chapter[] chapters = NovelChapters.ToArray<Chapter>();
+            for (int i = 0; i < chapters.Length; i++)
+            {
+                if (chapters[i].Index != i)
+                    chapters[i].ChangeIndex(i);
+            }
+            /*
             if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(this))
             {
                 BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
@@ -837,18 +821,16 @@ namespace NovelReader
                         _chapters[i].ChangeIndex(i);
                 }
             }
-            ChapterCount = _chapters.Count;
+            */
+            //ChapterCount = _chapters.Count;
         }
 
-        
 
         private void NotifyPropertyChanged(string propertyName)
         {
 
             if (PropertyChanged != null)
             {
-                NovelLibrary.Instance.db.Store(this);
-                NovelLibrary.Instance.db.Commit();
                 if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
                 {
                     BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
@@ -860,6 +842,7 @@ namespace NovelReader
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
                 }
+                NovelLibrary.libraryData.SubmitChanges();
             }
         }
 

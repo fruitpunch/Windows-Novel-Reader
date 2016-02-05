@@ -25,7 +25,7 @@ namespace NovelReader
             get {
                 if (_chapterUrl == null)
                 {
-                    var result = from chapterUrl in NovelLibrary.Instance.libraryData.ChapterUrls
+                    var result = from chapterUrl in NovelLibrary.libraryData.ChapterUrls
                                  where chapterUrl.ChapterID == this.ID
                                  select chapterUrl;
                     if (result.Any())
@@ -46,16 +46,6 @@ namespace NovelReader
         public bool HasText
         {
             get { return File.Exists(GetTextFileLocation()); }
-        }
-
-        /*============Constructor===========*/
-
-        public Chapter(string chapterTitle, string novelTitle, bool hasRead = false, int index = -1)
-        {
-            this._chapterTitle = chapterTitle;
-            this._novelTitle = novelTitle;
-            this._hasRead = hasRead;
-            this._index = index;
         }
 
         /*============Getter/Setter=========*/
@@ -104,7 +94,7 @@ namespace NovelReader
                     return;
                 }
             }
-            NovelLibrary.Instance.db.Store(this);
+            NovelLibrary.libraryData.SubmitChanges();
         }
 
 
@@ -140,7 +130,7 @@ namespace NovelReader
                     return;
                 }
             }
-            NovelLibrary.Instance.db.Store(this);
+            NovelLibrary.libraryData.SubmitChanges();
         }
 
         public void NotifyPropertyChanged(string propertyName)
@@ -149,6 +139,7 @@ namespace NovelReader
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+            NovelLibrary.libraryData.SubmitChanges();
         }
     }
 }

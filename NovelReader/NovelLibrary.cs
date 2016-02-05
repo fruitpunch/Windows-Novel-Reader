@@ -19,7 +19,7 @@ namespace NovelReader
 
         private BindingList<Novel> _novelList { get; set; }
         public volatile IObjectContainer db;
-        public volatile LibraryDataContext libraryData;
+        public volatile static LibraryDataContext libraryData;
         
 
         /*============Properties============*/
@@ -51,7 +51,7 @@ namespace NovelReader
 
         public void LoadNovelLibrary()
         {
-            this.libraryData = new LibraryDataContext(Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName));
+            libraryData = new LibraryDataContext(Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName));
             try
             {
                 IEmbeddedConfiguration config = Db4oEmbedded.NewConfiguration();
@@ -94,12 +94,10 @@ namespace NovelReader
 
         public Novel GetNovel(string novelTitle)
         {
-            foreach (Novel n in _novelList)
-            {
-                if (n.NovelTitle.Equals(novelTitle))
-                    return n;
-            }
-            return null;
+            Novel result = (from novel in NovelLibrary.libraryData.Novels
+                            where novel.NovelTitle == novelTitle
+                            select novel).First<Novel>();
+            return result;
         }
 
         public int GetNovelCount()

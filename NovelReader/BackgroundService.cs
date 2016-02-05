@@ -223,26 +223,27 @@ namespace NovelReader
             bool newUpdate = false;
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
-                if (updateNovels[i] == null && results[i])
+                if (updateNovels[i] == null || results[i])
                     continue;
-                updateNovels[i].LoadChapterFromDB();
-                int updateCount = updateNovels[i].GetUpdateCount();
-                int idx = 0;
-                int lastUpdatedIdx = 0;
+
+                Chapter[] downloadChapters = (from chapter in NovelLibrary.libraryData.Chapters
+                              where chapter.NovelTitle == updateNovels[i].NovelTitle && !chapter.HasText
+                              orderby chapter.Index ascending
+                              select chapter).ToArray<Chapter>();
+
                 int failure = 0;
                 bool success;
-                while (updateNovels[i] != null && updateNovels[i].HasUpdate() && !shutDown)
+                for(int j = 0; j < downloadChapters.Length; j++)
                 {
-                    idx++;
-                    lastUpdatedIdx = updateNovels[i].DownloadNextUpdate(lastUpdatedIdx, idx, updateCount, out success);
+                    success = updateNovels[i].DownloadChapter(downloadChapters[j], j+1, downloadChapters.Length);
                     if (!success)
                         failure++;
                 }
                 if (updateNovels[i] == null)
                     continue;
-                if (idx > 0)
+                if (downloadChapters.Length > 0)
                     newUpdate = true;
-                updateNovels[i].NewChaptersNotReadCount = updateNovels[i].NewChaptersNotReadCount + idx - failure;
+                updateNovels[i].NewChaptersNotReadCount = updateNovels[i].NewChaptersNotReadCount + downloadChapters.Length - failure;
                 updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
                 updateNovels[i].ClearChapters();
             }

@@ -7,6 +7,7 @@
       <Column Member="SourceID" Type="System.Int32" CanBeNull="false" />
       <Column Member="LastReadChapterID" Type="System.Int32" CanBeNull="false" />
       <Column Member="ChaptersNotReadCount" Type="System.Int32" CanBeNull="false" />
+      <Column Member="MakeAudio" Type="System.Boolean" CanBeNull="false" />
       <Association Name="Novel_Source" Member="Sources" ThisKey="SourceID" OtherKey="ID" Type="Source" />
       <Association Name="Novel_Chapter" Member="Chapters" ThisKey="NovelTitle" OtherKey="NovelTitle" Type="Chapter" />
     </Type>
