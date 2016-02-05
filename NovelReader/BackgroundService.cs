@@ -216,9 +216,7 @@ namespace NovelReader
                 if (updateNovels[i] == null)
                     continue;
                 results[i] = updateNovels[i].CheckForUpdate();
-                NovelLibrary.Instance.db.Store(updateNovels[i]);
             }
-            NovelLibrary.Instance.db.Commit();
             Configuration.Instance.LastFullUpdateTime = DateTime.Now;
             bool newUpdate = false;
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
@@ -243,7 +241,7 @@ namespace NovelReader
                     continue;
                 if (downloadChapters.Length > 0)
                     newUpdate = true;
-                updateNovels[i].NewChaptersNotReadCount = updateNovels[i].NewChaptersNotReadCount + downloadChapters.Length - failure;
+                updateNovels[i].ChaptersNotReadCount = updateNovels[i].ChaptersNotReadCount + downloadChapters.Length - failure;
                 updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
                 updateNovels[i].ClearChapters();
             }

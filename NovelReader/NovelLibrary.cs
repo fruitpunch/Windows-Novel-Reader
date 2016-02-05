@@ -51,7 +51,9 @@ namespace NovelReader
         public void LoadNovelLibrary()
         {
             libraryData = new LibraryDataContext(Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName));
-            this.novelList = (from novel in libraryData.Novels
+            if (!libraryData.DatabaseExists())
+                libraryData.CreateDatabase();
+            novelList = (from novel in libraryData.Novels
                               orderby novel.Rank ascending
                               select novel).ToList<Novel>();
         }
