@@ -131,9 +131,9 @@ namespace NovelReader
                 
             if (parts.Length != 2)
                 return;
-            if (Int32.TryParse(parts[0], out fileIndex) && fileIndex >= 0 && fileIndex < currentReadingNovel.Chapters.Count)
+            if (Int32.TryParse(parts[0], out fileIndex) && fileIndex >= 0 && fileIndex < currentReadingNovel.ChapterCount)
             {
-                if (e.FullPath.Equals(currentReadingNovel.Chapters[fileIndex].GetAudioFileLocation()) || e.FullPath.Equals(currentReadingNovel.Chapters[fileIndex].GetTextFileLocation()))
+                if (e.FullPath.Equals(currentReadingNovel.NovelChapters[fileIndex].GetAudioFileLocation()) || e.FullPath.Equals(currentReadingNovel.NovelChapters[fileIndex].GetTextFileLocation()))
                 {
                     ModifyCellStyle(fileIndex);
                     if (currentReadingChapter != null && fileIndex == currentReadingChapter.Index)
@@ -156,7 +156,7 @@ namespace NovelReader
 
         private void dgvChapterList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            ReadChapter(currentReadingNovel.Chapters[e.RowIndex]);
+            ReadChapter(currentReadingNovel.NovelChapters[e.RowIndex]);
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -467,11 +467,11 @@ namespace NovelReader
 
         private void ModifyCellStyle(int rowIndex)
         {
-            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count || rowIndex >= currentReadingNovel.Chapters.Count)
+            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count || rowIndex >= currentReadingNovel.ChapterCount)
                 return;
             
             DataGridViewRow row = dgvChapterList.Rows[rowIndex];
-            Chapter chapter = currentReadingNovel.Chapters[rowIndex];
+            Chapter chapter = currentReadingNovel.NovelChapters[rowIndex];
             row.DefaultCellStyle.SelectionForeColor = Color.DimGray;
             if (chapter.Equals(currentReadingChapter))
             {

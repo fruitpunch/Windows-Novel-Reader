@@ -29,9 +29,10 @@ namespace NovelReader
 
         private Chapter _lastViewedChapter { get; set; }
         private Chapter _lastReadChapter { get; set; }
-        private bool _makeAudio { get; set; }
         private bool _isReading { get; set; }
-        NovelSource _novelSource { get; set; }
+        private bool isDirty = false;
+        private List<Chapter> chapterList = null;
+        NovelSource novelSource = null;
         UpdateStates _updateState { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
         [Transient]
@@ -46,7 +47,7 @@ namespace NovelReader
 
         public NovelState State
         {
-            get { return (NovelState)this.StateID; }
+            get { return (NovelState)StateID; }
             set {
                 if (State != NovelState.Dropped && value == NovelState.Dropped)
                     NovelLibrary.Instance.DropNovel(NovelTitle);
@@ -61,7 +62,10 @@ namespace NovelReader
         public int ChapterCount
         {
             get {
-                return NovelChapters.Count();
+                var result = NovelChapters;
+                if(result == null)
+                    return 0;
+                return result.Count();
             }
         }
 
@@ -83,35 +87,31 @@ namespace NovelReader
         public Chapter LastReadChapter
         {
             get {
-                Chapter lastReadChapter = (from chapter in NovelLibrary.libraryData.Chapters
+                var result = (from chapter in NovelLibrary.libraryData.Chapters
                                            where chapter.ID == LastReadChapterID
-                                           select chapter).First<Chapter>();
-                return lastReadChapter;
+                                           select chapter);
+                if (result.Any())
+                    return result.First<Chapter>();
+                return null;
             }
             set {
                 LastReadChapterID = value.ID;
             }
         }
 
-        public IQueryable<Chapter> NovelChapters
+        public List<Chapter> NovelChapters
         {
             get {
-                var novelChapter = (from chapter in NovelLibrary.libraryData.Chapters
-                                     where chapter.NovelTitle == this.NovelTitle
-                                     select chapter);
-
-                var joinedResult = (from chapter in novelChapter
-                                    join url in NovelLibrary.libraryData.ChapterUrls
-                                    on chapter.ID equals url.ChapterID into jr
-                                    from subChapterUrl in jr.DefaultIfEmpty()
-                                    select new { chapter, Url = (subChapterUrl == null ? null : subChapterUrl)});
-
-                var finalResult = (from result in joinedResult
-                                   where result.Url.Valid || result.Url == null
-                                   orderby result.chapter.Index ascending
-                                   select result.chapter);
-                
-                return finalResult;
+                if (chapterList == null)
+                    chapterList = new List<Chapter>();
+                else if (!isDirty)
+                    return chapterList;
+                chapterList = (from chapter in NovelLibrary.libraryData.Chapters
+                                     where chapter.NovelTitle == this.NovelTitle && chapter.Index >= 0
+                                     orderby chapter.Index ascending
+                                     select chapter).ToList<Chapter>();
+                isDirty = false;
+                return chapterList;
             }
         }
 
@@ -123,8 +123,8 @@ namespace NovelReader
 
         public NovelSource NovelSource
         {
-            get { return this._novelSource; }
-            set { this._novelSource = value; }
+            get { return this.novelSource; }
+            set { this.novelSource = value; }
         }
 
         public Tuple<int, string> UpdateProgress
@@ -325,7 +325,7 @@ namespace NovelReader
             if (Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage].Equals("No Voice Selected"))
                 return false;
             //Do not make audio for novel not selected
-            if (!_makeAudio)
+            if (!MakeAudio)
                 return false;
             //Do not make audio for novel that is dropped
             if (State == NovelState.Dropped)
@@ -411,9 +411,11 @@ namespace NovelReader
         public bool CheckForUpdate()
         {
             //LoadChapterFromDB();
+            if (novelSource == null)
+                GetSource();
 
             SetUpdateProgress(0, 0, UpdateStates.Checking);
-            Tuple<string, string>[] menuItems = _novelSource.GetMenuURLs();
+            Tuple<string, string>[] menuItems = novelSource.GetMenuURLs();
             if(menuItems == null)
             {
                 SetUpdateProgress(0, 0, UpdateStates.Error);
@@ -434,16 +436,27 @@ namespace NovelReader
                     newChapter.Index = maxIndex++;
                     newChapter.Read = false;
                     NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
+                    NovelLibrary.libraryData.SubmitChanges();
                     ChapterUrl newChapterUrl = new ChapterUrl();
                     newChapterUrl.ChapterID = newChapter.ID;
                     newChapterUrl.Url = menuItems[i].Item2;
                     newChapterUrl.Valid = true;
                     NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
+                    NovelLibrary.libraryData.SubmitChanges();
+                    isDirty = true;
                 }
             }
-            int updateCount = (from chapter in NovelLibrary.libraryData.Chapters
-                               where chapter.NovelTitle == NovelTitle && !chapter.HasText
-                               select chapter).Count();
+            int updateCount = 0;
+            var result = NovelChapters;
+            if (result != null)
+            {
+                Chapter[] chapters = result.ToArray();
+                foreach (Chapter c in chapters)
+                    if (!c.HasText)
+                        updateCount++;
+            }
+
+            Console.WriteLine("Update Count " + updateCount);
             if (updateCount == 0)
                 SetUpdateProgress(0, 0, UpdateStates.UpToDate);
             else
@@ -491,8 +504,10 @@ namespace NovelReader
         {
             if (chapter == null || chapter.ChapterUrl == null)
                 return false;
+            if (novelSource == null)
+                GetSource();
             BackgroundService.lastUpdatedChapter = chapter;
-            string[] novelContent = _novelSource.GetChapterContent(chapter.ChapterTitle, chapter.ChapterUrl.Url);
+            string[] novelContent = novelSource.GetChapterContent(chapter.ChapterTitle, chapter.ChapterUrl.Url);
             if (novelContent == null)
                 return false;
             System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
@@ -572,6 +587,7 @@ namespace NovelReader
             newChapter.Index = maxIndex + 1;
             NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
             NovelLibrary.libraryData.SubmitChanges();
+            isDirty = true;
             return newChapter;
         }
 
@@ -593,7 +609,7 @@ namespace NovelReader
                         _lastViewedChapter = null;
                 }
 
-                deleteChapter.Index = -1;
+                deleteChapter.Index = Int32.MinValue;
                 if (deleteChapter.ChapterUrl != null)
                 {
                     if (blackList)
@@ -604,6 +620,9 @@ namespace NovelReader
                         NovelLibrary.libraryData.ChapterUrls.DeleteOnSubmit(deleteChapter.ChapterUrl);
                     }
                 }
+                else
+                    NovelLibrary.libraryData.Chapters.DeleteOnSubmit(deleteChapter);
+                isDirty = true;
                 NovelLibrary.libraryData.SubmitChanges();
                 VeryifyAndCorrectChapterIndexing(NovelChapters.ToArray<Chapter>());
             }
@@ -732,6 +751,15 @@ namespace NovelReader
             }
             */
             //ChapterCount = _chapters.Count;
+        }
+
+        private void GetSource()
+        {
+            Source s = (from source in NovelLibrary.libraryData.Sources
+                        where source.ID == SourceID
+                        select source).First<Source>();
+            SourceLocation location = (SourceLocation)Enum.Parse(typeof(SourceLocation), s.SourceNovelLocation);
+            novelSource = SourceManager.GetSource(location, s.SourceNovelID);
         }
 
 

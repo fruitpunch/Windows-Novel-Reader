@@ -50,12 +50,23 @@ namespace NovelReader
 
         public void LoadNovelLibrary()
         {
-            libraryData = new LibraryDataContext(Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName));
-            if (!libraryData.DatabaseExists())
-                libraryData.CreateDatabase();
-            novelList = (from novel in libraryData.Novels
-                              orderby novel.Rank ascending
-                              select novel).ToList<Novel>();
+            try
+            {
+                string dbFileName = Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName);
+                string connectionString = String.Format(@"Data Source=(LocalDB)\v11.0;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;MultipleActiveResultSets=true", "NovelData", dbFileName);
+                libraryData = new LibraryDataContext(connectionString);
+                if (!libraryData.DatabaseExists())
+                {
+                    libraryData.CreateDatabase();
+                }
+                novelList = (from novel in libraryData.Novels
+                             orderby novel.Rank ascending
+                             select novel).ToList<Novel>();
+            }catch(System.Data.SqlClient.SqlException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            
         }
 
         public void SaveNovelLibrary()
@@ -65,7 +76,7 @@ namespace NovelReader
 
         public void CloseNovelLibrary()
         {
-            //libraryData.Connection.Close();
+            libraryData.Connection.Close();
         }
 
         /*============Getter/Setter=========*/
@@ -147,11 +158,11 @@ namespace NovelReader
             newNovel.LastReadChapterID = -1;
             newNovel.SourceID = newSource.ID;
             newNovel.State = Novel.NovelState.Active;
+            novelList.Insert(GetNonDroppedNovelCount(), newNovel);
+            UpdateNovelRanking();
             libraryData.Novels.InsertOnSubmit(newNovel);
             libraryData.SubmitChanges();
-            novelList.Insert(GetNonDroppedNovelCount(), newNovel);
-
-            UpdateNovelRanking();
+            libraryData.Refresh(System.Data.Linq.RefreshMode.KeepCurrentValues);
             Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");
             return successfulReturn;
 

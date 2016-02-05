@@ -256,11 +256,10 @@ namespace NovelReader
             dgvNovelList.Columns.Add(stateColumn);
             dgvNovelList.Columns.Add(makeAudioColumn);
             dgvNovelList.Columns.Add(updateProgressColumn);
-
-            var novelList = (from novel in NovelLibrary.libraryData.Novels
-                             select novel);
-
-            dgvNovelList.DataSource = novelList;
+            
+            dgvNovelList.DataSource = (from novel in NovelLibrary.libraryData.Novels
+                                           orderby novel.Rank ascending
+                                           select novel);
         }
 
         private void ModifyCellStyle(int rowIndex)

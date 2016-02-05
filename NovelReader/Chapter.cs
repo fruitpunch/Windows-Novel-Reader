@@ -20,11 +20,11 @@ namespace NovelReader
             get {
                 if (chapterUrl == null)
                 {
-                    var result = from chapterUrl in NovelLibrary.libraryData.ChapterUrls
+                    var result = (from chapterUrl in NovelLibrary.libraryData.ChapterUrls
                                  where chapterUrl.ChapterID == this.ID
-                                 select chapterUrl;
+                                 select chapterUrl);
                     if (result.Any())
-                        this.chapterUrl = (ChapterUrl)result;
+                        this.chapterUrl = result.First<ChapterUrl>();
                     else
                         return null;
                 }

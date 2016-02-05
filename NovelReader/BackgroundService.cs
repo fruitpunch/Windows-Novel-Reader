@@ -68,7 +68,7 @@ namespace NovelReader
             this.mre = new ManualResetEvent(false);
             
             this.updateTimer.Start();
-            this.scheduleTTSThread.Start();
+            //this.scheduleTTSThread.Start();
             this.ttsScheduler.StartTTSService();
             this.updateThread.Start();
         }
@@ -154,7 +154,7 @@ namespace NovelReader
             ttsScheduler.ClearRequests();
             foreach (Novel n in NovelLibrary.Instance.NovelList)
             {
-                n.ResetTTSRequest();
+                //n.ResetTTSRequest();
             }
             mre.Set();
         }
@@ -210,7 +210,7 @@ namespace NovelReader
         {
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
             bool[] results = new bool[updateNovels.Length];
-
+            
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
                 if (updateNovels[i] == null)
@@ -221,27 +221,30 @@ namespace NovelReader
             bool newUpdate = false;
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
-                if (updateNovels[i] == null || results[i])
+                Console.WriteLine("update Novels length " + updateNovels.Length);
+                if (updateNovels[i] == null || !results[i])
                     continue;
+                Console.WriteLine("Downloading " + updateNovels[i].NovelTitle);
+                var chapters = updateNovels[i].NovelChapters;
 
-                Chapter[] downloadChapters = (from chapter in NovelLibrary.libraryData.Chapters
-                              where chapter.NovelTitle == updateNovels[i].NovelTitle && !chapter.HasText
-                              orderby chapter.Index ascending
-                              select chapter).ToArray<Chapter>();
+                List<Chapter> downloadChapters = new List<Chapter>();
+                foreach (Chapter c in chapters)
+                    if (!c.HasText)
+                        downloadChapters.Add(c);
 
                 int failure = 0;
                 bool success;
-                for(int j = 0; j < downloadChapters.Length && !shutDown; j++)
+                for(int j = 0; j < downloadChapters.Count && !shutDown; j++)
                 {
-                    success = updateNovels[i].DownloadChapter(downloadChapters[j], j+1, downloadChapters.Length);
+                    success = updateNovels[i].DownloadChapter(downloadChapters[j], j+1, downloadChapters.Count);
                     if (!success)
                         failure++;
                 }
                 if (updateNovels[i] == null)
                     continue;
-                if (downloadChapters.Length > 0)
+                if (downloadChapters.Count > 0)
                     newUpdate = true;
-                updateNovels[i].ChaptersNotReadCount = updateNovels[i].ChaptersNotReadCount + downloadChapters.Length - failure;
+                updateNovels[i].ChaptersNotReadCount = updateNovels[i].ChaptersNotReadCount + downloadChapters.Count - failure;
                 updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
                 updateNovels[i].ClearChapters();
             }
