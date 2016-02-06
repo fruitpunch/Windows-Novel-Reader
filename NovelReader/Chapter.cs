@@ -11,28 +11,23 @@ namespace NovelReader
     public partial class Chapter : INotifyPropertyChanged
     {
 
-        private ChapterUrl chapterUrl { get; set; }
         
         /*============Properties============*/
-
+        
         public ChapterUrl ChapterUrl
         {
             get {
-                if (chapterUrl == null)
-                {
-                    var result = (from chapterUrl in NovelLibrary.libraryData.ChapterUrls
-                                 where chapterUrl.ChapterID == this.ID
-                                 select chapterUrl);
-                    if (result.Any())
-                        this.chapterUrl = result.First<ChapterUrl>();
-                    else
-                        return null;
-                }
-                return chapterUrl;
+                var result = (from url in NovelLibrary.libraryData.ChapterUrls
+                              where url.ChapterID == ID
+                              select url);
+                if (result.Any())
+                    return result.First<ChapterUrl>();
+                else
+                    return null;
             }
 
         }
-
+        
         public bool HasAudio
         {
             get { return File.Exists(GetAudioFileLocation()); }
@@ -55,16 +50,26 @@ namespace NovelReader
             return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "texts", Index.ToString() + "_" + Util.CleanFileTitle(ChapterTitle) + ".txt");
         }
 
+        public void SetChapterTitle(string title)
+        {
+            this._ChapterTitle = title;
+        }
+
+        public void SetIndex(int index)
+        {
+            this._Index = index;
+        }
+
         /*============Public Function=======*/
 
         public void ChangeIndex(int newIndex)
         {
-            Console.WriteLine("old index: " + Index + "  new index: " + newIndex);
+            //Console.WriteLine("old index: " + Index + "  new index: " + newIndex);
             if (newIndex == Index)
                 return;
             string oldAudioFileLocation = GetAudioFileLocation();
             string oldTextFileLocation = GetTextFileLocation();
-            Index = newIndex;
+            this._Index = newIndex;
             string newAudioFileLocation = GetAudioFileLocation();
             string newTextFileLocation = GetTextFileLocation();
 
@@ -99,7 +104,7 @@ namespace NovelReader
         {
             string oldAudioFileLocation = GetAudioFileLocation();
             string oldTextFileLocation = GetTextFileLocation();
-            ChapterTitle = newChapterTitle;
+            this._ChapterTitle = newChapterTitle;
             string newAudioFileLocation = GetAudioFileLocation();
             string newTextFileLocation = GetTextFileLocation();
 
@@ -127,7 +132,7 @@ namespace NovelReader
             }
             NovelLibrary.libraryData.SubmitChanges();
         }
-
+        
         public void NotifyPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
@@ -136,5 +141,26 @@ namespace NovelReader
             }
             NovelLibrary.libraryData.SubmitChanges();
         }
+
+        partial void OnIndexChanging(int value)
+        {
+            Console.WriteLine("Original " + _ChapterTitle + " " + this._Index + " " + value);
+            
+            if (this._Index != value)
+                if(Novel != null)
+                    Novel.ChangeIndex(this._Index, value);
+                else
+                    NovelLibrary.Instance.GetNovel(NovelTitle).ChangeIndex(this._Index, value);
+            else
+                this._Index = value;
+            //NotifyPropertyChanged("Index");
+        }
+
+        partial void OnChapterTitleChanging(string value)
+        {
+            ChangeChapterTitle(value);
+            NovelLibrary.libraryData.SubmitChanges();
+        }
+
     }
 }

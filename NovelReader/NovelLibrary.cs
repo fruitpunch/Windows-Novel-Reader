@@ -4,6 +4,7 @@ using Source;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,8 +17,9 @@ namespace NovelReader
 
         private static NovelLibrary instance;
 
-        private List<Novel> novelList { get; set; }
+        private BindingList<Novel> _novelList { get; set; }
         public volatile static LibraryDataContext libraryData;
+        
         
 
         /*============Properties============*/
@@ -35,16 +37,16 @@ namespace NovelReader
             }
         }
 
-        public List<Novel> NovelList
+        public BindingList<Novel> NovelList
         {
-            get { return this.novelList; }
+            get { return this._novelList; }
         }
 
         /*============Constructor===========*/
 
         private NovelLibrary()
         {
-            this.novelList = new List<Novel>();
+            this._novelList = new BindingList<Novel>();
             
         }
 
@@ -53,20 +55,47 @@ namespace NovelReader
             try
             {
                 string dbFileName = Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName);
-                string connectionString = String.Format(@"Data Source=(LocalDB)\v11.0;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;MultipleActiveResultSets=true", "NovelData", dbFileName);
+                string dbName = "NovelData";
+                string connectionString = String.Format(@"Data Source=(LocalDB)\v11.0;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;MultipleActiveResultSets=true", dbName, dbFileName);
                 libraryData = new LibraryDataContext(connectionString);
+                DetachDatabase(dbName);
                 if (!libraryData.DatabaseExists())
                 {
+                    Console.WriteLine("Database does not exist, recreating.");
                     libraryData.CreateDatabase();
                 }
-                novelList = (from novel in libraryData.Novels
+                    
+                //else
+                //    libraryData.DeleteDatabase();
+                _novelList = new BindingList<Novel>((from novel in libraryData.Novels
                              orderby novel.Rank ascending
-                             select novel).ToList<Novel>();
+                             select novel).ToList<Novel>());
             }catch(System.Data.SqlClient.SqlException e)
             {
                 Console.WriteLine(e.ToString());
             }
             
+        }
+
+        private bool DetachDatabase(string dbName)
+        {
+            try
+            {
+                string connectionString = String.Format(@"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True");
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = connection.CreateCommand();
+                    cmd.CommandText = String.Format("exec sp_detach_db '{0}'", dbName);
+                    cmd.ExecuteNonQuery();
+
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void SaveNovelLibrary()
@@ -76,6 +105,7 @@ namespace NovelReader
 
         public void CloseNovelLibrary()
         {
+            libraryData.SubmitChanges();
             libraryData.Connection.Close();
         }
 
@@ -83,22 +113,24 @@ namespace NovelReader
 
         public Novel GetNovel(string novelTitle)
         {
-            Novel result = (from novel in NovelLibrary.libraryData.Novels
-                            where novel.NovelTitle == novelTitle
-                            select novel).First<Novel>();
-            return result;
+            var result = (from novel in NovelLibrary.libraryData.Novels
+                          where novel.NovelTitle == novelTitle
+                          select novel);
+            if (result.Any())
+                return result.First<Novel>();
+            return null;
         }
 
         public int GetNovelCount()
         {
-            return novelList.Count;
+            return _novelList.Count;
         }
 
         public Novel[] GetUpdatingNovel()
         {
             List<Novel> updatingNovels = new List<Novel>();
 
-            var results = from novel in novelList
+            var results = from novel in _novelList
                           where novel.State == Novel.NovelState.Active || novel.State == Novel.NovelState.Inactive
                           orderby novel.Rank ascending
                           select novel;
@@ -113,7 +145,7 @@ namespace NovelReader
 
         public Tuple<bool, string> AddNovel(string novelTitle, NovelSource novelSource)
         {
-            foreach (Novel n in novelList)
+            foreach (Novel n in _novelList)
             {
                 if (novelTitle.Equals(n.NovelTitle))
                 {
@@ -146,7 +178,7 @@ namespace NovelReader
                 if (!File.Exists(Path.Combine(newNovelLocation, Configuration.Instance.DeleteSpecification)))
                     File.Create(Path.Combine(newNovelLocation, Configuration.Instance.DeleteSpecification));
             }
-
+            
             Source newSource = new Source();
             newSource.SourceNovelLocation = novelSource.SourceLocation.ToString();
             newSource.SourceNovelID = novelSource.NovelID;
@@ -158,11 +190,14 @@ namespace NovelReader
             newNovel.LastReadChapterID = -1;
             newNovel.SourceID = newSource.ID;
             newNovel.State = Novel.NovelState.Active;
-            novelList.Insert(GetNonDroppedNovelCount(), newNovel);
-            UpdateNovelRanking();
+            newNovel.Reading = false;
+            newNovel.Rank = GetNonDroppedNovelCount();
             libraryData.Novels.InsertOnSubmit(newNovel);
             libraryData.SubmitChanges();
-            libraryData.Refresh(System.Data.Linq.RefreshMode.KeepCurrentValues);
+            _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
+            UpdateNovelRanking();
+            
+            Console.WriteLine("Added new novel " + novelTitle);
             Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");
             return successfulReturn;
 
@@ -192,6 +227,7 @@ namespace NovelReader
                 {
                     Directory.Delete(deleteNovel.GetNovelDirectory(), true);
                 }
+                NovelList.Remove(deleteNovel);
                 libraryData.SubmitChanges();
             }
             catch (Exception e)
@@ -225,7 +261,7 @@ namespace NovelReader
         public void DropNovel(string novelTitle)
         {
             int pos = GetPosition(novelTitle);
-            Move(pos, novelList.Count - 1);
+            Move(pos, _novelList.Count - 1);
         }
 
         public void PickUpNovel(string novelTitle)
@@ -238,25 +274,25 @@ namespace NovelReader
 
         private bool Move(int oldPosition, int newPosition)
         {
-            if (oldPosition < 0 || oldPosition >= novelList.Count)
+            if (oldPosition < 0 || oldPosition >= _novelList.Count)
                 return false;
-            if (newPosition < 0 || newPosition >= novelList.Count)
+            if (newPosition < 0 || newPosition >= _novelList.Count)
                 return false;
             if (oldPosition == newPosition)
                 return false;
 
-            Novel tmp = novelList[oldPosition];
-            novelList.RemoveAt(oldPosition);
-            novelList.Insert(newPosition, tmp);
+            Novel tmp = _novelList[oldPosition];
+            _novelList.RemoveAt(oldPosition);
+            _novelList.Insert(newPosition, tmp);
             UpdateNovelRanking();
             return true;
         }
 
         private int GetPosition(string novelTitle)
         {
-            for (int i = 0; i < novelList.Count; i++)
+            for (int i = 0; i < _novelList.Count; i++)
             {
-                if (novelList[i].NovelTitle.Equals(novelTitle))
+                if (_novelList[i].NovelTitle.Equals(novelTitle))
                     return i;
             }
             return -1;
@@ -265,9 +301,9 @@ namespace NovelReader
         private int GetNonDroppedNovelCount()
         {
             int count = 0;
-            for (int i = 0; i < novelList.Count; i++)
+            for (int i = 0; i < _novelList.Count; i++)
             {
-                if (novelList[i].State != Novel.NovelState.Dropped)
+                if (_novelList[i].State != Novel.NovelState.Dropped)
                     count++;
             }
             return count;
@@ -275,9 +311,9 @@ namespace NovelReader
 
         private void UpdateNovelRanking()
         {
-            for (int i = 0; i < novelList.Count; i++)
+            for (int i = 0; i < _novelList.Count; i++)
             {
-                novelList[i].Rank = i + 1;
+                _novelList[i].Rank = i + 1;
             }
             libraryData.SubmitChanges();
         }

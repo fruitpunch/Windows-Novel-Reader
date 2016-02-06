@@ -246,7 +246,6 @@ namespace NovelReader
                     newUpdate = true;
                 updateNovels[i].ChaptersNotReadCount = updateNovels[i].ChaptersNotReadCount + downloadChapters.Count - failure;
                 updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
-                updateNovels[i].ClearChapters();
             }
             if (newUpdate)
                 mre.Set();

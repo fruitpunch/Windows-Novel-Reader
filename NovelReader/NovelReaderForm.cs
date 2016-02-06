@@ -338,7 +338,7 @@ namespace NovelReader
                 Name = "Index",
                 HeaderText = "Index",
                 DataPropertyName = "Index",
-                Width = 75
+                Width = 50
             };
 
             DataGridViewTextBoxColumn titleColumn = new DataGridViewTextBoxColumn()

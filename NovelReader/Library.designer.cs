@@ -120,9 +120,9 @@ namespace NovelReader
 		
 		private bool _MakeAudio;
 		
-		private EntitySet<Source> _Sources;
-		
 		private EntitySet<Chapter> _Chapters;
+		
+		private EntitySet<Source> _Sources;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -146,8 +146,8 @@ namespace NovelReader
 		
 		public Novel()
 		{
-			this._Sources = new EntitySet<Source>(new Action<Source>(this.attach_Sources), new Action<Source>(this.detach_Sources));
 			this._Chapters = new EntitySet<Chapter>(new Action<Chapter>(this.attach_Chapters), new Action<Chapter>(this.detach_Chapters));
+			this._Sources = new EntitySet<Source>(new Action<Source>(this.attach_Sources), new Action<Source>(this.detach_Sources));
 			OnCreated();
 		}
 		
@@ -291,19 +291,6 @@ namespace NovelReader
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Novel_Source", Storage="_Sources", ThisKey="SourceID", OtherKey="ID")]
-		public EntitySet<Source> Sources
-		{
-			get
-			{
-				return this._Sources;
-			}
-			set
-			{
-				this._Sources.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Novel_Chapter", Storage="_Chapters", ThisKey="NovelTitle", OtherKey="NovelTitle")]
 		public EntitySet<Chapter> Chapters
 		{
@@ -314,6 +301,19 @@ namespace NovelReader
 			set
 			{
 				this._Chapters.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Novel_Source", Storage="_Sources", ThisKey="SourceID", OtherKey="ID")]
+		public EntitySet<Source> Sources
+		{
+			get
+			{
+				return this._Sources;
+			}
+			set
+			{
+				this._Sources.Assign(value);
 			}
 		}
 		
@@ -337,18 +337,6 @@ namespace NovelReader
 			}
 		}
 		
-		private void attach_Sources(Source entity)
-		{
-			this.SendPropertyChanging();
-			entity.Novel = this;
-		}
-		
-		private void detach_Sources(Source entity)
-		{
-			this.SendPropertyChanging();
-			entity.Novel = null;
-		}
-		
 		private void attach_Chapters(Chapter entity)
 		{
 			this.SendPropertyChanging();
@@ -356,6 +344,18 @@ namespace NovelReader
 		}
 		
 		private void detach_Chapters(Chapter entity)
+		{
+			this.SendPropertyChanging();
+			entity.Novel = null;
+		}
+		
+		private void attach_Sources(Source entity)
+		{
+			this.SendPropertyChanging();
+			entity.Novel = this;
+		}
+		
+		private void detach_Sources(Source entity)
 		{
 			this.SendPropertyChanging();
 			entity.Novel = null;
@@ -601,7 +601,11 @@ namespace NovelReader
 		
 		private int _ChapterID;
 		
+		private int _SourceID;
+		
 		private EntityRef<Chapter> _Chapter;
+		
+		private EntityRef<Source> _Source;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -613,11 +617,14 @@ namespace NovelReader
     partial void OnValidChanged();
     partial void OnChapterIDChanging(int value);
     partial void OnChapterIDChanged();
+    partial void OnSourceIDChanging(int value);
+    partial void OnSourceIDChanged();
     #endregion
 		
 		public ChapterUrl()
 		{
 			this._Chapter = default(EntityRef<Chapter>);
+			this._Source = default(EntityRef<Source>);
 			OnCreated();
 		}
 		
@@ -685,6 +692,30 @@ namespace NovelReader
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SourceID")]
+		public int SourceID
+		{
+			get
+			{
+				return this._SourceID;
+			}
+			set
+			{
+				if ((this._SourceID != value))
+				{
+					if (this._Source.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSourceIDChanging(value);
+					this.SendPropertyChanging();
+					this._SourceID = value;
+					this.SendPropertyChanged("SourceID");
+					this.OnSourceIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Chapter_ChapterUrl", Storage="_Chapter", ThisKey="ChapterID", OtherKey="ID", IsForeignKey=true)]
 		public Chapter Chapter
 		{
@@ -715,6 +746,40 @@ namespace NovelReader
 						this._ChapterID = default(int);
 					}
 					this.SendPropertyChanged("Chapter");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Source_ChapterUrl", Storage="_Source", ThisKey="SourceID", OtherKey="ID", IsForeignKey=true)]
+		public Source Source
+		{
+			get
+			{
+				return this._Source.Entity;
+			}
+			set
+			{
+				Source previousValue = this._Source.Entity;
+				if (((previousValue != value) 
+							|| (this._Source.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Source.Entity = null;
+						previousValue.ChapterUrls.Remove(this);
+					}
+					this._Source.Entity = value;
+					if ((value != null))
+					{
+						value.ChapterUrls.Add(this);
+						this._SourceID = value.ID;
+					}
+					else
+					{
+						this._SourceID = default(int);
+					}
+					this.SendPropertyChanged("Source");
 				}
 			}
 		}
@@ -752,6 +817,8 @@ namespace NovelReader
 		
 		private string _SourceNovelID;
 		
+		private EntitySet<ChapterUrl> _ChapterUrls;
+		
 		private EntityRef<Novel> _Novel;
 		
     #region Extensibility Method Definitions
@@ -768,6 +835,7 @@ namespace NovelReader
 		
 		public Source()
 		{
+			this._ChapterUrls = new EntitySet<ChapterUrl>(new Action<ChapterUrl>(this.attach_ChapterUrls), new Action<ChapterUrl>(this.detach_ChapterUrls));
 			this._Novel = default(EntityRef<Novel>);
 			OnCreated();
 		}
@@ -836,6 +904,19 @@ namespace NovelReader
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Source_ChapterUrl", Storage="_ChapterUrls", ThisKey="ID", OtherKey="SourceID")]
+		public EntitySet<ChapterUrl> ChapterUrls
+		{
+			get
+			{
+				return this._ChapterUrls;
+			}
+			set
+			{
+				this._ChapterUrls.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Novel_Source", Storage="_Novel", ThisKey="ID", OtherKey="SourceID", IsForeignKey=true)]
 		public Novel Novel
 		{
@@ -888,6 +969,18 @@ namespace NovelReader
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ChapterUrls(ChapterUrl entity)
+		{
+			this.SendPropertyChanging();
+			entity.Source = this;
+		}
+		
+		private void detach_ChapterUrls(ChapterUrl entity)
+		{
+			this.SendPropertyChanging();
+			entity.Source = null;
 		}
 	}
 }
