@@ -382,7 +382,6 @@ namespace NovelReader
                         updateCount++;
             }
 
-            Console.WriteLine("Chapter Count " + result.Count);
             if (updateCount == 0)
                 SetUpdateProgress(0, 0, UpdateStates.UpToDate);
             else
