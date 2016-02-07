@@ -84,7 +84,6 @@ namespace NovelReader
             this.ttsScheduler.ShutdownService();
             while (!hasTTSShutDown || !hasUpdateShutDown)
             {
-
             }
         }
 
