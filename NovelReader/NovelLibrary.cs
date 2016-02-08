@@ -56,9 +56,10 @@ namespace NovelReader
             {
                 string dbFileName = Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName);
                 string dbName = "NovelData";
-                string connectionString = String.Format(@"Data Source=(LocalDB)\v11.0;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;MultipleActiveResultSets=true", dbName, dbFileName);
+                string connectionString = String.Format(@"Data Source=(LocalDB)\v11.0;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;MultipleActiveResultSets=True;Connect Timeout=5", dbName, dbFileName);
                 libraryData = new LibraryDataContext(connectionString);
-                DetachDatabase(dbName);
+                Console.WriteLine("lag a lot here");
+                //DetachDatabase(dbName);
                 if (!libraryData.DatabaseExists())
                 {
                     Console.WriteLine("Database does not exist, recreating.");
