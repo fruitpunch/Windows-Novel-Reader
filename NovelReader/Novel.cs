@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Source;
 using System.IO;
+using System.Transactions;
 using Db4objects.Db4o;
 
 namespace NovelReader
@@ -66,7 +67,7 @@ namespace NovelReader
                 var result = NovelChapters;
                 if(result == null)
                     return 0;
-                return result.Count();
+                return result.Count;
             }
         }
 
@@ -74,8 +75,8 @@ namespace NovelReader
         {
             get {
                 if(ChaptersNotReadCount > 0)
-                    return ChaptersNotReadCount.ToString() + "  ( " + ChaptersNotReadCount + " new chapters )";
-                return ChaptersNotReadCount.ToString();
+                    return ChapterCount.ToString() + "  ( " + ChaptersNotReadCount + " new chapters )";
+                return ChapterCount.ToString();
             }
         }
 
@@ -354,22 +355,33 @@ namespace NovelReader
             {
                 if(!urls.Contains(menuItems[i].Item2))
                 {
-                    Console.WriteLine(menuItems[i].Item1 + " " + maxIndex + " ");
-                    Chapter newChapter = new Chapter();
-                    newChapter.SetChapterTitle(menuItems[i].Item1);
-                    newChapter.NovelTitle = NovelTitle;
-                    newChapter.Read = false;
-                    newChapter.SetIndex(maxIndex++);
-                    NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
-                    NovelLibrary.libraryData.SubmitChanges();
-                    ChapterUrl newChapterUrl = new ChapterUrl();
-                    newChapterUrl.ChapterID = newChapter.ID;
-                    newChapterUrl.Url = menuItems[i].Item2;
-                    newChapterUrl.Valid = true;
-                    newChapterUrl.SourceID = Sources.First<Source>().ID;
-                    NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
-                    NovelLibrary.libraryData.SubmitChanges();
-                    isDirty = true;
+                    using (var transaction = new TransactionScope())
+                    {
+                        try
+                        {
+                            Chapter newChapter = new Chapter();
+                            newChapter.SetChapterTitle(menuItems[i].Item1);
+                            newChapter.NovelTitle = NovelTitle;
+                            newChapter.Read = false;
+                            newChapter.SetIndex(maxIndex++);
+                            NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
+                            NovelLibrary.libraryData.SubmitChanges();
+                            ChapterUrl newChapterUrl = new ChapterUrl();
+                            newChapterUrl.ChapterID = newChapter.ID;
+                            newChapterUrl.Url = menuItems[i].Item2;
+                            newChapterUrl.Valid = true;
+                            newChapterUrl.SourceID = Sources.First<Source>().ID;
+                            NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
+                            NovelLibrary.libraryData.SubmitChanges();
+                            isDirty = true;
+                            transaction.Complete();
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Unable to add chapter " + menuItems[i].Item1);
+                        }
+                    }
+                        
                 }
             }
             int updateCount = 0;
@@ -664,7 +676,7 @@ namespace NovelReader
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
                 }
-                NovelLibrary.libraryData.SubmitChanges();
+                //NovelLibrary.libraryData.SubmitChanges();
             }
         }
         

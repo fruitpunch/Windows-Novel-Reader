@@ -110,9 +110,9 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Tuple<bool, string> AddNovel(string novelTitle, NovelSource novelSource)
+        public bool AddNovel(string novelTitle, NovelSource novelSource, out string message)
         {
-            return NovelLibrary.Instance.AddNovel(novelTitle, novelSource);
+            return NovelLibrary.Instance.AddNovel(novelTitle, novelSource, out message);
         }
 
         public void DeleteNovel(string novelTitle, bool deleteData)

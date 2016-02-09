@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Transactions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -143,14 +144,14 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Tuple<bool, string> AddNovel(string novelTitle, NovelSource novelSource)
+        public bool AddNovel(string novelTitle, NovelSource novelSource, out string message)
         {
             foreach (Novel n in _novelList)
             {
                 if (novelTitle.Equals(n.NovelTitle))
                 {
-                    Tuple<bool, string> failReturn = new Tuple<bool, string>(false, novelTitle + " already exists.");
-                    return failReturn;
+                    message = novelTitle + " already exists.";
+                    return false;
                 }
             }
 
@@ -179,27 +180,37 @@ namespace NovelReader
                     File.Create(Path.Combine(newNovelLocation, Configuration.Instance.DeleteSpecification));
             }
             
-            Source newSource = new Source();
-            newSource.SourceNovelLocation = novelSource.SourceLocation.ToString();
-            newSource.SourceNovelID = novelSource.NovelID;
-            libraryData.Sources.InsertOnSubmit(newSource);
-            libraryData.SubmitChanges();
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    Source newSource = new Source();
+                    newSource.SourceNovelLocation = novelSource.SourceLocation.ToString();
+                    newSource.SourceNovelID = novelSource.NovelID;
+                    libraryData.Sources.InsertOnSubmit(newSource);
+                    libraryData.SubmitChanges();
 
-            Novel newNovel = new Novel();
-            newNovel.NovelTitle = novelTitle;
-            newNovel.LastReadChapterID = -1;
-            newNovel.SourceID = newSource.ID;
-            newNovel.State = Novel.NovelState.Active;
-            newNovel.Reading = false;
-            newNovel.Rank = GetNonDroppedNovelCount();
-            libraryData.Novels.InsertOnSubmit(newNovel);
-            libraryData.SubmitChanges();
-            _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
-            UpdateNovelRanking();
-            
-            Console.WriteLine("Added new novel " + novelTitle);
-            Tuple<bool, string> successfulReturn = new Tuple<bool, string>(true, novelTitle + " successfully added.");
-            return successfulReturn;
+                    Novel newNovel = new Novel();
+                    newNovel.NovelTitle = novelTitle;
+                    newNovel.LastReadChapterID = -1;
+                    newNovel.SourceID = newSource.ID;
+                    newNovel.State = Novel.NovelState.Active;
+                    newNovel.Reading = false;
+                    newNovel.Rank = GetNonDroppedNovelCount();
+                    libraryData.Novels.InsertOnSubmit(newNovel);
+                    libraryData.SubmitChanges();
+                    _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
+                    UpdateNovelRanking();
+                    transaction.Complete();
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Unable to add novel");
+                }
+                
+            }
+            message = novelTitle + " successfully added.";
+            return true;
 
         }
 
@@ -208,31 +219,35 @@ namespace NovelReader
             Novel deleteNovel = GetNovel(novelTitle);
             if (deleteNovel == null)
                 return;
-            try
+            using (var transaction = new TransactionScope())
             {
-                var deleteChapters = (from chapter in libraryData.Chapters
-                                      where chapter.NovelTitle == novelTitle
-                                      select chapter);
-                var deleteUrls = (from url in libraryData.ChapterUrls
-                                  where deleteChapters.Contains(url.Chapter)
-                                  select url);
-                var deleteSources = (from source in libraryData.Sources
-                                    where source.ID == deleteNovel.SourceID
-                                    select source);
-                libraryData.Chapters.DeleteAllOnSubmit(deleteChapters);
-                libraryData.ChapterUrls.DeleteAllOnSubmit(deleteUrls);
-                libraryData.Sources.DeleteAllOnSubmit(deleteSources);
-                libraryData.Novels.DeleteOnSubmit(deleteNovel);
-                if (deleteData)
+                try
                 {
-                    Directory.Delete(deleteNovel.GetNovelDirectory(), true);
+                    var deleteChapters = (from chapter in libraryData.Chapters
+                                          where chapter.NovelTitle == novelTitle
+                                          select chapter);
+                    var deleteUrls = (from url in libraryData.ChapterUrls
+                                      where deleteChapters.Contains(url.Chapter)
+                                      select url);
+                    var deleteSources = (from source in libraryData.Sources
+                                         where source.ID == deleteNovel.SourceID
+                                         select source);
+                    libraryData.Chapters.DeleteAllOnSubmit(deleteChapters);
+                    libraryData.ChapterUrls.DeleteAllOnSubmit(deleteUrls);
+                    libraryData.Sources.DeleteAllOnSubmit(deleteSources);
+                    libraryData.Novels.DeleteOnSubmit(deleteNovel);
+                    if (deleteData)
+                    {
+                        Directory.Delete(deleteNovel.GetNovelDirectory(), true);
+                    }
+                    NovelList.Remove(deleteNovel);
+                    libraryData.SubmitChanges();
+                    transaction.Complete();
                 }
-                NovelList.Remove(deleteNovel);
-                libraryData.SubmitChanges();
-            }
-            catch (Exception e)
-            {
-
+                catch (Exception e)
+                {
+                    Console.WriteLine("Unable to delete novel");
+                }
             }
 
         }
@@ -311,11 +326,23 @@ namespace NovelReader
 
         private void UpdateNovelRanking()
         {
-            for (int i = 0; i < _novelList.Count; i++)
+            using (var transaction = new TransactionScope())
             {
-                _novelList[i].Rank = i + 1;
+                try
+                {
+                    for (int i = 0; i < _novelList.Count; i++)
+                    {
+                        _novelList[i].Rank = i + 1;
+                    }
+                    libraryData.SubmitChanges();
+                    transaction.Complete();
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Unable to Update Novel Ranking");
+                }
+                
             }
-            libraryData.SubmitChanges();
         }
     }
 }
