@@ -150,10 +150,11 @@ namespace NovelReader
 
         /*============Constructor===========*/
 
-        public void Init()
+        partial void OnLoaded()
         {
             this.requestIndex = 0;
             this.queuedTTSChapters = new Dictionary<Chapter, Request>();
+            this.novelSource = GetSource();
             SetUpdateProgress();
         }
 
@@ -247,7 +248,7 @@ namespace NovelReader
             //    return false;
             if (_lastReadChapter != null && _lastReadChapter.Index > chapter.Index && !secondaryPass)
                 return false;
-            if (Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage].Equals("No Voice Selected"))
+            if (Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage] == null || Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage].Equals("No Voice Selected"))
                 return false;
             //Do not make audio for novel not selected
             if (!MakeAudio)
@@ -335,9 +336,6 @@ namespace NovelReader
         //Check and see if there is new chapter available for download.
         public bool CheckForUpdate()
         {
-            //LoadChapterFromDB();
-            if (novelSource == null)
-                GetSource();
 
             SetUpdateProgress(0, 0, UpdateStates.Checking);
             Tuple<string, string>[] menuItems = novelSource.GetMenuURLs();
@@ -418,8 +416,7 @@ namespace NovelReader
         {
             if (chapter == null || chapter.ChapterUrl == null)
                 return false;
-            if (novelSource == null)
-                GetSource();
+
             BackgroundService.lastUpdatedChapter = chapter;
             Console.WriteLine("url " + chapter.ChapterUrl.Url);
             string[] novelContent = novelSource.GetChapterContent(chapter.ChapterTitle, chapter.ChapterUrl.Url);
@@ -650,13 +647,13 @@ namespace NovelReader
 
         }
 
-        private void GetSource()
+        private NovelSource GetSource()
         {
             Source s = (from source in NovelLibrary.libraryData.Sources
                         where source.ID == SourceID
                         select source).First<Source>();
             SourceLocation location = (SourceLocation)Enum.Parse(typeof(SourceLocation), s.SourceNovelLocation);
-            novelSource = SourceManager.GetSource(location, s.SourceNovelID);
+            return SourceManager.GetSource(location, s.SourceNovelID); ;
         }
         
 

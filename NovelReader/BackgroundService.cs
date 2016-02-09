@@ -68,7 +68,7 @@ namespace NovelReader
             this.mre = new ManualResetEvent(false);
             
             this.updateTimer.Start();
-            //this.scheduleTTSThread.Start();
+            this.scheduleTTSThread.Start();
             this.ttsScheduler.StartTTSService();
             this.updateThread.Start();
         }
@@ -153,7 +153,7 @@ namespace NovelReader
             ttsScheduler.ClearRequests();
             foreach (Novel n in NovelLibrary.Instance.NovelList)
             {
-                //n.ResetTTSRequest();
+                n.ResetTTSRequest();
             }
             mre.Set();
         }

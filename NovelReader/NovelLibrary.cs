@@ -70,33 +70,13 @@ namespace NovelReader
                 _novelList = new BindingList<Novel>((from novel in libraryData.Novels
                              orderby novel.Rank ascending
                              select novel).ToList<Novel>());
+
             }catch(System.Data.SqlClient.SqlException e)
             {
                 Console.WriteLine("Failed to create db");
                 Console.WriteLine(e.ToString());
             }
             
-        }
-
-        private bool DetachDatabase(string dbName)
-        {
-            try
-            {
-                string connectionString = String.Format(@"Data Source=(LocalDB)\mssqllocaldb;Initial Catalog=master;Integrated Security=True");
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    SqlCommand cmd = connection.CreateCommand();
-                    cmd.CommandText = String.Format("exec sp_detach_db '{0}'", dbName);
-                    cmd.ExecuteNonQuery();
-
-                    return true;
-                }
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         public void SaveNovelLibrary()
@@ -206,6 +186,7 @@ namespace NovelReader
                 catch(Exception e)
                 {
                     Console.WriteLine("Unable to add novel");
+                    Console.WriteLine(e.ToString());
                 }
                 
             }
@@ -247,6 +228,7 @@ namespace NovelReader
                 catch (Exception e)
                 {
                     Console.WriteLine("Unable to delete novel");
+                    Console.WriteLine(e.ToString());
                 }
             }
 
@@ -340,6 +322,7 @@ namespace NovelReader
                 catch(Exception e)
                 {
                     Console.WriteLine("Unable to Update Novel Ranking");
+                    Console.WriteLine(e.ToString());
                 }
                 
             }
