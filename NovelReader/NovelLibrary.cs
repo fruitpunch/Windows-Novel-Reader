@@ -55,14 +55,12 @@ namespace NovelReader
             try
             {
                 string dbFileName = Path.Combine(Configuration.Instance.NovelFolderLocation, Configuration.Instance.LibraryDataName);
-                string dbName = "NovelData";
-                string connectionString = String.Format(@"Data Source=(LocalDB)\v11.0;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;MultipleActiveResultSets=True;Connect Timeout=5", dbName, dbFileName);
+                string dbName = "NovelDataBase";
+                string connectionString = String.Format(@"Data Source=(LocalDB)\mssqllocaldb;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;MultipleActiveResultSets=True;Connect Timeout=5", dbName, dbFileName);
                 libraryData = new LibraryDataContext(connectionString);
-                Console.WriteLine("lag a lot here");
                 //DetachDatabase(dbName);
                 if (!libraryData.DatabaseExists())
                 {
-                    Console.WriteLine("Database does not exist, recreating.");
                     libraryData.CreateDatabase();
                 }
                     
@@ -73,6 +71,7 @@ namespace NovelReader
                              select novel).ToList<Novel>());
             }catch(System.Data.SqlClient.SqlException e)
             {
+                Console.WriteLine("Failed to create db");
                 Console.WriteLine(e.ToString());
             }
             
@@ -82,7 +81,7 @@ namespace NovelReader
         {
             try
             {
-                string connectionString = String.Format(@"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True");
+                string connectionString = String.Format(@"Data Source=(LocalDB)\mssqllocaldb;Initial Catalog=master;Integrated Security=True");
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
