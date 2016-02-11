@@ -106,10 +106,15 @@ namespace NovelReader
                     return chapterList;
                 else if (chapterList == null)
                     chapterList = new BindingList<Chapter>();
+                /*List<Chapter> newChapterList = (from chapter in NovelLibrary.libraryData.Chapters
+                                                where chapter.NovelTitle == NovelTitle && chapter.Index >= 0 && chapter.Index < 5
+                                                orderby chapter.Index ascending
+                                                select chapter).ToList<Chapter>();*/
                 List<Chapter> newChapterList = (from chapter in Chapters
                                                 where chapter.Index >= 0
                                                 orderby chapter.Index ascending
                                                 select chapter).ToList<Chapter>();
+
                 List<int> newChapterListId = (from chapter in newChapterList
                                               select chapter.ID).ToList<int>();
                 for (int i = 0; i < chapterList.Count;)
@@ -126,7 +131,6 @@ namespace NovelReader
                     else if (i >= chapterList.Count)
                         chapterList.Add(newChapterList[i]);
                 }
-
                 isDirty = false;
                 return chapterList;
             }
@@ -383,6 +387,7 @@ namespace NovelReader
                             newChapter.NovelTitle = NovelTitle;
                             newChapter.Read = false;
                             newChapter.Index = maxIndex++;
+                            newChapter.Novel = this;
                             NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
                             NovelLibrary.libraryData.SubmitChanges();
                             ChapterUrl newChapterUrl = new ChapterUrl();
@@ -395,7 +400,6 @@ namespace NovelReader
                             isDirty = true;
                             transaction.Complete();
                             updateCount++;
-                            Console.WriteLine("Added chapter " + newChapter.ChapterTitle + " " + updateCount);
                         }
                         catch (Exception)
                         {
@@ -513,6 +517,7 @@ namespace NovelReader
             NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
             NovelLibrary.libraryData.SubmitChanges();
             isDirty = true;
+            NotifyPropertyChanged("ChapterCountStatus");
             return newChapter;
         }
 
@@ -553,6 +558,7 @@ namespace NovelReader
                 isDirty = true;
                 NovelLibrary.libraryData.SubmitChanges();
                 VeryifyAndCorrectChapterIndexing(NovelChapters.ToArray<Chapter>());
+                NotifyPropertyChanged("ChapterCountStatus");
             }
         }
 
@@ -650,8 +656,28 @@ namespace NovelReader
             */
         }
 
+        public void NotifyPropertyChanged(string propertyName)
+        {
+
+            if (PropertyChanged != null)
+            {
+                if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
+                {
+                    BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                    }));
+                }
+                else
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                }
+                //NovelLibrary.libraryData.SubmitChanges();
+            }
+        }
+
         /*============Private Function======*/
-        
+
 
         private void VeryifyAndCorrectChapterIndexing(Chapter[] chapters)
         {
@@ -685,25 +711,7 @@ namespace NovelReader
         }
         
 
-        private void NotifyPropertyChanged(string propertyName)
-        {
-
-            if (PropertyChanged != null)
-            {
-                if (BackgroundService.Instance.novelListController != null && BackgroundService.Instance.novelListController.InvokeRequired)
-                {
-                    BackgroundService.Instance.novelListController.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                    }));
-                }
-                else
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                }
-                //NovelLibrary.libraryData.SubmitChanges();
-            }
-        }
+        
         
     }
 }

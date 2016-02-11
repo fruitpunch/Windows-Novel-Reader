@@ -220,17 +220,14 @@ namespace NovelReader
             bool newUpdate = false;
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
-                Console.WriteLine("update Novels length " + updateNovels.Length + " " + results[i]);
                 if (updateNovels[i] == null)
                     continue;
-                Console.WriteLine("Downloading " + updateNovels[i].NovelTitle);
                 var chapters = updateNovels[i].NovelChapters;
 
                 List<Chapter> downloadChapters = new List<Chapter>();
                 foreach (Chapter c in chapters)
                     if (!c.HasText)
                         downloadChapters.Add(c);
-
                 int failure = 0;
                 bool success;
                 for(int j = 0; j < downloadChapters.Count && !shutDown; j++)
@@ -245,6 +242,7 @@ namespace NovelReader
                     newUpdate = true;
                 updateNovels[i].ChaptersNotReadCount = updateNovels[i].ChaptersNotReadCount + downloadChapters.Count - failure;
                 updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
+                updateNovels[i].NotifyPropertyChanged("ChapterCountStatus");
             }
             if (newUpdate)
                 mre.Set();

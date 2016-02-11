@@ -169,7 +169,8 @@ namespace NovelReader
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            FinishEditing();
+            if(editModeOn)
+                FinishEditing();
             if (currentReadingNovel != null && currentReadingChapter != null)
             {
                 Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
@@ -179,7 +180,8 @@ namespace NovelReader
 
         private void btnPrevious_Click(object sender, EventArgs e)
         {
-            FinishEditing();
+            if (editModeOn)
+                FinishEditing();
             if (currentReadingNovel != null && currentReadingChapter != null)
             {
                 Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index - 1);
@@ -190,7 +192,8 @@ namespace NovelReader
 
         private void btnFinishReading_Click(object sender, EventArgs e)
         {
-            FinishEditing();
+            if (editModeOn)
+                FinishEditing();
             if (currentReadingNovel != null && currentReadingChapter != null)
             {
                 if (mp3Player.playState == WMPLib.WMPPlayState.wmppsPlaying)
@@ -462,7 +465,8 @@ namespace NovelReader
 
         private void FinishEditing()
         {
-            rtbChapterTextBox.ReadOnly = true;
+            if (!editModeOn)
+                return;
             rtbChapterTextBox.BackColor = Color.AliceBlue;
             btnEdit.Text = "Edit";
             if (currentChapterDirty)
