@@ -45,11 +45,15 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.mp3Player = new AxWMPLib.AxWindowsMediaPlayer();
+            this.labelIndex = new System.Windows.Forms.Label();
+            this.upIndex = new System.Windows.Forms.NumericUpDown();
+            this.tbTitleChange = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mp3Player)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.upIndex)).BeginInit();
             this.SuspendLayout();
             // 
             // dgvChapterList
@@ -83,7 +87,7 @@
             this.rtbChapterTextBox.Location = new System.Drawing.Point(360, 50);
             this.rtbChapterTextBox.Name = "rtbChapterTextBox";
             this.rtbChapterTextBox.ReadOnly = true;
-            this.rtbChapterTextBox.Size = new System.Drawing.Size(895, 600);
+            this.rtbChapterTextBox.Size = new System.Drawing.Size(920, 600);
             this.rtbChapterTextBox.TabIndex = 1;
             this.rtbChapterTextBox.Text = "";
             this.rtbChapterTextBox.TextChanged += new System.EventHandler(this.rtbChapterTextBox_TextChanged);
@@ -107,13 +111,14 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.BackColor = System.Drawing.Color.SteelBlue;
             this.btnEdit.FlatAppearance.BorderSize = 0;
             this.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.btnEdit.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnEdit.Location = new System.Drawing.Point(475, 0);
+            this.btnEdit.Location = new System.Drawing.Point(500, 0);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(130, 45);
             this.btnEdit.TabIndex = 4;
@@ -186,13 +191,14 @@
             // 
             // btnRedownload
             // 
-            this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRedownload.BackColor = System.Drawing.Color.SteelBlue;
             this.btnRedownload.FlatAppearance.BorderSize = 0;
             this.btnRedownload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.btnRedownload.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnRedownload.Location = new System.Drawing.Point(605, 0);
+            this.btnRedownload.Location = new System.Drawing.Point(630, 0);
             this.btnRedownload.Name = "btnRedownload";
             this.btnRedownload.Size = new System.Drawing.Size(150, 45);
             this.btnRedownload.TabIndex = 10;
@@ -202,13 +208,14 @@
             // 
             // btnDeleteChapter
             // 
-            this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDeleteChapter.BackColor = System.Drawing.Color.SteelBlue;
             this.btnDeleteChapter.FlatAppearance.BorderSize = 0;
             this.btnDeleteChapter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDeleteChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.btnDeleteChapter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnDeleteChapter.Location = new System.Drawing.Point(755, 0);
+            this.btnDeleteChapter.Location = new System.Drawing.Point(780, 0);
             this.btnDeleteChapter.Name = "btnDeleteChapter";
             this.btnDeleteChapter.Size = new System.Drawing.Size(140, 45);
             this.btnDeleteChapter.TabIndex = 11;
@@ -255,13 +262,16 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.Color.SteelBlue;
+            this.panel1.Controls.Add(this.tbTitleChange);
+            this.panel1.Controls.Add(this.upIndex);
+            this.panel1.Controls.Add(this.labelIndex);
             this.panel1.Controls.Add(this.labelTitle);
             this.panel1.Controls.Add(this.btnEdit);
             this.panel1.Controls.Add(this.btnRedownload);
             this.panel1.Controls.Add(this.btnDeleteChapter);
             this.panel1.Location = new System.Drawing.Point(360, 5);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(895, 45);
+            this.panel1.Size = new System.Drawing.Size(920, 45);
             this.panel1.TabIndex = 15;
             // 
             // panel2
@@ -283,7 +293,7 @@
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.panel3.BackColor = System.Drawing.Color.SteelBlue;
             this.panel3.Controls.Add(this.cbAutoPlay);
-            this.panel3.Location = new System.Drawing.Point(1155, 650);
+            this.panel3.Location = new System.Drawing.Point(1180, 650);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(100, 45);
             this.panel3.TabIndex = 17;
@@ -296,9 +306,53 @@
             this.mp3Player.Location = new System.Drawing.Point(765, 650);
             this.mp3Player.Name = "mp3Player";
             this.mp3Player.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("mp3Player.OcxState")));
-            this.mp3Player.Size = new System.Drawing.Size(390, 45);
+            this.mp3Player.Size = new System.Drawing.Size(415, 45);
             this.mp3Player.TabIndex = 14;
             this.mp3Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.mp3Player_PlayStateChange);
+            // 
+            // labelIndex
+            // 
+            this.labelIndex.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelIndex.AutoSize = true;
+            this.labelIndex.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelIndex.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.labelIndex.Location = new System.Drawing.Point(373, 15);
+            this.labelIndex.Name = "labelIndex";
+            this.labelIndex.Size = new System.Drawing.Size(49, 16);
+            this.labelIndex.TabIndex = 18;
+            this.labelIndex.Text = "Index:";
+            // 
+            // upIndex
+            // 
+            this.upIndex.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.upIndex.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.upIndex.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.upIndex.CausesValidation = false;
+            this.upIndex.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.upIndex.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.upIndex.Location = new System.Drawing.Point(427, 15);
+            this.upIndex.Margin = new System.Windows.Forms.Padding(2);
+            this.upIndex.Maximum = new decimal(new int[] {
+            1410065408,
+            2,
+            0,
+            0});
+            this.upIndex.Name = "upIndex";
+            this.upIndex.Size = new System.Drawing.Size(69, 18);
+            this.upIndex.TabIndex = 19;
+            // 
+            // tbTitleChange
+            // 
+            this.tbTitleChange.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbTitleChange.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tbTitleChange.Location = new System.Drawing.Point(16, 12);
+            this.tbTitleChange.MaxLength = 50;
+            this.tbTitleChange.Name = "tbTitleChange";
+            this.tbTitleChange.Size = new System.Drawing.Size(351, 22);
+            this.tbTitleChange.TabIndex = 20;
+            this.tbTitleChange.WordWrap = false;
             // 
             // NovelReaderForm
             // 
@@ -306,7 +360,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.ClientSize = new System.Drawing.Size(1259, 700);
+            this.ClientSize = new System.Drawing.Size(1284, 700);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -314,6 +368,7 @@
             this.Controls.Add(this.rtbChapterTextBox);
             this.Controls.Add(this.dgvChapterList);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MinimumSize = new System.Drawing.Size(1300, 300);
             this.Name = "NovelReaderForm";
             this.Text = "NovelReaderForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NovelReaderForm_FormClosing);
@@ -325,6 +380,7 @@
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mp3Player)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.upIndex)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -347,5 +403,8 @@
         private System.Windows.Forms.Panel panel2;
         private AxWMPLib.AxWindowsMediaPlayer mp3Player;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label labelIndex;
+        private System.Windows.Forms.TextBox tbTitleChange;
+        private System.Windows.Forms.NumericUpDown upIndex;
     }
 }

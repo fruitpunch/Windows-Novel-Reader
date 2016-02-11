@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Source;
 using System.IO;
 using System.Transactions;
-using Db4objects.Db4o;
 
 namespace NovelReader
 {
@@ -36,8 +35,7 @@ namespace NovelReader
         NovelSource novelSource = null;
         UpdateStates _updateState { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
-        [Transient]
-        //private volatile BindingList<Chapter> _chapters;
+
 
         //==========
         private Dictionary<Chapter, Request> queuedTTSChapters;
@@ -104,12 +102,31 @@ namespace NovelReader
         public BindingList<Chapter> NovelChapters
         {
             get {
-                if (!isDirty)
+                if (!isDirty && chapterList != null)
                     return chapterList;
-                chapterList = new BindingList<Chapter>((from chapter in NovelLibrary.libraryData.Chapters
-                                     where chapter.NovelTitle == this.NovelTitle && chapter.Index >= 0
-                                     orderby chapter.Index ascending
-                                     select chapter).ToList<Chapter>());
+                else if (chapterList == null)
+                    chapterList = new BindingList<Chapter>();
+                List<Chapter> newChapterList = (from chapter in Chapters
+                                                where chapter.Index >= 0
+                                                orderby chapter.Index ascending
+                                                select chapter).ToList<Chapter>();
+                List<int> newChapterListId = (from chapter in newChapterList
+                                              select chapter.ID).ToList<int>();
+                for (int i = 0; i < chapterList.Count;)
+                {
+                    if (newChapterListId.Contains(chapterList[i].ID))
+                        i++;
+                    else
+                        chapterList.RemoveAt(i);
+                }
+                for (int i = 0; i < newChapterList.Count; i++)
+                {
+                    if (i < chapterList.Count && chapterList[i].ID != newChapterList[i].ID)
+                        chapterList.Insert(i, newChapterList[i]);
+                    else if (i >= chapterList.Count)
+                        chapterList.Add(newChapterList[i]);
+                }
+
                 isDirty = false;
                 return chapterList;
             }
@@ -151,6 +168,11 @@ namespace NovelReader
         /*============Constructor===========*/
 
         partial void OnLoaded()
+        {
+            Initiate();
+        }
+
+        public void Initiate()
         {
             this.requestIndex = 0;
             this.queuedTTSChapters = new Dictionary<Chapter, Request>();
@@ -336,7 +358,6 @@ namespace NovelReader
         //Check and see if there is new chapter available for download.
         public bool CheckForUpdate()
         {
-
             SetUpdateProgress(0, 0, UpdateStates.Checking);
             Tuple<string, string>[] menuItems = novelSource.GetMenuURLs();
             if(menuItems == null)
@@ -344,11 +365,11 @@ namespace NovelReader
                 SetUpdateProgress(0, 0, UpdateStates.Error);
                 return false;
             }
-            
+            Console.WriteLine("Got here " + menuItems.Length);
             List<string> urls = (from url in NovelLibrary.libraryData.ChapterUrls
                                  select url.Url).ToList<string>();
             int maxIndex = ChapterCount;
-
+            int updateCount = 0;
             for (int i = 0; i < menuItems.Length; i++)
             {
                 if(!urls.Contains(menuItems[i].Item2))
@@ -358,10 +379,10 @@ namespace NovelReader
                         try
                         {
                             Chapter newChapter = new Chapter();
-                            newChapter.SetChapterTitle(menuItems[i].Item1);
+                            newChapter.ChapterTitle = menuItems[i].Item1;
                             newChapter.NovelTitle = NovelTitle;
                             newChapter.Read = false;
-                            newChapter.SetIndex(maxIndex++);
+                            newChapter.Index = maxIndex++;
                             NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
                             NovelLibrary.libraryData.SubmitChanges();
                             ChapterUrl newChapterUrl = new ChapterUrl();
@@ -373,6 +394,8 @@ namespace NovelReader
                             NovelLibrary.libraryData.SubmitChanges();
                             isDirty = true;
                             transaction.Complete();
+                            updateCount++;
+                            Console.WriteLine("Added chapter " + newChapter.ChapterTitle + " " + updateCount);
                         }
                         catch (Exception)
                         {
@@ -382,16 +405,7 @@ namespace NovelReader
                         
                 }
             }
-            int updateCount = 0;
-            var result = NovelChapters;
-            if (result != null)
-            {
-                Chapter[] chapters = result.ToArray();
-                foreach (Chapter c in chapters)
-                    if (!c.HasText)
-                        updateCount++;
-            }
-
+            
             if (updateCount == 0)
                 SetUpdateProgress(0, 0, UpdateStates.UpToDate);
             else
@@ -429,21 +443,20 @@ namespace NovelReader
         //Change the index of the chapter and change the file name of the text and audio file.
         public void ChangeIndex(int oldIndex, int newIndex)
         {
-            List<Chapter> chapters = NovelChapters.ToList<Chapter>();
             if (oldIndex == newIndex)
                 return;
-            if (oldIndex < 0 || oldIndex >= chapters.Count)
+            if (oldIndex < 0 || oldIndex >= chapterList.Count)
                 return;
             if (newIndex < 0)
                 return;
-            if (newIndex >= chapters.Count)
-                newIndex = chapters.Count - 1;
+            if (newIndex >= chapterList.Count)
+                newIndex = chapterList.Count - 1;
 
-            Chapter tmp = chapters[oldIndex];
-            chapters.RemoveAt(oldIndex);
-            chapters.Insert(newIndex, tmp);
+            Chapter tmp = chapterList[oldIndex];
+            chapterList.RemoveAt(oldIndex);
+            chapterList.Insert(newIndex, tmp);
 
-            VeryifyAndCorrectChapterIndexing(chapters.ToArray());
+            VeryifyAndCorrectChapterIndexing(chapterList.ToArray());
         }
 
         public Chapter GetChapter(int chapterIndex = -1)
@@ -520,12 +533,15 @@ namespace NovelReader
                     else
                         _lastViewedChapter = null;
                 }
-
-                deleteChapter.Index = Int32.MinValue;
+                
                 if (deleteChapter.ChapterUrl != null)
                 {
                     if (blackList)
+                    {
+                        deleteChapter.Index = Int32.MinValue;
                         deleteChapter.ChapterUrl.Valid = false;
+                    }
+                        
                     else
                     {
                         NovelLibrary.libraryData.Chapters.DeleteOnSubmit(deleteChapter);
@@ -639,21 +655,33 @@ namespace NovelReader
 
         private void VeryifyAndCorrectChapterIndexing(Chapter[] chapters)
         {
-            for (int i = 0; i < chapters.Length; i++)
+            bool result = true;
+
+            using (var transaction = new TransactionScope())
             {
-                if (chapters[i].Index != i)
-                    chapters[i].ChangeIndex(i);
+                for (int i = 0; i < chapters.Length; i++)
+                {
+                    Console.WriteLine(chapters[i].ChapterTitle);
+                    if (chapters[i].Index != i)
+                    {
+                        Console.WriteLine(chapters[i].Index + " " + i + " " + chapters[i].ChapterTitle);
+                        result = chapters[i].ChangeIndex(i);
+                        if (!result)
+                            break;
+                    }
+                }
+                if (result)
+                    transaction.Complete();
             }
+            NovelLibrary.libraryData.SubmitChanges();
 
         }
 
         private NovelSource GetSource()
         {
-            Source s = (from source in NovelLibrary.libraryData.Sources
-                        where source.ID == SourceID
-                        select source).First<Source>();
+            Source s = Sources.First<Source>();
             SourceLocation location = (SourceLocation)Enum.Parse(typeof(SourceLocation), s.SourceNovelLocation);
-            return SourceManager.GetSource(location, s.SourceNovelID); ;
+            return SourceManager.GetSource(location, s.SourceNovelID);
         }
         
 

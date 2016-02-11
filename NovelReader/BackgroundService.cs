@@ -220,8 +220,8 @@ namespace NovelReader
             bool newUpdate = false;
             for (int i = 0; i < updateNovels.Length && !shutDown; i++)
             {
-                Console.WriteLine("update Novels length " + updateNovels.Length);
-                if (updateNovels[i] == null || !results[i])
+                Console.WriteLine("update Novels length " + updateNovels.Length + " " + results[i]);
+                if (updateNovels[i] == null)
                     continue;
                 Console.WriteLine("Downloading " + updateNovels[i].NovelTitle);
                 var chapters = updateNovels[i].NovelChapters;

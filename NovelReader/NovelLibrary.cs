@@ -1,6 +1,4 @@
-﻿using Db4objects.Db4o;
-using Db4objects.Db4o.Config;
-using Source;
+﻿using Source;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,12 +57,18 @@ namespace NovelReader
                 string dbName = "NovelDataBase";
                 string connectionString = String.Format(@"Data Source=(LocalDB)\mssqllocaldb;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;MultipleActiveResultSets=True;Connect Timeout=5", dbName, dbFileName);
                 libraryData = new LibraryDataContext(connectionString);
-                //DetachDatabase(dbName);
-                if (!libraryData.DatabaseExists())
+                if(!File.Exists(dbFileName))
                 {
+                    DetachDatabase(dbName);
+                    if (libraryData.DatabaseExists())
+                    {
+                        Console.WriteLine("Already exist, deleting...");
+                        libraryData.DeleteDatabase();
+                    }
+                        
                     libraryData.CreateDatabase();
                 }
-                    
+
                 //else
                 //    libraryData.DeleteDatabase();
                 _novelList = new BindingList<Novel>((from novel in libraryData.Novels
@@ -77,6 +81,27 @@ namespace NovelReader
                 Console.WriteLine(e.ToString());
             }
             
+        }
+
+        public bool DetachDatabase(string dbName)
+        {
+            try
+            {
+                string connectionString = String.Format(@"Data Source=(LocalDB)\mssqllocaldb;Initial Catalog=master;Integrated Security=True");
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = connection.CreateCommand();
+                    cmd.CommandText = String.Format("exec sp_detach_db '{0}'", dbName);
+                    cmd.ExecuteNonQuery();
+
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void SaveNovelLibrary()
@@ -164,21 +189,27 @@ namespace NovelReader
             {
                 try
                 {
-                    Source newSource = new Source();
-                    newSource.SourceNovelLocation = novelSource.SourceLocation.ToString();
-                    newSource.SourceNovelID = novelSource.NovelID;
-                    libraryData.Sources.InsertOnSubmit(newSource);
-                    libraryData.SubmitChanges();
+
+
 
                     Novel newNovel = new Novel();
                     newNovel.NovelTitle = novelTitle;
                     newNovel.LastReadChapterID = -1;
-                    newNovel.SourceID = newSource.ID;
                     newNovel.State = Novel.NovelState.Active;
                     newNovel.Reading = false;
                     newNovel.Rank = GetNonDroppedNovelCount();
                     libraryData.Novels.InsertOnSubmit(newNovel);
                     libraryData.SubmitChanges();
+
+                    Source newSource = new Source();
+                    newSource.SourceNovelLocation = novelSource.SourceLocation.ToString();
+                    newSource.SourceNovelID = novelSource.NovelID;
+                    newSource.NovelTitle = novelTitle;
+                    libraryData.Sources.InsertOnSubmit(newSource);
+                    libraryData.SubmitChanges();
+
+                    newNovel.Initiate();
+
                     _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
                     UpdateNovelRanking();
                     transaction.Complete();
@@ -188,8 +219,8 @@ namespace NovelReader
                     Console.WriteLine("Unable to add novel");
                     Console.WriteLine(e.ToString());
                 }
-                
             }
+            
             message = novelTitle + " successfully added.";
             return true;
 
@@ -210,9 +241,8 @@ namespace NovelReader
                     var deleteUrls = (from url in libraryData.ChapterUrls
                                       where deleteChapters.Contains(url.Chapter)
                                       select url);
-                    var deleteSources = (from source in libraryData.Sources
-                                         where source.ID == deleteNovel.SourceID
-                                         select source);
+                    var deleteSources = deleteNovel.Sources;
+
                     libraryData.Chapters.DeleteAllOnSubmit(deleteChapters);
                     libraryData.ChapterUrls.DeleteAllOnSubmit(deleteUrls);
                     libraryData.Sources.DeleteAllOnSubmit(deleteSources);

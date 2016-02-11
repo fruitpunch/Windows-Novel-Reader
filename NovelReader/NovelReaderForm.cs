@@ -290,8 +290,6 @@ namespace NovelReader
                 Chapter chapter = currentReadingNovel.AddChapter();
                 
                 ReadChapter(chapter);
-                dgvChapterList.CurrentCell = dgvChapterList[0, chapter.Index];
-                dgvChapterList.BeginEdit(true);
             }
         }
 
@@ -338,7 +336,8 @@ namespace NovelReader
                 Name = "Index",
                 HeaderText = "Index",
                 DataPropertyName = "Index",
-                Width = 50
+                Width = 50,
+                ReadOnly = true
             };
 
             DataGridViewTextBoxColumn titleColumn = new DataGridViewTextBoxColumn()
@@ -347,7 +346,8 @@ namespace NovelReader
                 Name = "ChapterTitle",
                 HeaderText = "Chapter Title",
                 DataPropertyName = "ChapterTitle",
-                Width = 200
+                Width = 200,
+                ReadOnly = true
             };
 
             DataGridViewCheckBoxColumn makeAudioColumn = new DataGridViewCheckBoxColumn()
@@ -363,14 +363,17 @@ namespace NovelReader
             dgvChapterList.Columns.Add(titleColumn);
             dgvChapterList.Columns.Add(indexColumn);
             dgvChapterList.Columns.Add(makeAudioColumn);
+
+            labelIndex.Visible = false;
+            upIndex.Visible = false;
+            tbTitleChange.Visible = false;
         }
 
         private void ReadChapter(Chapter chapter)
         {
             if (chapter == null || chapter.NovelTitle != currentReadingNovel.NovelTitle)
                 return;
-            labelTitle.DataBindings.Clear();
-            labelTitle.DataBindings.Add(new Binding("Text", chapter, "ChapterTitle", false, DataSourceUpdateMode.OnPropertyChanged));
+            labelTitle.Text = chapter.ChapterTitle;
             currentReadingNovel.StartReadingChapter(chapter);
             currentReadingChapter = chapter;
             
@@ -446,6 +449,15 @@ namespace NovelReader
             rtbChapterTextBox.BackColor = Color.White;
             btnEdit.Text = "Finish Edit";
             editModeOn = true;
+
+            upIndex.Value = currentReadingChapter.Index;
+            upIndex.Maximum = currentReadingNovel.ChapterCount - 1;
+            tbTitleChange.Text = currentReadingChapter.ChapterTitle;
+
+            labelIndex.Visible = true;
+            upIndex.Visible = true;
+            tbTitleChange.Visible = true;
+            labelTitle.Visible = false;
         }
 
         private void FinishEditing()
@@ -462,7 +474,15 @@ namespace NovelReader
                 }
             }
 
+            currentReadingNovel.ChangeIndex(currentReadingChapter.Index, (int)upIndex.Value);
+            currentReadingChapter.ChangeChapterTitle(tbTitleChange.Text);
+            labelTitle.Text = tbTitleChange.Text;
+
             editModeOn = false;
+            labelIndex.Visible = false;
+            upIndex.Visible = false;
+            tbTitleChange.Visible = false;
+            labelTitle.Visible = true;
         }
 
         private void ModifyCellStyle(int rowIndex)

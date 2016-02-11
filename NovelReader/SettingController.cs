@@ -79,7 +79,6 @@ namespace NovelReader
 
         private void dgvLanguageSelector_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            Console.WriteLine(e.RowIndex + " " + e.ColumnIndex + " value changed");
             if (dgvLanguageSelector.Columns[e.ColumnIndex] is DataGridViewComboBoxColumn)
             {
                 string language = dgvLanguageSelector.Rows[e.RowIndex].Cells["Language"].Value.ToString();
@@ -93,7 +92,11 @@ namespace NovelReader
         private void dgvLanguageSelector_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
             if (dgvLanguageSelector.IsCurrentCellDirty)
+            {
                 dgvLanguageSelector.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                dgvLanguageSelector.EndEdit();
+            }
+                
         }
 
         private void dgvLanguageSelector_CellClick(object sender, DataGridViewCellEventArgs e)

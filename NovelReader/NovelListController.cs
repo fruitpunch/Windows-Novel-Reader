@@ -100,7 +100,11 @@ namespace NovelReader
         private void dgvNovelList_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
             if (dgvNovelList.IsCurrentCellDirty)
+            {
                 dgvNovelList.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                dgvNovelList.EndEdit();
+            }
+                
         }
 
         private void dgvNovelList_CellValueChanged(object sender, DataGridViewCellEventArgs e)

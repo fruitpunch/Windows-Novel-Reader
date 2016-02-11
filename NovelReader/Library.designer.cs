@@ -112,8 +112,6 @@ namespace NovelReader
 		
 		private int _StateID;
 		
-		private int _SourceID;
-		
 		private int _LastReadChapterID;
 		
 		private int _ChaptersNotReadCount;
@@ -134,8 +132,6 @@ namespace NovelReader
     partial void OnRankChanged();
     partial void OnStateIDChanging(int value);
     partial void OnStateIDChanged();
-    partial void OnSourceIDChanging(int value);
-    partial void OnSourceIDChanged();
     partial void OnLastReadChapterIDChanging(int value);
     partial void OnLastReadChapterIDChanged();
     partial void OnChaptersNotReadCountChanging(int value);
@@ -207,26 +203,6 @@ namespace NovelReader
 					this._StateID = value;
 					this.SendPropertyChanged("StateID");
 					this.OnStateIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SourceID")]
-		public int SourceID
-		{
-			get
-			{
-				return this._SourceID;
-			}
-			set
-			{
-				if ((this._SourceID != value))
-				{
-					this.OnSourceIDChanging(value);
-					this.SendPropertyChanging();
-					this._SourceID = value;
-					this.SendPropertyChanged("SourceID");
-					this.OnSourceIDChanged();
 				}
 			}
 		}
@@ -304,7 +280,7 @@ namespace NovelReader
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Novel_Source", Storage="_Sources", ThisKey="SourceID", OtherKey="ID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Novel_Source", Storage="_Sources", ThisKey="NovelTitle", OtherKey="NovelTitle")]
 		public EntitySet<Source> Sources
 		{
 			get
@@ -817,6 +793,8 @@ namespace NovelReader
 		
 		private string _SourceNovelID;
 		
+		private string _NovelTitle;
+		
 		private EntitySet<ChapterUrl> _ChapterUrls;
 		
 		private EntityRef<Novel> _Novel;
@@ -831,6 +809,8 @@ namespace NovelReader
     partial void OnSourceNovelLocationChanged();
     partial void OnSourceNovelIDChanging(string value);
     partial void OnSourceNovelIDChanged();
+    partial void OnNovelTitleChanging(string value);
+    partial void OnNovelTitleChanged();
     #endregion
 		
 		public Source()
@@ -851,10 +831,6 @@ namespace NovelReader
 			{
 				if ((this._ID != value))
 				{
-					if (this._Novel.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnIDChanging(value);
 					this.SendPropertyChanging();
 					this._ID = value;
@@ -904,6 +880,30 @@ namespace NovelReader
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NovelTitle", CanBeNull=false)]
+		public string NovelTitle
+		{
+			get
+			{
+				return this._NovelTitle;
+			}
+			set
+			{
+				if ((this._NovelTitle != value))
+				{
+					if (this._Novel.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnNovelTitleChanging(value);
+					this.SendPropertyChanging();
+					this._NovelTitle = value;
+					this.SendPropertyChanged("NovelTitle");
+					this.OnNovelTitleChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Source_ChapterUrl", Storage="_ChapterUrls", ThisKey="ID", OtherKey="SourceID")]
 		public EntitySet<ChapterUrl> ChapterUrls
 		{
@@ -917,7 +917,7 @@ namespace NovelReader
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Novel_Source", Storage="_Novel", ThisKey="ID", OtherKey="SourceID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Novel_Source", Storage="_Novel", ThisKey="NovelTitle", OtherKey="NovelTitle", IsForeignKey=true)]
 		public Novel Novel
 		{
 			get
@@ -940,11 +940,11 @@ namespace NovelReader
 					if ((value != null))
 					{
 						value.Sources.Add(this);
-						this._ID = value.SourceID;
+						this._NovelTitle = value.NovelTitle;
 					}
 					else
 					{
-						this._ID = default(int);
+						this._NovelTitle = default(string);
 					}
 					this.SendPropertyChanged("Novel");
 				}
