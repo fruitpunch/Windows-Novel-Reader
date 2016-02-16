@@ -19,7 +19,7 @@ namespace Source
             try
             {
                 using (var stream = client.OpenRead(url))
-                using (var reader = new StreamReader(stream, System.Text.Encoding.GetEncoding(936)))
+                using (var reader = new StreamReader(stream, client.Encoding))
                 {
                     string line;
                     while ((line = reader.ReadLine()) != null)
@@ -34,17 +34,15 @@ namespace Source
             return lines.ToArray();
         }
 
-        public static string[] GetUrlContentsEn(string url)
+        public static string[] GetUrlContentsUTF8(string url)
         {
             List<string> lines = new List<string>();
             WebClient client = new WebClient();
-            client.Encoding = System.Text.Encoding.UTF8;
             try
             {
                 using (var stream = client.OpenRead(url))
-                using (var reader = new StreamReader(stream))
+                using (var reader = new StreamReader(stream, System.Text.Encoding.UTF8))
                 {
-
                     string line;
                     while ((line = reader.ReadLine()) != null)
                         lines.Add(line);

@@ -13,21 +13,7 @@ namespace NovelReader
 
         
         /*============Properties============*/
-        
-        public ChapterUrl ChapterUrl
-        {
-            get {
-                var result = (from url in NovelLibrary.libraryData.ChapterUrls
-                              where url.ChapterID == ID
-                              select url);
-                if (result.Any())
-                    return result.First<ChapterUrl>();
-                else
-                    return null;
-            }
 
-        }
-        
         public bool HasAudio
         {
             get { return File.Exists(GetAudioFileLocation()); }

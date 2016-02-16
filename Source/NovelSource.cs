@@ -6,6 +6,36 @@ using System.Threading.Tasks;
 
 namespace Source
 {
+    public struct ChapterSource
+    {
+        private string _url { get; set; }
+        private string _title { get; set; }
+        private bool _vip { get; set; }
+
+        public string Url
+        {
+            get { return this._url; }
+        }
+
+        public string Title
+        {
+            get { return this._title; }
+        }
+
+        public bool Vip
+        {
+            get { return this._vip; }
+        }
+
+        public ChapterSource(string url, string title, bool vip)
+        {
+            this._url = url;
+            this._title = title;
+            this._vip = vip;
+        }
+
+    }
+
     public interface NovelSource
     {
         //Returns the SourceLocation of the type extending this class.
@@ -30,7 +60,7 @@ namespace Source
         }
 
         Tuple<bool, string> VerifySource(); //Checks the ID of the source. Return true and the novel title if the novel found is valid.
-        Tuple<string, string>[] GetMenuURLs(); //Returns an array of tuple of chapter title and url. 
+        ChapterSource[] GetMenuURLs(); //Returns an array of tuple of chapter title and url. 
         string[] GetChapterContent(string chapterTitle, string url); //Returns the novel content of the URL.
     }
 }

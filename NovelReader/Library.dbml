@@ -28,6 +28,7 @@
       <Column Name="Valid" Type="System.Boolean" CanBeNull="false" />
       <Column Name="ChapterID" Type="System.Int32" CanBeNull="false" />
       <Column Name="SourceID" Type="System.Int32" CanBeNull="false" />
+      <Column Member="Vip" Type="System.Boolean" CanBeNull="false" />
       <Association Name="Chapter_ChapterUrl" Member="Chapter" ThisKey="ChapterID" OtherKey="ID" Type="Chapter" IsForeignKey="true" />
       <Association Name="Source_ChapterUrl" Member="Source" ThisKey="SourceID" OtherKey="ID" Type="Source" IsForeignKey="true" />
     </Type>
@@ -37,7 +38,8 @@
       <Column Name="ID" Type="System.Int32" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="SourceNovelLocation" Type="System.String" CanBeNull="false" />
       <Column Name="SourceNovelID" Type="System.String" CanBeNull="false" />
-      <Column Member="NovelTitle" Type="System.String" CanBeNull="false" />
+      <Column Name="NovelTitle" Type="System.String" CanBeNull="false" />
+      <Column Member="Mirror" Type="System.Boolean" CanBeNull="false" />
       <Association Name="Source_ChapterUrl" Member="ChapterUrls" ThisKey="ID" OtherKey="SourceID" Type="ChapterUrl" />
       <Association Name="Novel_Source" Member="Novel" ThisKey="NovelTitle" OtherKey="NovelTitle" Type="Novel" IsForeignKey="true" />
     </Type>

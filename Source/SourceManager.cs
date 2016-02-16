@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public enum SourceLocation { Web69, WebPiaoTian, WuxiaWorld };
+    public enum SourceLocation { Web17k, Web69, WebPiaoTian, WebWuxiaWorld };
     /*
     public class PlugInFactory<T>
     {
@@ -44,34 +44,32 @@ namespace Source
         */
         public static NovelSource GetSource(SourceLocation s, string sourceID)
         {
-            NovelSource rtnSource;
             switch (s)
             {
+                case SourceLocation.Web17k:
+                    return new Source17k(sourceID);
                 case SourceLocation.Web69:
-                    rtnSource = new SourceWeb69(sourceID);
-                    break;
+                    return new SourceWeb69(sourceID);
                 case SourceLocation.WebPiaoTian:
-                    rtnSource = new SourcePiaoTian(sourceID);
-                    break;
-                case SourceLocation.WuxiaWorld:
-                    rtnSource = new SourceWuxiaWorld(sourceID);
-                    break;
+                    return new SourcePiaoTian(sourceID);
+                case SourceLocation.WebWuxiaWorld:
+                    return new SourceWuxiaWorld(sourceID);
                 default:
-                    rtnSource = null;
-                    break;
+                    return null;
             }
-            return rtnSource;
         }
 
         public static string GetSourceURL(SourceLocation s)
         {
             switch (s)
             {
+                case SourceLocation.Web17k:
+                    return new Source17k(null).BaseURL;
                 case SourceLocation.Web69:
                     return new SourceWeb69(null).BaseURL;
                 case SourceLocation.WebPiaoTian:
                     return new SourcePiaoTian(null).BaseURL;
-                case SourceLocation.WuxiaWorld:
+                case SourceLocation.WebWuxiaWorld:
                     return new SourceWuxiaWorld(null).BaseURL;
                 default:
                     return null;

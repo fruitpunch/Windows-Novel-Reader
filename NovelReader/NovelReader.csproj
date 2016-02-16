@@ -46,6 +46,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Speech, Version=11.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -152,6 +155,12 @@
     <EmbeddedResource Include="NovelReaderForm.resx">
       <DependentUpon>NovelReaderForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NovelTileController.resx">
+      <DependentUpon>NovelTileController.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NovelTileViewController.resx">
+      <DependentUpon>NovelTileViewController.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -245,6 +254,9 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "D:\Dev\Project\CS\WindowNovelReader\NovelReader\bin\Debug" "D:\Sync\WindowNovelReader(test)" /Y /E /D</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

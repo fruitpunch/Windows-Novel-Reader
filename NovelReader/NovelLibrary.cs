@@ -106,7 +106,7 @@ namespace NovelReader
 
         public void SaveNovelLibrary()
         {
-           
+            //libraryData.SubmitChanges();
         }
 
         public void CloseNovelLibrary()
@@ -189,9 +189,6 @@ namespace NovelReader
             {
                 try
                 {
-
-
-
                     Novel newNovel = new Novel();
                     newNovel.NovelTitle = novelTitle;
                     newNovel.LastReadChapterID = -1;

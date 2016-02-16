@@ -579,6 +579,8 @@ namespace NovelReader
 		
 		private int _SourceID;
 		
+		private bool _Vip;
+		
 		private EntityRef<Chapter> _Chapter;
 		
 		private EntityRef<Source> _Source;
@@ -595,6 +597,8 @@ namespace NovelReader
     partial void OnChapterIDChanged();
     partial void OnSourceIDChanging(int value);
     partial void OnSourceIDChanged();
+    partial void OnVipChanging(bool value);
+    partial void OnVipChanged();
     #endregion
 		
 		public ChapterUrl()
@@ -688,6 +692,26 @@ namespace NovelReader
 					this._SourceID = value;
 					this.SendPropertyChanged("SourceID");
 					this.OnSourceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Vip")]
+		public bool Vip
+		{
+			get
+			{
+				return this._Vip;
+			}
+			set
+			{
+				if ((this._Vip != value))
+				{
+					this.OnVipChanging(value);
+					this.SendPropertyChanging();
+					this._Vip = value;
+					this.SendPropertyChanged("Vip");
+					this.OnVipChanged();
 				}
 			}
 		}
@@ -795,6 +819,8 @@ namespace NovelReader
 		
 		private string _NovelTitle;
 		
+		private bool _Mirror;
+		
 		private EntitySet<ChapterUrl> _ChapterUrls;
 		
 		private EntityRef<Novel> _Novel;
@@ -811,6 +837,8 @@ namespace NovelReader
     partial void OnSourceNovelIDChanged();
     partial void OnNovelTitleChanging(string value);
     partial void OnNovelTitleChanged();
+    partial void OnMirrorChanging(bool value);
+    partial void OnMirrorChanged();
     #endregion
 		
 		public Source()
@@ -900,6 +928,26 @@ namespace NovelReader
 					this._NovelTitle = value;
 					this.SendPropertyChanged("NovelTitle");
 					this.OnNovelTitleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mirror")]
+		public bool Mirror
+		{
+			get
+			{
+				return this._Mirror;
+			}
+			set
+			{
+				if ((this._Mirror != value))
+				{
+					this.OnMirrorChanging(value);
+					this.SendPropertyChanging();
+					this._Mirror = value;
+					this.SendPropertyChanged("Mirror");
+					this.OnMirrorChanged();
 				}
 			}
 		}

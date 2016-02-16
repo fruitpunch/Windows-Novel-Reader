@@ -30,12 +30,11 @@ namespace NovelReader
 
         private void NovelListController_Load(object sender, EventArgs e)
         {
-            int updateInterval = Configuration.Instance.UpdateInterval;
-            upUpdateFreq.Value = updateInterval / (1000 * 60);
+
             refreshUpdateLabelTimer.Start();
         }
 
-        private void btnTest_Click(object sender, EventArgs e)
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
 
             BackgroundService.Instance.UpdateTTSTest();
@@ -154,11 +153,6 @@ namespace NovelReader
         private void refreshUpdateLabelTimer_Tick(object sender, EventArgs e)
         {
             labelLastUpdateTime.Text = Util.GetUpdateTimeString(Configuration.Instance.LastFullUpdateTime);
-        }
-
-        private void upUpdateFreq_ValueChanged(object sender, EventArgs e)
-        {
-            BackgroundService.Instance.UpdateTimerInterval((int)upUpdateFreq.Value);
         }
 
 

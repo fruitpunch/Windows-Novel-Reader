@@ -161,7 +161,7 @@ namespace NovelReader
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (!rtbChapterTextBox.ReadOnly) //Finished Editing
+            if (editModeOn) //Finished Editing
                 FinishEditing();
             else //Start Editing
                 StartEditing();     
@@ -477,8 +477,8 @@ namespace NovelReader
                     System.IO.File.WriteAllText(currentReadingChapter.GetTextFileLocation(), text);
                 }
             }
-
-            currentReadingNovel.ChangeIndex(currentReadingChapter.Index, (int)upIndex.Value);
+            if(currentReadingChapter.Index != (int)upIndex.Value)
+                currentReadingNovel.ChangeIndex(currentReadingChapter.Index, (int)upIndex.Value);
             currentReadingChapter.ChangeChapterTitle(tbTitleChange.Text);
             labelTitle.Text = tbTitleChange.Text;
 

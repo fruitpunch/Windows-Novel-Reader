@@ -112,5 +112,16 @@ namespace NovelReader
                 ((ComboBox)datagridview.EditingControl).DroppedDown = true;
             }
         }
+
+        private void upUpdateFreq_ValueChanged(object sender, EventArgs e)
+        {
+            BackgroundService.Instance.UpdateTimerInterval((int)upUpdateFreq.Value);
+        }
+
+        private void SettingController_Load(object sender, EventArgs e)
+        {
+            int updateInterval = Configuration.Instance.UpdateInterval;
+            upUpdateFreq.Value = updateInterval / (1000 * 60);
+        }
     }
 }

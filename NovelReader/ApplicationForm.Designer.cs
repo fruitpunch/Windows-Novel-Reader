@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.buttonContainerPanel = new System.Windows.Forms.Panel();
+            this.btnNovelTileView = new System.Windows.Forms.Button();
             this.btnSetting = new System.Windows.Forms.Button();
             this.btnNovelList = new System.Windows.Forms.Button();
             this.btnTTSList = new System.Windows.Forms.Button();
@@ -41,6 +42,7 @@
             this.buttonContainerPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonContainerPanel.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.buttonContainerPanel.Controls.Add(this.btnNovelTileView);
             this.buttonContainerPanel.Controls.Add(this.btnSetting);
             this.buttonContainerPanel.Controls.Add(this.btnNovelList);
             this.buttonContainerPanel.Controls.Add(this.btnTTSList);
@@ -48,6 +50,22 @@
             this.buttonContainerPanel.Name = "buttonContainerPanel";
             this.buttonContainerPanel.Size = new System.Drawing.Size(200, 700);
             this.buttonContainerPanel.TabIndex = 0;
+            // 
+            // btnNovelTileView
+            // 
+            this.btnNovelTileView.FlatAppearance.BorderSize = 0;
+            this.btnNovelTileView.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.WindowFrame;
+            this.btnNovelTileView.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNovelTileView.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNovelTileView.ForeColor = System.Drawing.Color.Black;
+            this.btnNovelTileView.Location = new System.Drawing.Point(0, 195);
+            this.btnNovelTileView.Name = "btnNovelTileView";
+            this.btnNovelTileView.Size = new System.Drawing.Size(200, 65);
+            this.btnNovelTileView.TabIndex = 4;
+            this.btnNovelTileView.Text = "TileView";
+            this.btnNovelTileView.UseVisualStyleBackColor = true;
+            this.btnNovelTileView.Visible = false;
+            this.btnNovelTileView.Click += new System.EventHandler(this.btnNovelTileView_Click);
             // 
             // btnSetting
             // 
@@ -132,6 +150,7 @@
         private System.Windows.Forms.Button btnTTSList;
         private System.Windows.Forms.Button btnSetting;
         private System.Windows.Forms.Panel controlContainerPanel;
+        private System.Windows.Forms.Button btnNovelTileView;
     }
 }
 

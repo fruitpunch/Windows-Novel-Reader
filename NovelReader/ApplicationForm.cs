@@ -15,6 +15,7 @@ namespace NovelReader
         public NovelListController novelListController;
         public TTSController ttsController;
         public SettingController settingController;
+        public NovelTileViewController tileViewController;
          
         public ApplicationForm()
         {
@@ -23,18 +24,23 @@ namespace NovelReader
             novelListController = new NovelListController();
             ttsController = new TTSController();
             settingController = new SettingController();
+            //tileViewController = new NovelTileViewController();
             novelListController.Dock = DockStyle.Fill;
             ttsController.Dock = DockStyle.Fill;
             settingController.Dock = DockStyle.Fill;
+            //tileViewController.Dock = DockStyle.Fill;
             novelListController.Visible = true;
             ttsController.Visible = false;
             settingController.Visible = false;
+            //tileViewController.Visible = false;
             btnNovelList.BackColor = this.BackColor;
             btnTTSList.BackColor = buttonContainerPanel.BackColor;
             btnSetting.BackColor = buttonContainerPanel.BackColor;
+            btnNovelTileView.BackColor = buttonContainerPanel.BackColor;
             controlContainerPanel.Controls.Add(novelListController);
             controlContainerPanel.Controls.Add(ttsController);
             controlContainerPanel.Controls.Add(settingController);
+            //controlContainerPanel.Controls.Add(tileViewController);
         }
 
         private void ApplicationForm_Load(object sender, EventArgs e)
@@ -63,9 +69,11 @@ namespace NovelReader
             btnNovelList.BackColor = this.BackColor;
             btnTTSList.BackColor = buttonContainerPanel.BackColor;
             btnSetting.BackColor = buttonContainerPanel.BackColor;
+            btnNovelTileView.BackColor = buttonContainerPanel.BackColor;
             novelListController.Visible = true;
             ttsController.Visible = false;
             settingController.Visible = false;
+            //tileViewController.Visible = false;
         }
 
         private void btnTTSList_Click(object sender, EventArgs e)
@@ -73,9 +81,11 @@ namespace NovelReader
             btnNovelList.BackColor = buttonContainerPanel.BackColor;
             btnTTSList.BackColor = this.BackColor;
             btnSetting.BackColor = buttonContainerPanel.BackColor;
+            btnNovelTileView.BackColor = buttonContainerPanel.BackColor;
             novelListController.Visible = false;
             ttsController.Visible = true;
             settingController.Visible = false;
+            //tileViewController.Visible = false;
         }
 
         private void btnSetting_Click(object sender, EventArgs e)
@@ -83,10 +93,24 @@ namespace NovelReader
             btnNovelList.BackColor = buttonContainerPanel.BackColor;
             btnTTSList.BackColor = buttonContainerPanel.BackColor;
             btnSetting.BackColor = this.BackColor;
+            btnNovelTileView.BackColor = buttonContainerPanel.BackColor;
             novelListController.Visible = false;
             ttsController.Visible = false;
             settingController.Visible = true;
+            //tileViewController.Visible = false;
 
+        }
+
+        private void btnNovelTileView_Click(object sender, EventArgs e)
+        {
+            btnNovelList.BackColor = buttonContainerPanel.BackColor;
+            btnTTSList.BackColor = buttonContainerPanel.BackColor;
+            btnSetting.BackColor = buttonContainerPanel.BackColor;
+            btnNovelTileView.BackColor = this.BackColor;
+            novelListController.Visible = false;
+            ttsController.Visible = false;
+            settingController.Visible = false;
+            //tileViewController.Visible = true;
         }
     }
 }

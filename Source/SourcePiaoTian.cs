@@ -75,9 +75,9 @@ namespace Source
             return new Tuple<bool, string>(true, title);
         }
 
-        public Tuple<string, string>[] GetMenuURLs()
+        public ChapterSource[] GetMenuURLs()
         {
-            List<Tuple<string, string>> chapterURLs = new List<Tuple<string, string>>();
+            List<ChapterSource> chapterURLs = new List<ChapterSource>();
 
             string url = BaseURL + "/read/" + _novelID.ToString() + "/index.html";
             string chapterMatchingSubstring = "<a href=\"/read/" + _novelID.ToString() + "/";
@@ -96,7 +96,7 @@ namespace Source
                     chURL = quoteMatch[2].ToString();
                     title = title.Replace("\"", "");
                     chURL = chURL.Replace("\"", "");
-                    chapterURLs.Add(new Tuple<string, string>(title, chURL));
+                    chapterURLs.Add(new ChapterSource(chURL, title, false));
                 }
 
             }

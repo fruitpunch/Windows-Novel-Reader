@@ -17,7 +17,7 @@ namespace Source
 
         public SourceLocation SourceLocation
         {
-            get { return SourceLocation.WuxiaWorld; }
+            get { return SourceLocation.WebWuxiaWorld; }
         }
 
         public string NovelID
@@ -56,7 +56,7 @@ namespace Source
         public Tuple<bool, string> VerifySource()
         {
             string url = BaseURL + "/" + _novelID.ToString() + "/";
-            string[] lines = WebUtil.GetUrlContentsEn(url);
+            string[] lines = WebUtil.GetUrlContentsUTF8(url);
             
             if (lines == null)
                 return new Tuple<bool, string>(false, "");
@@ -79,13 +79,13 @@ namespace Source
             return new Tuple<bool, string>(true, title);
         }
 
-        public Tuple<string, string>[] GetMenuURLs()
+        public ChapterSource[] GetMenuURLs()
         {
-            List<Tuple<string, string>> chapterURLs = new List<Tuple<string, string>>();
+            List<ChapterSource> chapterURLs = new List<ChapterSource>();
 
             string url = BaseURL + "/" + _novelID.ToString();
             string chapterMatchingSubstring = url;
-            string[] lines = WebUtil.GetUrlContents(url);
+            string[] lines = WebUtil.GetUrlContentsUTF8(url);
             if (lines == null)
                 return null;
 
@@ -113,7 +113,7 @@ namespace Source
                             title = chURL.Split('/').Last();
                             chURL = chURL.Replace("http://www.wuxiaworld.com", "");
                             //Console.WriteLine(match.ToString().Replace("\"", "") + "  |  " + chURL + "  |  " + title);
-                            chapterURLs.Add(new Tuple<string, string>(title, chURL));
+                            chapterURLs.Add(new ChapterSource(chURL, title, false));
                         }
                     }
                 }
@@ -124,7 +124,7 @@ namespace Source
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
-            string[] lines = WebUtil.GetUrlContentsEn(BaseURL + url);
+            string[] lines = WebUtil.GetUrlContentsUTF8(BaseURL + url);
             if (lines == null)
                 return null;
             Console.WriteLine(chapterTitle + " " + url);

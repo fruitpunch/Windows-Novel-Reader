@@ -28,8 +28,6 @@ namespace NovelReader
 
         private volatile ManualResetEvent mre;
 
-        public static Chapter lastUpdatedChapter = null;
-
         /*============Properties============*/
 
         public static BackgroundService Instance
@@ -208,44 +206,50 @@ namespace NovelReader
         private void DoUpdate()
         {
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
-            bool[] results = new bool[updateNovels.Length];
-            
-            for (int i = 0; i < updateNovels.Length && !shutDown; i++)
-            {
-                if (updateNovels[i] == null)
-                    continue;
-                results[i] = updateNovels[i].CheckForUpdate();
-            }
-            Configuration.Instance.LastFullUpdateTime = DateTime.Now;
-            bool newUpdate = false;
-            for (int i = 0; i < updateNovels.Length && !shutDown; i++)
-            {
-                if (updateNovels[i] == null)
-                    continue;
-                var chapters = updateNovels[i].NovelChapters;
 
-                List<Chapter> downloadChapters = new List<Chapter>();
-                foreach (Chapter c in chapters)
-                    if (!c.HasText)
-                        downloadChapters.Add(c);
-                int failure = 0;
-                bool success;
-                for(int j = 0; j < downloadChapters.Count && !shutDown; j++)
-                {
-                    success = updateNovels[i].DownloadChapter(downloadChapters[j], j+1, downloadChapters.Count);
-                    if (!success)
-                        failure++;
-                }
-                if (updateNovels[i] == null)
-                    continue;
-                if (downloadChapters.Count > 0)
+            bool newUpdate = false;
+            foreach(Novel updateNovel in updateNovels)
+            {
+                bool result = UpdateNovel(updateNovel);
+                if (result)
                     newUpdate = true;
-                updateNovels[i].ChaptersNotReadCount = updateNovels[i].ChaptersNotReadCount + downloadChapters.Count - failure;
-                updateNovels[i].SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
-                updateNovels[i].NotifyPropertyChanged("ChapterCountStatus");
             }
             if (newUpdate)
                 mre.Set();
+        }
+
+        private bool UpdateNovel(Novel updateNovel)
+        {
+            if (updateNovel == null || updateNovel.UpdateState == Novel.UpdateStates.Checking || updateNovel.UpdateState == Novel.UpdateStates.Fetching)
+                return false;
+            updateNovel.CheckForUpdate();
+
+            var chapters = updateNovel.NovelChapters;
+            List<Chapter> downloadChapters = new List<Chapter>();
+            foreach (Chapter c in chapters)
+                if (!c.HasText)
+                    downloadChapters.Add(c);
+
+            int failure = 0;
+            bool success;
+            for (int i = 0; i < downloadChapters.Count && !shutDown && updateNovel != null; i++)
+            {
+                success = updateNovel.DownloadChapter(downloadChapters[i], i + 1, downloadChapters.Count);
+                if (!success)
+                    failure++;
+            }
+            if (updateNovel != null)
+            {
+                updateNovel.ChaptersNotReadCount = updateNovel.ChaptersNotReadCount + downloadChapters.Count - failure;
+                updateNovel.SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
+                updateNovel.NotifyPropertyChanged("ChapterCountStatus");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+                
         }
 
 
