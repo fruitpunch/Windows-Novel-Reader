@@ -45,9 +45,10 @@ namespace Source
                 {"<br />", "\n"}
             };
 
-        public SourceWeb69(string novelID)
+        public SourceWeb69(string novelID, string novelTitle)
         {
             this._novelID = novelID;
+            this._novelTitle = novelTitle;
             cultureInfo = new CultureInfo("zh-CN", false);
         }
 
@@ -72,6 +73,7 @@ namespace Source
                     break;
                 }
             }
+            NovelTitle = title;
             return new Tuple<bool, string>(true, title);
         }
 

@@ -14,16 +14,16 @@
         <elementListCompartment Id="0f1d8589-5398-4e6f-a6cd-3f4d3d1b48cf" absoluteBounds="10.515, 4.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="4a8d62f5-c8cd-43c9-b007-1894394f6156" absoluteBounds="13.5, 4.25, 2, 1.7708968098958327">
+    <classShape Id="4a8d62f5-c8cd-43c9-b007-1894394f6156" absoluteBounds="13.5, 4.25, 2, 1.9631982421874996">
       <DataClassMoniker Name="/LibraryDataContext/ChapterUrl" />
       <nestedChildShapes>
-        <elementListCompartment Id="f2aee0ac-9808-4bf3-9b0c-5ccb1802c2a8" absoluteBounds="13.515, 4.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="f2aee0ac-9808-4bf3-9b0c-5ccb1802c2a8" absoluteBounds="13.515, 4.71, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="a02312fa-0c6d-4caf-9ec6-6b035e2e4d4c" absoluteBounds="5, 4.25, 2, 1.7708968098958327">
+    <classShape Id="a02312fa-0c6d-4caf-9ec6-6b035e2e4d4c" absoluteBounds="5, 4.25, 2, 1.9631982421874996">
       <DataClassMoniker Name="/LibraryDataContext/Source" />
       <nestedChildShapes>
-        <elementListCompartment Id="4b36f021-9e68-4e23-b752-349d18095d26" absoluteBounds="5.0150000000000006, 4.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="4b36f021-9e68-4e23-b752-349d18095d26" absoluteBounds="5.0150000000000006, 4.71, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <associationConnector edgePoints="[(9.75 : 5.13544840494792); (10.5 : 5.13544840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
@@ -40,14 +40,14 @@
         <classShapeMoniker Id="4a8d62f5-c8cd-43c9-b007-1894394f6156" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(7 : 4.25); (7.375 : 3.875); (13.125 : 3.875); (13.5 : 4.25)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(7 : 6.2131982421875); (7.375 : 6.5881982421875); (13.126509152494 : 6.5881982421875); (13.501509152494 : 6.2131982421875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/LibraryDataContext/Source/Source_ChapterUrl" />
       <nodes>
         <classShapeMoniker Id="a02312fa-0c6d-4caf-9ec6-6b035e2e4d4c" />
         <classShapeMoniker Id="4a8d62f5-c8cd-43c9-b007-1894394f6156" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(7.75 : 5.16670090494792); (7 : 5.16670090494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(7.75 : 5.26285162109375); (7 : 5.26285162109375)]" fixedFrom="Algorithm" fixedTo="Algorithm">
       <AssociationMoniker Name="/LibraryDataContext/Novel/Novel_Source" />
       <nodes>
         <classShapeMoniker Id="7c52ffc7-eab2-4594-b748-e8a91a4f84d7" />

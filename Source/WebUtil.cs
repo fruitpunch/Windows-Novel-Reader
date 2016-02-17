@@ -27,7 +27,7 @@ namespace Source
 
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

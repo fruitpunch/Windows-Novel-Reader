@@ -62,6 +62,11 @@ namespace NovelReader
             set { this._metaFileLocation = value; }
         }
 
+        public string CacheFolderLocation
+        {
+            get { return Path.Combine(NovelFolderLocation, "Cache"); }
+        }
+
         public int TTSThreadCount
         {
             get { return this._ttsThreadCount; }

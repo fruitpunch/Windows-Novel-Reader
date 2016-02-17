@@ -182,6 +182,7 @@ namespace NovelReader
             DataGridViewCell novelTitleCell = new DataGridViewTextBoxCell();
             DataGridViewCell rankingCell = new DataGridViewTextBoxCell();
             DataGridViewCell chapterCountStatusCell = new DataGridViewTextBoxCell();
+            DataGridViewLinkCell sourceEditLinkCell = new DataGridViewLinkCell();
             DataGridViewCheckBoxCell makeAudioCell = new DataGridViewCheckBoxCell();
             UpdateDataGridViewProgressCell updateProgressCell = new UpdateDataGridViewProgressCell();
 
@@ -236,6 +237,14 @@ namespace NovelReader
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                 FlatStyle = FlatStyle.Popup
                 //Width = 100,
+            };
+
+            DataGridViewLinkColumn editSourceLinkColumn = new DataGridViewLinkColumn()
+            {
+                CellTemplate = sourceEditLinkCell,
+                Name = "SourceEdit",
+                HeaderText = "Edit Source",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
             };
 
             UpdateDataGridViewProgressColumn updateProgressColumn = new UpdateDataGridViewProgressColumn()

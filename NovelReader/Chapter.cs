@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Source;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -34,6 +35,12 @@ namespace NovelReader
         public string GetTextFileLocation()
         {
             return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "texts", Index.ToString() + "_" + Util.CleanFileTitle(ChapterTitle) + ".txt");
+        }
+
+        public int GetHash()
+        {
+            string s = NovelTitle + ChapterTitle + Index;
+            return s.GetHashCode();
         }
 
         /*============Public Function=======*/
@@ -108,7 +115,7 @@ namespace NovelReader
             }
             NovelLibrary.libraryData.SubmitChanges();
         }
-        
+
         public void NotifyPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)

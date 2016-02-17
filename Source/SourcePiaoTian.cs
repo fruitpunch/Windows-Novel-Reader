@@ -45,9 +45,10 @@ namespace Source
                 {"<br />", "\n"}
             };
 
-        public SourcePiaoTian(string novelID)
+        public SourcePiaoTian(string novelID, string novelTitle)
         {
             this._novelID = novelID;
+            this._novelTitle = novelTitle;
             this.cultureInfo = new CultureInfo("en-US", false);
         }
 
@@ -72,6 +73,7 @@ namespace Source
                     break;
                 }
             }
+            NovelTitle = title;
             return new Tuple<bool, string>(true, title);
         }
 

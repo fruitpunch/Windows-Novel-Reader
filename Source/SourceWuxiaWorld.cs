@@ -47,9 +47,10 @@ namespace Source
                 {"Next Chapter", ""}
             };
 
-        public SourceWuxiaWorld(string novelID)
+        public SourceWuxiaWorld(string novelID, string novelTitle)
         {
             this._novelID = novelID;
+            this._novelTitle = novelTitle;
             this.cultureInfo = new CultureInfo("en-US", false);
         }
 
@@ -76,6 +77,7 @@ namespace Source
                     break;
                 }
             }
+            NovelTitle = title;
             return new Tuple<bool, string>(true, title);
         }
 

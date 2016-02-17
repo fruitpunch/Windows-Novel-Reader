@@ -22,15 +22,27 @@ namespace NovelReader
             Configuration.LoadConfiguration();
             NovelLibrary.Instance.LoadNovelLibrary();
             BackgroundService.Instance.StartService();
-            
+            CreateCache();
         }
 
         public static void SaveComponents()
         {
             BackgroundService.Instance.CloseService();
-            //NovelLibrary.Instance.SaveNovelLibrary();
             Configuration.SaveConfiguration();
             NovelLibrary.Instance.CloseNovelLibrary();
+            ClearCache();
+        }
+
+        public static void CreateCache()
+        {
+            ClearCache();
+            Directory.CreateDirectory(Configuration.Instance.CacheFolderLocation);
+        }
+
+        public static void ClearCache()
+        {
+            if(Directory.Exists(Configuration.Instance.CacheFolderLocation))
+                Directory.Delete(Configuration.Instance.CacheFolderLocation))
         }
 
         public static string CleanFileTitle(string input)

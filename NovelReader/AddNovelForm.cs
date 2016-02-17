@@ -51,9 +51,17 @@ namespace NovelReader
             novelTitle = inputNovelTitle.Text;
             sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
             string message = "";
-            bool result = BackgroundService.Instance.AddNovel(novelTitle, source, out message);
+            Novel newNovel = BackgroundService.Instance.AddNovel(novelTitle, out message);
 
-            if (!result)
+            if (newNovel == null)
+            {
+                MessageBox.Show(message, "Add Novel Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Source newSource = newNovel.AddSource(source, false);
+
+            if (newNovel == null)
             {
                 MessageBox.Show(message, "Add Novel Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;

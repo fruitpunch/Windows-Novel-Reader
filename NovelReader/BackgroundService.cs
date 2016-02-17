@@ -108,10 +108,12 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public bool AddNovel(string novelTitle, NovelSource novelSource, out string message)
+        public Novel AddNovel(string novelTitle, out string message)
         {
-            return NovelLibrary.Instance.AddNovel(novelTitle, novelSource, out message);
+            return NovelLibrary.Instance.AddNovel(novelTitle, out message);
         }
+
+
 
         public void DeleteNovel(string novelTitle, bool deleteData)
         {

@@ -55,7 +55,7 @@ namespace TTS
                         Console.WriteLine();
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                 }
             }
@@ -98,7 +98,7 @@ namespace TTS
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
 
                 }
@@ -116,7 +116,7 @@ namespace TTS
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                 }
             }
@@ -447,7 +447,7 @@ namespace TTS
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine("Invalid replacement file location");
                     PrintHelp();

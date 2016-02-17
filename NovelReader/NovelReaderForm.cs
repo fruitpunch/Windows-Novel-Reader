@@ -88,7 +88,7 @@ namespace NovelReader
                 {
                     dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                 }
             }
@@ -248,12 +248,12 @@ namespace NovelReader
             }
             if (currentReadingNovel != null)
             {
-                if (currentReadingChapter != null && currentReadingChapter.ChapterUrl != null)
+                if (currentReadingChapter != null && currentReadingChapter.ChapterUrls != null)
                 {
                     Thread t = new Thread(new ParameterizedThreadStart(DownloadAndReadChapter));
                     t.Start(currentReadingChapter);
                 }
-                else if (currentReadingChapter != null && currentReadingChapter.ChapterUrl == null)
+                else if (currentReadingChapter != null && currentReadingChapter.ChapterUrls == null)
                 {
                     MessageBox.Show("This chapter does not contain a source link to download from.", "No Source Link", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -269,7 +269,7 @@ namespace NovelReader
                 DialogResult deleteResult = MessageBox.Show("Are you sure you want to delete " + currentReadingChapter.ChapterTitle, "Delete Chapter", MessageBoxButtons.YesNo);
                 if (deleteResult == DialogResult.No)
                     return;
-                if (currentReadingChapter.ChapterUrl != null)
+                if (currentReadingChapter.ChapterUrls != null)
                 {
                     DialogResult blackListResult = MessageBox.Show("Do you want to blacklist " + currentReadingChapter.ChapterTitle + "'s Source Link?", "Blacklist Link.", MessageBoxButtons.YesNo);
                     if (blackListResult == DialogResult.Yes)
@@ -289,9 +289,7 @@ namespace NovelReader
         {
             if (currentReadingNovel != null)
             {
-                
                 Chapter chapter = currentReadingNovel.AddChapter();
-                
                 ReadChapter(chapter);
             }
         }
@@ -386,7 +384,9 @@ namespace NovelReader
             {
                 try
                 {
-                    using (StreamReader sr = new StreamReader(chapter.GetTextFileLocation()))
+                    string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.GetHash().ToString() + ".txt");
+                    File.Copy(chapter.GetTextFileLocation(), cacheLocation, true);
+                    using (StreamReader sr = new StreamReader(cacheLocation))
                     {
                         string chapterText = sr.ReadToEnd();
                         rtbChapterTextBox.Text = chapterText;
@@ -426,10 +426,9 @@ namespace NovelReader
                     mp3Player.currentPlaylist.clear();
                     mp3Player.URL = null;
                 }
-                //Console.WriteLine("play " + chapter.Index);
-                string tempMp3FileLocation = chapter.GetAudioFileLocation();
-                //File.Copy(chapter.GetAudioFileLocation(), tempMp3FileLocation, true);
-                mp3Player.URL = new Uri(tempMp3FileLocation).ToString();
+                string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.GetHash().ToString() + ".mp3");
+                File.Copy(chapter.GetAudioFileLocation(), cacheLocation, true);
+                mp3Player.URL = new Uri(cacheLocation).ToString();
                 mp3Player.Ctlcontrols.play();
             }
         }

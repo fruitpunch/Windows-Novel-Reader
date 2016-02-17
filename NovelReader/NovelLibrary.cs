@@ -149,14 +149,14 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public bool AddNovel(string novelTitle, NovelSource novelSource, out string message)
+        public Novel AddNovel(string novelTitle, out string message)
         {
             foreach (Novel n in _novelList)
             {
                 if (novelTitle.Equals(n.NovelTitle))
                 {
                     message = novelTitle + " already exists.";
-                    return false;
+                    return null;
                 }
             }
 
@@ -184,12 +184,11 @@ namespace NovelReader
                 if (!File.Exists(Path.Combine(newNovelLocation, Configuration.Instance.DeleteSpecification)))
                     File.Create(Path.Combine(newNovelLocation, Configuration.Instance.DeleteSpecification));
             }
-            
+            Novel newNovel = new Novel();
             using (var transaction = new TransactionScope())
             {
                 try
                 {
-                    Novel newNovel = new Novel();
                     newNovel.NovelTitle = novelTitle;
                     newNovel.LastReadChapterID = -1;
                     newNovel.State = Novel.NovelState.Active;
@@ -197,14 +196,6 @@ namespace NovelReader
                     newNovel.Rank = GetNonDroppedNovelCount();
                     libraryData.Novels.InsertOnSubmit(newNovel);
                     libraryData.SubmitChanges();
-
-                    Source newSource = new Source();
-                    newSource.SourceNovelLocation = novelSource.SourceLocation.ToString();
-                    newSource.SourceNovelID = novelSource.NovelID;
-                    newSource.NovelTitle = novelTitle;
-                    libraryData.Sources.InsertOnSubmit(newSource);
-                    libraryData.SubmitChanges();
-
                     newNovel.Initiate();
 
                     _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
@@ -215,11 +206,13 @@ namespace NovelReader
                 {
                     Console.WriteLine("Unable to add novel");
                     Console.WriteLine(e.ToString());
+                    message = "Unable to add novel " + novelTitle;
+                    return null;
                 }
             }
             
             message = novelTitle + " successfully added.";
-            return true;
+            return newNovel;
 
         }
 

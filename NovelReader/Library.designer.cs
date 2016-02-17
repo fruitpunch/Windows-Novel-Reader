@@ -581,6 +581,8 @@ namespace NovelReader
 		
 		private bool _Vip;
 		
+		private int _Hash;
+		
 		private EntityRef<Chapter> _Chapter;
 		
 		private EntityRef<Source> _Source;
@@ -599,6 +601,8 @@ namespace NovelReader
     partial void OnSourceIDChanged();
     partial void OnVipChanging(bool value);
     partial void OnVipChanged();
+    partial void OnHashChanging(int value);
+    partial void OnHashChanged();
     #endregion
 		
 		public ChapterUrl()
@@ -716,6 +720,26 @@ namespace NovelReader
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Hash")]
+		public int Hash
+		{
+			get
+			{
+				return this._Hash;
+			}
+			set
+			{
+				if ((this._Hash != value))
+				{
+					this.OnHashChanging(value);
+					this.SendPropertyChanging();
+					this._Hash = value;
+					this.SendPropertyChanged("Hash");
+					this.OnHashChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Chapter_ChapterUrl", Storage="_Chapter", ThisKey="ChapterID", OtherKey="ID", IsForeignKey=true)]
 		public Chapter Chapter
 		{
@@ -821,6 +845,8 @@ namespace NovelReader
 		
 		private bool _Mirror;
 		
+		private int _Priority;
+		
 		private EntitySet<ChapterUrl> _ChapterUrls;
 		
 		private EntityRef<Novel> _Novel;
@@ -839,6 +865,8 @@ namespace NovelReader
     partial void OnNovelTitleChanged();
     partial void OnMirrorChanging(bool value);
     partial void OnMirrorChanged();
+    partial void OnPriorityChanging(int value);
+    partial void OnPriorityChanged();
     #endregion
 		
 		public Source()
@@ -948,6 +976,26 @@ namespace NovelReader
 					this._Mirror = value;
 					this.SendPropertyChanged("Mirror");
 					this.OnMirrorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Priority")]
+		public int Priority
+		{
+			get
+			{
+				return this._Priority;
+			}
+			set
+			{
+				if ((this._Priority != value))
+				{
+					this.OnPriorityChanging(value);
+					this.SendPropertyChanging();
+					this._Priority = value;
+					this.SendPropertyChanged("Priority");
+					this.OnPriorityChanged();
 				}
 			}
 		}
