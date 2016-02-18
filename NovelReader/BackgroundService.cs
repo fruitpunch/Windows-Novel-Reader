@@ -73,7 +73,8 @@ namespace NovelReader
 
         public void CloseService()
         {
-            //this.scheduleTTSThread.
+            if(this.novelReaderForm != null)
+                this.novelReaderForm.Close();
             mre.Set();
             this.shutDown = true;
             this.updateTimer.Stop();
@@ -232,17 +233,17 @@ namespace NovelReader
                 if (!c.HasText)
                     downloadChapters.Add(c);
 
-            int failure = 0;
+            int downloadCount = 0;
             bool success;
             for (int i = 0; i < downloadChapters.Count && !shutDown && updateNovel != null; i++)
             {
                 success = updateNovel.DownloadChapter(downloadChapters[i], i + 1, downloadChapters.Count);
-                if (!success)
-                    failure++;
+                if (success)
+                    downloadCount++;
             }
             if (updateNovel != null)
             {
-                updateNovel.ChaptersNotReadCount = updateNovel.ChaptersNotReadCount + downloadChapters.Count - failure;
+                updateNovel.ChaptersNotReadCount = updateNovel.ChaptersNotReadCount + downloadCount;
                 updateNovel.SetUpdateProgress(0, 0, Novel.UpdateStates.UpToDate);
                 updateNovel.NotifyPropertyChanged("ChapterCountStatus");
                 return true;

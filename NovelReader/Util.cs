@@ -42,7 +42,7 @@ namespace NovelReader
         public static void ClearCache()
         {
             if(Directory.Exists(Configuration.Instance.CacheFolderLocation))
-                Directory.Delete(Configuration.Instance.CacheFolderLocation))
+                Directory.Delete(Configuration.Instance.CacheFolderLocation, true);
         }
 
         public static string CleanFileTitle(string input)

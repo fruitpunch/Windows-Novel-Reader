@@ -75,7 +75,7 @@ namespace TTS
                         Console.WriteLine();
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                 }
             }

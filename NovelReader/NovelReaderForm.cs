@@ -218,6 +218,9 @@ namespace NovelReader
                 Configuration.Instance.NovelReaderMaximized = false;
             if (currentReadingNovel != null)
                 currentReadingNovel.StopReading();
+            mp3Player.Ctlcontrols.stop();
+            mp3Player.close();
+            mp3Player = null;
             BackgroundService.Instance.novelReaderForm = null;
         }
 

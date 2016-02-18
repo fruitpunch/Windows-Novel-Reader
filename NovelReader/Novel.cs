@@ -432,6 +432,7 @@ namespace NovelReader
                     NovelLibrary.libraryData.SubmitChanges();
                     isDirty = true;
                     updateCount++;
+                    Console.WriteLine("Added chapter " + menuItems[i].Title);
                 }
             }
 
@@ -449,11 +450,11 @@ namespace NovelReader
 
                 for (int i = 0; i < menuItems.Length; i++)
                 {
-                    Chapter c = Chapters[i];
-                    Console.WriteLine(c.ChapterUrls.Count);
+                    //Chapter c = Chapters[i];
+                    //Console.WriteLine(c.ChapterUrls.Count);
                     if (chapters.Keys.Contains(menuItems[i].Title) && !NovelLibrary.libraryData.ChapterUrls.Where(url => url.Url == menuItems[i].Url).Any())
                     {
-                        //Console.WriteLine(NovelLibrary.libraryData.Chapters.Count() + " " + NovelLibrary.libraryData.ChapterUrls.Where(url => url.Hash == menuItems[i].Url.GetHashCode()).Any());
+                        Console.WriteLine(NovelLibrary.libraryData.Chapters.Count() + " " + NovelLibrary.libraryData.ChapterUrls.Where(url => url.Hash == menuItems[i].Url.GetHashCode()).Any());
 
                         ChapterUrl newChapterUrl = new ChapterUrl();
                         newChapterUrl.ChapterID = chapters[menuItems[i].Title].ID;
@@ -510,10 +511,10 @@ namespace NovelReader
                 if (novelContent == null)
                     continue;
                 System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
-                break;
+                return true;
             }
             
-            return true;
+            return false;
         }
 
         //Change the index of the chapter and change the file name of the text and audio file.
