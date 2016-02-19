@@ -23,7 +23,7 @@ namespace NovelReader
          *              X = No          O = Yes             D = If specified
          */
 
-        public enum UpdateStates { Default, Waiting, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped, Error };
+        public enum UpdateStates { Default, Waiting, Syncing, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped, Error };
 
         //public event PropertyChangedEventHandler PropertyChanged;
 
@@ -401,45 +401,86 @@ namespace NovelReader
             return priority;
         }
 
-
-        //Check and see if there is new chapter available for download.
-        public bool CheckForUpdate()
+        //Sync the chapter list to the origin source.
+        public bool SyncToOrigin()
         {
-            SetUpdateProgress(0, 0, UpdateStates.Checking);
+            SetUpdateProgress(0, 0, UpdateStates.Syncing);
             NovelSource originSource = GetNovelSourceFromSource(OriginSource);
             if (originSource == null)
                 return false;
             ChapterSource[] menuItems = originSource.GetMenuURLs();
-            if(menuItems == null)
+            if (menuItems == null)
             {
                 SetUpdateProgress(0, 0, UpdateStates.Error);
                 return false;
             }
-            Dictionary<string, Chapter> chapters = ChapterDictionary;
-            int maxIndex = ChapterCount;
+            List<Chapter> chapterListing = new List<Chapter>();
             int updateCount = 0;
             for (int i = 0; i < menuItems.Length; i++)
             {
-                if(!chapters.Keys.Contains(menuItems[i].Title))
+                //add new chapter if url does not exist in database
+                if (!OriginSource.ChapterUrls.Where(originUrl => originUrl.Url == menuItems[i].Url).Any())
                 {
                     Chapter newChapter = new Chapter();
                     newChapter.ChapterTitle = menuItems[i].Title;
                     newChapter.NovelTitle = NovelTitle;
                     newChapter.Read = false;
-                    newChapter.Index = maxIndex++;
+                    newChapter.Index = -1;
                     newChapter.Novel = this;
                     NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
                     NovelLibrary.libraryData.SubmitChanges();
+                    chapterListing.Add(newChapter);
                     isDirty = true;
                     updateCount++;
-                    Console.WriteLine("Added chapter " + menuItems[i].Title);
+                }
+                //ignore if url already exists in database and that url is invalid.
+                else if (OriginSource.ChapterUrls.Where(originUrl => originUrl.Url == menuItems[i].Url && !originUrl.Valid).Any())
+                {
+                    continue;
+                }
+                //chapter already exist within database and is valid so add chapter to list to correct indexing.
+                else
+                {
+                    Chapter c = (from chapterUrl in OriginSource.ChapterUrls
+                                 where chapterUrl.Url == menuItems[i].Url
+                                 select chapterUrl.Chapter).First<Chapter>();
+                    if (c.ChapterTitle != menuItems[i].Title)
+                        c.ChangeChapterTitle(menuItems[i].Title);
+                    chapterListing.Add(c);
                 }
             }
 
-            Source[] sources = OrderedSources;
-            chapters = ChapterDictionary;
+            HashSet<int> includedID = new HashSet<int>(chapterListing.Select(c => c.ID));
+            Chapter[] allChapters = Chapters.ToArray();
+            for(int i = 0; i < allChapters.Count(); i++)
+            {
+                if (!includedID.Contains(allChapters[i].ID) && allChapters[i].Index >= 0)
+                {
+                    Console.WriteLine("Deleting " + allChapters[i].ChapterTitle + " " + allChapters[i].ID);
+                    DeleteChapter(allChapters[i], false, false);
+                }
+                    
+            }
 
-            foreach(Source source in sources)
+            VeryifyAndCorrectChapterIndexing(chapterListing.ToArray());
+            RefreshCacheData();
+
+            if (updateCount == 0)
+                SetUpdateProgress(0, 0, UpdateStates.UpToDate);
+            else
+                SetUpdateProgress(updateCount, 0, UpdateStates.UpdateAvailable);
+
+            return true;
+        }
+
+
+        //Check and see if there is new chapter available for download.
+        public bool CheckForUpdate()
+        {
+            Source[] sources = OrderedSources;
+            Dictionary<string, Chapter> chapters = ChapterDictionary;
+            ChapterSource[] menuItems;
+            foreach (Source source in sources)
             {
                 if (source == null)
                     continue;
@@ -454,7 +495,7 @@ namespace NovelReader
                     //Console.WriteLine(c.ChapterUrls.Count);
                     if (chapters.Keys.Contains(menuItems[i].Title) && !NovelLibrary.libraryData.ChapterUrls.Where(url => url.Url == menuItems[i].Url).Any())
                     {
-                        Console.WriteLine(NovelLibrary.libraryData.Chapters.Count() + " " + NovelLibrary.libraryData.ChapterUrls.Where(url => url.Hash == menuItems[i].Url.GetHashCode()).Any());
+                        //Console.WriteLine(NovelLibrary.libraryData.Chapters.Count() + " " + NovelLibrary.libraryData.ChapterUrls.Where(url => url.Hash == menuItems[i].Url.GetHashCode()).Any());
 
                         ChapterUrl newChapterUrl = new ChapterUrl();
                         newChapterUrl.ChapterID = chapters[menuItems[i].Title].ID;
@@ -472,24 +513,40 @@ namespace NovelReader
 
             }
 
-            if (updateCount == 0)
-                SetUpdateProgress(0, 0, UpdateStates.UpToDate);
-            else
-                SetUpdateProgress(updateCount, 0, UpdateStates.UpdateAvailable);
-            return updateCount > 0;
+            
+            return true;
         }
 
-        public bool DownloadChapter(Chapter downloadChapter, int index, int totalUpdateCount)
+        public bool DownloadChapter(Chapter downloadChapter)
         {
-            bool success = false;
-
-            success = DownloadChapterContent(downloadChapter);
-
-            if (success)
-                SetUpdateProgress(index, totalUpdateCount, UpdateStates.Fetching);
-            else
+            if (downloadChapter == null)
+            {
                 SetUpdateProgress(0, 0, UpdateStates.Error);
-            return success;
+                return false;
+            }
+
+            ChapterUrl[] urls = downloadChapter.ChapterUrls.ToArray<ChapterUrl>();
+            if (urls == null)
+            {
+                SetUpdateProgress(0, 0, UpdateStates.Error);
+                return false;
+            }
+                
+            foreach (ChapterUrl url in urls)
+            {
+                if (url == null || url.Vip || !url.Valid)
+                    continue;
+                Source source = url.Source;
+                if (source == null)
+                    continue;
+                string[] novelContent = GetNovelSourceFromSource(source).GetChapterContent(downloadChapter.ChapterTitle, url.Url);
+                if (novelContent == null)
+                    continue;
+                System.IO.File.WriteAllLines(downloadChapter.GetTextFileLocation(), novelContent);
+                return true;
+            }
+
+            return false;
         }
 
         public bool DownloadChapterContent(Chapter chapter)
@@ -514,7 +571,7 @@ namespace NovelReader
                 return true;
             }
             
-            return false;
+            return true;
         }
 
         //Change the index of the chapter and change the file name of the text and audio file.
@@ -608,7 +665,7 @@ namespace NovelReader
             return s;
         }
 
-        public void DeleteChapter(Chapter deleteChapter, bool blackList)
+        public void DeleteChapter(Chapter deleteChapter, bool blackList, bool verifyData = true)
         {
             if(NovelLibrary.libraryData.Chapters.Any(chapter => chapter.ID == deleteChapter.ID))
             {   
@@ -632,9 +689,8 @@ namespace NovelReader
                     {
                         deleteChapter.Index = Int32.MinValue;
                         foreach(ChapterUrl url in urls)
-                        url.Valid = false;
-                    }
-                        
+                            url.Valid = false;
+                    } 
                     else
                     {
                         NovelLibrary.libraryData.Chapters.DeleteOnSubmit(deleteChapter);
@@ -645,10 +701,16 @@ namespace NovelReader
                     NovelLibrary.libraryData.Chapters.DeleteOnSubmit(deleteChapter);
                 isDirty = true;
                 NovelLibrary.libraryData.SubmitChanges();
-                Chapter[] chapters = NovelChapters.ToArray<Chapter>();
+                
                 //foreach (Chapter c in chapters)
                 //    Console.WriteLine(c.ChapterTitle + " " + c.Index +" " + c.ID);
-                VeryifyAndCorrectChapterIndexing(chapters);
+                if(verifyData)
+                {
+                    Chapter[] chapters = NovelChapters.ToArray<Chapter>();
+                    VeryifyAndCorrectChapterIndexing(chapters);
+                    RefreshCacheData();
+                }
+                
                 NotifyPropertyChanged("ChapterCountStatus");
             }
         }
@@ -687,6 +749,10 @@ namespace NovelReader
                 case UpdateStates.Waiting:
                     progress = 0;
                     message = "Waiting For Updates";
+                    break;
+                case UpdateStates.Syncing:
+                    progress = 0;
+                    message = "Syncing to origin";
                     break;
                 case UpdateStates.Checking:
                     progress = 0;
@@ -826,7 +892,7 @@ namespace NovelReader
             chapterDictionary = new Dictionary<string, Chapter>();
 
             foreach (Chapter c in newChapterList)
-                chapterDictionary.Add(c.ChapterTitle, c);
+                chapterDictionary[c.ChapterTitle] = c;
 
             isDirty = false;
 

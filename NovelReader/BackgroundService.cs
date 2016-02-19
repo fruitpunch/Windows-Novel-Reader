@@ -223,9 +223,13 @@ namespace NovelReader
 
         private bool UpdateNovel(Novel updateNovel)
         {
-            if (updateNovel == null || updateNovel.UpdateState == Novel.UpdateStates.Checking || updateNovel.UpdateState == Novel.UpdateStates.Fetching)
+            if (updateNovel == null || updateNovel.UpdateState == Novel.UpdateStates.Checking || updateNovel.UpdateState == Novel.UpdateStates.Fetching || updateNovel.UpdateState == Novel.UpdateStates.Syncing)
                 return false;
-            updateNovel.CheckForUpdate();
+            updateNovel.SyncToOrigin();
+            bool result = updateNovel.CheckForUpdate();
+            if (!result)
+                return false;
+                
 
             var chapters = updateNovel.NovelChapters;
             List<Chapter> downloadChapters = new List<Chapter>();
@@ -237,7 +241,8 @@ namespace NovelReader
             bool success;
             for (int i = 0; i < downloadChapters.Count && !shutDown && updateNovel != null; i++)
             {
-                success = updateNovel.DownloadChapter(downloadChapters[i], i + 1, downloadChapters.Count);
+                updateNovel.SetUpdateProgress(i+1, downloadChapters.Count, Novel.UpdateStates.Fetching);
+                success = updateNovel.DownloadChapter(downloadChapters[i]);
                 if (success)
                     downloadCount++;
             }

@@ -58,24 +58,18 @@ namespace NovelReader
 
             if (File.Exists(oldAudioFileLocation))
             {
-                if (!File.Exists(newAudioFileLocation))
-                    File.Move(oldAudioFileLocation, newAudioFileLocation);
-                else
-                {
-                    Console.WriteLine("Cannot move " + oldAudioFileLocation + " to " + newAudioFileLocation + ". " + newAudioFileLocation + " already exists.");
-                    return false;
-                }
+                if (File.Exists(newAudioFileLocation))
+                    File.Delete(newAudioFileLocation);
+
+                File.Move(oldAudioFileLocation, newAudioFileLocation);
             }
 
             if (File.Exists(oldTextFileLocation))
             {
-                if (!File.Exists(newTextFileLocation))
-                    File.Move(oldTextFileLocation, newTextFileLocation);
-                else
-                {
-                    Console.WriteLine("Cannot move " + oldTextFileLocation + " to " + newTextFileLocation + ". " + newTextFileLocation + " already exists.");
-                    return false;
-                }
+                if (File.Exists(newTextFileLocation))
+                    File.Delete(newTextFileLocation);
+
+                File.Move(oldTextFileLocation, newTextFileLocation);
             }
             NotifyPropertyChanged("Index");
             return true;
@@ -93,27 +87,21 @@ namespace NovelReader
 
             if (File.Exists(oldAudioFileLocation))
             {
-                if (!File.Exists(newAudioFileLocation))
-                    File.Move(oldAudioFileLocation, newAudioFileLocation);
-                else
-                {
-                    Console.WriteLine("Cannot move " + oldAudioFileLocation + " to " + newAudioFileLocation + ". " + newAudioFileLocation + " already exists.");
-                    return;
-                }
-            }
+                if (File.Exists(newAudioFileLocation))
+                    File.Delete(newAudioFileLocation);
 
+                File.Move(oldAudioFileLocation, newAudioFileLocation);
+            }
 
             if (File.Exists(oldTextFileLocation))
             {
-                if (!File.Exists(newTextFileLocation))
-                    File.Move(oldTextFileLocation, newTextFileLocation);
-                else
-                {
-                    Console.WriteLine("Cannot move " + oldTextFileLocation + " to " + newTextFileLocation + ". " + newTextFileLocation + " already exists.");
-                    return;
-                }
+                if (File.Exists(newTextFileLocation))
+                    File.Delete(newTextFileLocation);
+
+                File.Move(oldTextFileLocation, newTextFileLocation);
             }
             NovelLibrary.libraryData.SubmitChanges();
+            NotifyPropertyChanged("ChapterTitle");
         }
 
         public void NotifyPropertyChanged(string propertyName)

@@ -30,13 +30,11 @@ namespace NovelReader
 
         private void NovelListController_Load(object sender, EventArgs e)
         {
-
             refreshUpdateLabelTimer.Start();
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-
             BackgroundService.Instance.UpdateTTSTest();
         }
 
@@ -93,6 +91,10 @@ namespace NovelReader
             {
                 datagridview.BeginEdit(true);
                 ((ComboBox)datagridview.EditingControl).DroppedDown = true;
+            }
+            else if (validRow && validCol && datagridview.Columns[e.ColumnIndex] is DataGridViewLinkColumn)
+            {
+                Console.WriteLine("Link column clicked");
             }
         }
 
@@ -244,6 +246,10 @@ namespace NovelReader
                 CellTemplate = sourceEditLinkCell,
                 Name = "SourceEdit",
                 HeaderText = "Edit Source",
+                Text = "Edit",
+                UseColumnTextForLinkValue = true,
+                LinkColor = Color.Blue,
+                VisitedLinkColor = Color.Blue,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
             };
 
@@ -262,6 +268,7 @@ namespace NovelReader
             dgvNovelList.Columns.Add(chapterCountStatusColumn);
             dgvNovelList.Columns.Add(stateColumn);
             dgvNovelList.Columns.Add(makeAudioColumn);
+            dgvNovelList.Columns.Add(editSourceLinkColumn);
             dgvNovelList.Columns.Add(updateProgressColumn);
 
 

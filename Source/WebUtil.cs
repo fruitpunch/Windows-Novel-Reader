@@ -27,8 +27,10 @@ namespace Source
 
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine("Error getting URL: " + url);
+                Console.WriteLine(e.ToString());
                 return null;
             }
             return lines.ToArray();
@@ -51,6 +53,8 @@ namespace Source
             }
             catch (Exception e)
             {
+                Console.WriteLine("Error getting URL: " + url);
+                Console.WriteLine(e.ToString());
                 return null;
             }
             return lines.ToArray();

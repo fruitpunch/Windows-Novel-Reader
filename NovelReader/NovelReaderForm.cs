@@ -272,30 +272,15 @@ namespace NovelReader
                 DialogResult deleteResult = MessageBox.Show("Are you sure you want to delete " + currentReadingChapter.ChapterTitle, "Delete Chapter", MessageBoxButtons.YesNo);
                 if (deleteResult == DialogResult.No)
                     return;
-                if (currentReadingChapter.ChapterUrls != null)
-                {
-                    DialogResult blackListResult = MessageBox.Show("Do you want to blacklist " + currentReadingChapter.ChapterTitle + "'s Source Link?", "Blacklist Link.", MessageBoxButtons.YesNo);
-                    if (blackListResult == DialogResult.Yes)
-                        currentReadingNovel.DeleteChapter(currentReadingChapter, true);
-                    else
-                        currentReadingNovel.DeleteChapter(currentReadingChapter, false);
-                }
-                else
-                    currentReadingNovel.DeleteChapter(currentReadingChapter, false);
-                ReadChapter(currentReadingNovel.LastViewedChapter);
-            }
+                int index = currentReadingChapter.Index;
+                currentReadingNovel.DeleteChapter(currentReadingChapter, false);
 
-        }
-
-
-        private void btnAddChapter_Click(object sender, EventArgs e)
-        {
-            if (currentReadingNovel != null)
-            {
-                Chapter chapter = currentReadingNovel.AddChapter();
+                Chapter chapter = currentReadingNovel.GetChapter(index);
                 ReadChapter(chapter);
             }
+
         }
+
 
 
         private void btnPlay_Click(object sender, EventArgs e)
@@ -368,9 +353,6 @@ namespace NovelReader
             dgvChapterList.Columns.Add(indexColumn);
             dgvChapterList.Columns.Add(makeAudioColumn);
 
-            labelIndex.Visible = false;
-            upIndex.Visible = false;
-            tbTitleChange.Visible = false;
         }
 
         private void ReadChapter(Chapter chapter)
@@ -455,14 +437,6 @@ namespace NovelReader
             btnEdit.Text = "Finish Edit";
             editModeOn = true;
 
-            upIndex.Value = currentReadingChapter.Index;
-            upIndex.Maximum = currentReadingNovel.ChapterCount - 1;
-            tbTitleChange.Text = currentReadingChapter.ChapterTitle;
-
-            labelIndex.Visible = true;
-            upIndex.Visible = true;
-            tbTitleChange.Visible = true;
-            labelTitle.Visible = false;
         }
 
         private void FinishEditing()
@@ -479,16 +453,6 @@ namespace NovelReader
                     System.IO.File.WriteAllText(currentReadingChapter.GetTextFileLocation(), text);
                 }
             }
-            if(currentReadingChapter.Index != (int)upIndex.Value)
-                currentReadingNovel.ChangeIndex(currentReadingChapter.Index, (int)upIndex.Value);
-            currentReadingChapter.ChangeChapterTitle(tbTitleChange.Text);
-            labelTitle.Text = tbTitleChange.Text;
-
-            editModeOn = false;
-            labelIndex.Visible = false;
-            upIndex.Visible = false;
-            tbTitleChange.Visible = false;
-            labelTitle.Visible = true;
         }
 
         private void ModifyCellStyle(int rowIndex)
