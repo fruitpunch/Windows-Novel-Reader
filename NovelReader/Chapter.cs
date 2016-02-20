@@ -106,9 +106,22 @@ namespace NovelReader
 
         public void NotifyPropertyChanged(string propertyName)
         {
+
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                
+                if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(Novel))
+                {
+                    BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                    }));
+                }
+                else
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                }
+                
             }
             //NovelLibrary.libraryData.SubmitChanges();
         }

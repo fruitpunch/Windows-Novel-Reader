@@ -95,6 +95,10 @@ namespace NovelReader
             else if (validRow && validCol && datagridview.Columns[e.ColumnIndex] is DataGridViewLinkColumn)
             {
                 Console.WriteLine("Link column clicked");
+                string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
+                Novel novel = NovelLibrary.Instance.GetNovel(novelTitle);
+                BackgroundService.Instance.novelSourceController.SetNovel(novel);
+                this.Visible = false;
             }
         }
 
@@ -281,7 +285,7 @@ namespace NovelReader
             DataGridViewRow row = dgvNovelList.Rows[rowIndex];
 
             Novel.NovelState state = (Novel.NovelState)Enum.Parse(typeof(Novel.NovelState), row.Cells["State"].Value.ToString());
-            bool isReading = NovelLibrary.Instance.GetNovel(row.Cells["NovelTitle"].Value.ToString()).Reading;
+            //bool isReading = NovelLibrary.Instance.GetNovel(row.Cells["NovelTitle"].Value.ToString()).Reading;
 
             if (state == Novel.NovelState.Active)
             {

@@ -112,7 +112,7 @@ namespace NovelReader
 		
 		private int _StateID;
 		
-		private int _LastReadChapterID;
+		private System.Nullable<int> _LastReadChapterID;
 		
 		private int _ChaptersNotReadCount;
 		
@@ -132,7 +132,7 @@ namespace NovelReader
     partial void OnRankChanged();
     partial void OnStateIDChanging(int value);
     partial void OnStateIDChanged();
-    partial void OnLastReadChapterIDChanging(int value);
+    partial void OnLastReadChapterIDChanging(System.Nullable<int> value);
     partial void OnLastReadChapterIDChanged();
     partial void OnChaptersNotReadCountChanging(int value);
     partial void OnChaptersNotReadCountChanged();
@@ -208,7 +208,7 @@ namespace NovelReader
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastReadChapterID")]
-		public int LastReadChapterID
+		public System.Nullable<int> LastReadChapterID
 		{
 			get
 			{

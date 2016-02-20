@@ -11,6 +11,7 @@ namespace Source
         private string _url { get; set; }
         private string _title { get; set; }
         private bool _vip { get; set; }
+        private int _urlHash { get; set; }
 
         public string Url
         {
@@ -27,11 +28,17 @@ namespace Source
             get { return this._vip; }
         }
 
+        public int UrlHash
+        {
+            get { return this._urlHash; }
+        }
+
         public ChapterSource(string url, string title, bool vip)
         {
             this._url = url;
             this._title = title;
             this._vip = vip;
+            this._urlHash = url.GetHashCode();
         }
 
     }

@@ -68,7 +68,8 @@ namespace NovelReader
                         
                     libraryData.CreateDatabase();
                 }
-
+                libraryData.Connection.Open();
+                //libraryData.Connection.State = System.Data.ConnectionState.
                 //else
                 //    libraryData.DeleteDatabase();
                 _novelList = new BindingList<Novel>((from novel in libraryData.Novels
@@ -119,12 +120,21 @@ namespace NovelReader
 
         public Novel GetNovel(string novelTitle)
         {
-            var result = (from novel in NovelLibrary.libraryData.Novels
-                          where novel.NovelTitle == novelTitle
-                          select novel);
-            if (result.Any())
-                return result.First<Novel>();
-            return null;
+            try
+            {
+                var result = (from novel in NovelLibrary.libraryData.Novels
+                              where novel.NovelTitle == novelTitle
+                              select novel);
+                if (result != null && result.Any())
+                    return result.First<Novel>();
+                return null;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return null;
+            }
+            
         }
 
         public int GetNovelCount()

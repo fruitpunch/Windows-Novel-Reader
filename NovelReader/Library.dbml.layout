@@ -33,7 +33,7 @@
         <classShapeMoniker Id="56f71ce5-2171-4e1e-b20b-eb7ff46d1d68" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(12.5 : 5.13544840494792); (13.5 : 5.13544840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(12.5 : 5.13544840494792); (13.5 : 5.13544840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/LibraryDataContext/Chapter/Chapter_ChapterUrl" />
       <nodes>
         <classShapeMoniker Id="56f71ce5-2171-4e1e-b20b-eb7ff46d1d68" />
@@ -47,7 +47,7 @@
         <classShapeMoniker Id="4a8d62f5-c8cd-43c9-b007-1894394f6156" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(7.75 : 5.26285162109375); (7 : 5.26285162109375)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(7.75 : 5.26285162109375); (7 : 5.26285162109375)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/LibraryDataContext/Novel/Novel_Source" />
       <nodes>
         <classShapeMoniker Id="7c52ffc7-eab2-4594-b748-e8a91a4f84d7" />

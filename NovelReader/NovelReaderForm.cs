@@ -54,7 +54,7 @@ namespace NovelReader
             if (novel.LastReadChapter != null)
             {
                 Chapter nextChapter = novel.GetChapter(novel.LastReadChapter.Index + 1);
-                //Console.WriteLine("last read chapter " + novel.LastReadChapter.ChapterTitle);
+                Console.WriteLine("last read chapter " + novel.LastReadChapter.ChapterTitle);
                 //Console.WriteLine("next chapter " + nextChapter.ChapterTitle);
                 if (nextChapter != null && !nextChapter.Read)
                 {
@@ -69,11 +69,13 @@ namespace NovelReader
             }
             else if (novel.LastViewedChapter != null)
             {
+                Console.WriteLine("LastViewedChapter");
                 ReadChapter(novel.LastViewedChapter);
                 //dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
             }
             else if (currentReadingNovel.ChapterCount > 0)
             {
+                Console.WriteLine("Get 0");
                 ReadChapter(novel.GetChapter(0));
                 //dgvChapterList.FirstDisplayedScrollingRowIndex = 0;
             }
@@ -82,7 +84,7 @@ namespace NovelReader
                 rtbChapterTextBox.Text = "No chapters available";
             }
 
-            if (currentReadingChapter != null && dgvChapterList.Rows.Count > currentReadingChapter.Index)
+            if (currentReadingChapter != null && dgvChapterList.Rows.Count > currentReadingChapter.Index && 0 <= currentReadingChapter.Index)
             {
                 try
                 {
@@ -273,8 +275,9 @@ namespace NovelReader
                 if (deleteResult == DialogResult.No)
                     return;
                 int index = currentReadingChapter.Index;
-                currentReadingNovel.DeleteChapter(currentReadingChapter, false);
-
+                Console.WriteLine("Before delete " + index);
+                currentReadingNovel.DeleteChapter(currentReadingChapter, true);
+                Console.WriteLine("After delete " + index);
                 Chapter chapter = currentReadingNovel.GetChapter(index);
                 ReadChapter(chapter);
             }

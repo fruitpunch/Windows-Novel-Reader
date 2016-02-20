@@ -25,6 +25,7 @@ namespace NovelReader
         public volatile TTSController ttsController;
         public volatile NovelListController novelListController;
         public volatile NovelReaderForm novelReaderForm;
+        public volatile NovelSourceController novelSourceController;
 
         private volatile ManualResetEvent mre;
 
@@ -217,16 +218,21 @@ namespace NovelReader
                 if (result)
                     newUpdate = true;
             }
+            Configuration.Instance.LastFullUpdateTime = DateTime.Now;
             if (newUpdate)
                 mre.Set();
         }
 
-        private bool UpdateNovel(Novel updateNovel)
+        private bool UpdateNovel(Object input)
         {
+            if (!(input is Novel))
+                return false;
+            Novel updateNovel = input as Novel;
             if (updateNovel == null || updateNovel.UpdateState == Novel.UpdateStates.Checking || updateNovel.UpdateState == Novel.UpdateStates.Fetching || updateNovel.UpdateState == Novel.UpdateStates.Syncing)
                 return false;
             updateNovel.SyncToOrigin();
             bool result = updateNovel.CheckForUpdate();
+            
             if (!result)
                 return false;
                 
@@ -236,7 +242,7 @@ namespace NovelReader
             foreach (Chapter c in chapters)
                 if (!c.HasText)
                     downloadChapters.Add(c);
-
+            Console.WriteLine(downloadChapters.Count);
             int downloadCount = 0;
             bool success;
             for (int i = 0; i < downloadChapters.Count && !shutDown && updateNovel != null; i++)

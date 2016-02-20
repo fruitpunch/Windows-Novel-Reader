@@ -16,6 +16,7 @@ namespace NovelReader
         public TTSController ttsController;
         public SettingController settingController;
         public NovelTileViewController tileViewController;
+        public NovelSourceController novelSourceController;
          
         public ApplicationForm()
         {
@@ -25,22 +26,30 @@ namespace NovelReader
             ttsController = new TTSController();
             settingController = new SettingController();
             //tileViewController = new NovelTileViewController();
+            novelSourceController = new NovelSourceController();
+
             novelListController.Dock = DockStyle.Fill;
             ttsController.Dock = DockStyle.Fill;
             settingController.Dock = DockStyle.Fill;
             //tileViewController.Dock = DockStyle.Fill;
+            novelSourceController.Dock = DockStyle.Fill;
+
             novelListController.Visible = true;
             ttsController.Visible = false;
             settingController.Visible = false;
             //tileViewController.Visible = false;
+            novelSourceController.Visible = false;
+
             btnNovelList.BackColor = this.BackColor;
             btnTTSList.BackColor = buttonContainerPanel.BackColor;
             btnSetting.BackColor = buttonContainerPanel.BackColor;
             btnNovelTileView.BackColor = buttonContainerPanel.BackColor;
+
             controlContainerPanel.Controls.Add(novelListController);
             controlContainerPanel.Controls.Add(ttsController);
             controlContainerPanel.Controls.Add(settingController);
             //controlContainerPanel.Controls.Add(tileViewController);
+            controlContainerPanel.Controls.Add(novelSourceController);
         }
 
         private void ApplicationForm_Load(object sender, EventArgs e)
@@ -74,6 +83,7 @@ namespace NovelReader
             ttsController.Visible = false;
             settingController.Visible = false;
             //tileViewController.Visible = false;
+            novelSourceController.Close();
         }
 
         private void btnTTSList_Click(object sender, EventArgs e)
@@ -86,6 +96,7 @@ namespace NovelReader
             ttsController.Visible = true;
             settingController.Visible = false;
             //tileViewController.Visible = false;
+            novelSourceController.Close();
         }
 
         private void btnSetting_Click(object sender, EventArgs e)
@@ -98,6 +109,7 @@ namespace NovelReader
             ttsController.Visible = false;
             settingController.Visible = true;
             //tileViewController.Visible = false;
+            novelSourceController.Close();
 
         }
 
@@ -111,6 +123,7 @@ namespace NovelReader
             ttsController.Visible = false;
             settingController.Visible = false;
             //tileViewController.Visible = true;
+            novelSourceController.Close();
         }
     }
 }

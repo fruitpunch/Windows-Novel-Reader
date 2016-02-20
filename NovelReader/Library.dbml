@@ -4,7 +4,7 @@
       <Column Name="NovelTitle" Type="System.String" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Rank" Type="System.Int32" CanBeNull="false" />
       <Column Name="StateID" Type="System.Int32" CanBeNull="false" />
-      <Column Name="LastReadChapterID" Type="System.Int32" CanBeNull="false" />
+      <Column Name="LastReadChapterID" Type="System.Int32" CanBeNull="true" />
       <Column Name="ChaptersNotReadCount" Type="System.Int32" CanBeNull="false" />
       <Column Name="MakeAudio" Type="System.Boolean" CanBeNull="false" />
       <Association Name="Novel_Chapter" Member="Chapters" ThisKey="NovelTitle" OtherKey="NovelTitle" Type="Chapter" />
@@ -29,7 +29,7 @@
       <Column Name="ChapterID" Type="System.Int32" CanBeNull="false" />
       <Column Name="SourceID" Type="System.Int32" CanBeNull="false" />
       <Column Name="Vip" Type="System.Boolean" CanBeNull="false" />
-      <Column Member="Hash" Type="System.Int32" CanBeNull="false" />
+      <Column Name="Hash" Type="System.Int32" CanBeNull="false" />
       <Association Name="Chapter_ChapterUrl" Member="Chapter" ThisKey="ChapterID" OtherKey="ID" Type="Chapter" IsForeignKey="true" />
       <Association Name="Source_ChapterUrl" Member="Source" ThisKey="SourceID" OtherKey="ID" Type="Source" IsForeignKey="true" />
     </Type>
@@ -41,7 +41,7 @@
       <Column Name="SourceNovelID" Type="System.String" CanBeNull="false" />
       <Column Name="NovelTitle" Type="System.String" CanBeNull="false" />
       <Column Name="Mirror" Type="System.Boolean" CanBeNull="false" />
-      <Column Member="Priority" Type="System.Int32" CanBeNull="false" />
+      <Column Name="Priority" Type="System.Int32" CanBeNull="false" />
       <Association Name="Source_ChapterUrl" Member="ChapterUrls" ThisKey="ID" OtherKey="SourceID" Type="ChapterUrl" />
       <Association Name="Novel_Source" Member="Novel" ThisKey="NovelTitle" OtherKey="NovelTitle" Type="Novel" IsForeignKey="true" />
     </Type>
