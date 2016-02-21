@@ -68,7 +68,8 @@ namespace NovelReader
                         
                     libraryData.CreateDatabase();
                 }
-                libraryData.Connection.Open();
+                if(libraryData.Connection.State == System.Data.ConnectionState.Closed)
+                    libraryData.Connection.Open();
                 //libraryData.Connection.State = System.Data.ConnectionState.
                 //else
                 //    libraryData.DeleteDatabase();

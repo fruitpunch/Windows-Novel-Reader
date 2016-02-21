@@ -847,6 +847,8 @@ namespace NovelReader
 		
 		private int _Priority;
 		
+		private bool _Valid;
+		
 		private EntitySet<ChapterUrl> _ChapterUrls;
 		
 		private EntityRef<Novel> _Novel;
@@ -867,6 +869,8 @@ namespace NovelReader
     partial void OnMirrorChanged();
     partial void OnPriorityChanging(int value);
     partial void OnPriorityChanged();
+    partial void OnValidChanging(bool value);
+    partial void OnValidChanged();
     #endregion
 		
 		public Source()
@@ -996,6 +1000,26 @@ namespace NovelReader
 					this._Priority = value;
 					this.SendPropertyChanged("Priority");
 					this.OnPriorityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Valid")]
+		public bool Valid
+		{
+			get
+			{
+				return this._Valid;
+			}
+			set
+			{
+				if ((this._Valid != value))
+				{
+					this.OnValidChanging(value);
+					this.SendPropertyChanging();
+					this._Valid = value;
+					this.SendPropertyChanged("Valid");
+					this.OnValidChanged();
 				}
 			}
 		}

@@ -42,6 +42,7 @@
       <Column Name="NovelTitle" Type="System.String" CanBeNull="false" />
       <Column Name="Mirror" Type="System.Boolean" CanBeNull="false" />
       <Column Name="Priority" Type="System.Int32" CanBeNull="false" />
+      <Column Member="Valid" Type="System.Boolean" CanBeNull="false" />
       <Association Name="Source_ChapterUrl" Member="ChapterUrls" ThisKey="ID" OtherKey="SourceID" Type="ChapterUrl" />
       <Association Name="Novel_Source" Member="Novel" ThisKey="NovelTitle" OtherKey="NovelTitle" Type="Novel" IsForeignKey="true" />
     </Type>

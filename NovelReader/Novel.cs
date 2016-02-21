@@ -558,7 +558,7 @@ namespace NovelReader
             ChapterUrl[] urls = result.ToArray<ChapterUrl>();
             foreach (ChapterUrl url in urls)
             {
-                Console.WriteLine("Download chapter " + downloadChapter.ChapterTitle + " " + (url.Vip));
+                //Console.WriteLine("Download chapter " + downloadChapter.ChapterTitle + " " + (url.Vip));
                 if (url == null || url.Vip || !url.Valid)
                     continue;
                 Source source = url.Source;
@@ -675,23 +675,6 @@ namespace NovelReader
             return newChapter;
         }
 
-        public Source AddSource(NovelSource newSource, bool mirror)
-        {
-            //if (newSource.NovelTitle != NovelTitle)
-            //    return null;
-            Source s = new Source();
-            s.SourceNovelLocation = newSource.SourceLocation.ToString();
-            s.SourceNovelID = newSource.NovelID;
-            s.NovelTitle = NovelTitle;
-            s.Mirror = Sources.Count > 1;
-            s.Priority = Sources.Count;
-            s.Mirror = mirror;
-            s.Novel = this;
-            NovelLibrary.libraryData.Sources.InsertOnSubmit(s);
-            NovelLibrary.libraryData.SubmitChanges();
-            return s;
-        }
-
         public void DeleteChapter(Chapter deleteChapter, bool blackList, bool verifyData = true)
         {
             if(NovelLibrary.libraryData.Chapters.Any(chapter => chapter.ID == deleteChapter.ID))
@@ -741,6 +724,55 @@ namespace NovelReader
                 Console.WriteLine(LastReadChapterID == null);
                 NotifyPropertyChanged("ChapterCountStatus");
             }
+        }
+
+        public bool AddSource(NovelSource newSource, bool mirror, out string message)
+        {
+            message = newSource.SourceLocation.ToString() + " successfully added.";
+            if (Sources.Where(source => source.SourceNovelLocation == newSource.SourceLocation.ToString()).Any())
+            {
+                message = "Duplicate Source Location \"" + newSource.SourceLocation.ToString() + "\" found for novel " + NovelTitle;
+                return false;
+            }
+                
+            if (UpdateState == UpdateStates.Syncing || UpdateState == UpdateStates.Checking || UpdateState == UpdateStates.Fetching)
+            {
+                message = "Novel is currently updating. Please wait until finish before making changes to novel source.";
+                return false;
+            }
+            Source s = new Source();
+            s.SourceNovelLocation = newSource.SourceLocation.ToString();
+            s.SourceNovelID = newSource.NovelID;
+            s.NovelTitle = NovelTitle;
+            s.Mirror = Sources.Count > 1;
+            s.Priority = Sources.Count;
+            s.Mirror = mirror;
+            s.Novel = this;
+            s.Valid = true;
+            NovelLibrary.libraryData.Sources.InsertOnSubmit(s);
+            NovelLibrary.libraryData.SubmitChanges();
+            return true;
+        }
+
+        public bool DeleteSource(Source deleteSource, out string message)
+        {
+            message = deleteSource.SourceNovelLocation + " successfully removed.";
+            if (!Sources.Contains(deleteSource))
+            {
+                message = "Novel does not contain source.";
+                return false;
+            }
+                
+            if (UpdateState == UpdateStates.Syncing || UpdateState == UpdateStates.Checking || UpdateState == UpdateStates.Fetching)
+            {
+                message = "Novel is currently updating. Please wait until finish before making changes to novel source.";
+                return false;
+            }
+                
+            NovelLibrary.libraryData.ChapterUrls.DeleteAllOnSubmit(deleteSource.ChapterUrls);
+            NovelLibrary.libraryData.Sources.DeleteOnSubmit(deleteSource);
+            NovelLibrary.libraryData.SubmitChanges();
+            return true;
         }
 
         //Set the progress to be displayed in NovelListControl.

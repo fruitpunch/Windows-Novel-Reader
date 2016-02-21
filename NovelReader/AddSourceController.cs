@@ -11,7 +11,7 @@ using Source;
 
 namespace NovelReader
 {
-    public partial class AddNovelForm : Form
+    public partial class AddSourceController : UserControl
     {
 
         private SourceLocation sourceLocation;
@@ -19,21 +19,17 @@ namespace NovelReader
         private string novelTitle;
         private NovelSource source;
         private bool validSource = false;
-        public AddNovelForm()
+        private Novel novel = null;
+
+        public AddSourceController(Novel novel)
         {
             InitializeComponent();
+            this.novel = novel;
             sourceSelector.DataSource = Enum.GetValues(typeof(SourceLocation));
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
         {
-            
-
-            if(inputNovelTitle.Text.Length == 0)
-            {
-                MessageBox.Show("Invalid Novel Title", "Novel title must not be empty.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
 
             if (inputSourceID.Text.Length == 0)
             {
@@ -47,30 +43,26 @@ namespace NovelReader
                 return;
             }
 
-            novelTitle = inputNovelTitle.Text;
+            if(novelTitle != novel.NovelTitle)
+            {
+                DialogResult forceAddSourceResult = MessageBox.Show("Title for " + novel.NovelTitle + " is different from title found at specified source. Are you sure you want to add this source?", "Mismatch Title", MessageBoxButtons.YesNo);
+                if (forceAddSourceResult == DialogResult.No)
+                    return;
+            }
             string message = "";
-            Novel newNovel = BackgroundService.Instance.AddNovel(novelTitle, out message);
-
-            if (newNovel == null)
+            bool result = novel.AddSource(source, true, out message);
+            if (!result)
             {
-                MessageBox.Show(message, "Add Novel Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(message, "Invalid Source", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
-            if (newNovel == null)
-            {
-                MessageBox.Show(message, "Add Novel Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            newNovel.AddSource(source, false, out message);
-
-            this.Close();
+            BackgroundService.Instance.novelSourceController.RefreshSourceList();
+            BackgroundService.Instance.novelSourceController.CloseAddSourceController();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            BackgroundService.Instance.novelSourceController.CloseAddSourceController();
         }
 
         private void inputSourceID_TextChanged(object sender, EventArgs e)
@@ -89,6 +81,7 @@ namespace NovelReader
                 textCheckerTimer.Stop();
                 labelStatus.Text = "";
             }
+            Console.WriteLine("Start timer");
         }
 
         private void sourceSelector_SelectionChangeCommitted(object sender, EventArgs e)
@@ -101,7 +94,7 @@ namespace NovelReader
             source = SourceManager.GetSource(sourceLocation, sourceID);
             Tuple<bool, string> result = source.VerifySource();
             e.Result = result;
-            
+
         }
 
         private void sourceChecker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -109,16 +102,15 @@ namespace NovelReader
             Tuple<bool, string> result = (Tuple<bool, string>)e.Result;
             if (result.Item1)
             {
-                labelStatus.Text = "Valid ID.";
-                labelStatus.ForeColor = Color.Green;
-                inputNovelTitle.Text = result.Item2;
+                labelStatus.Text = "Found " + result.Item2;
+                novelTitle = result.Item2;
                 validSource = true;
             }
             else
             {
                 labelStatus.Text = "Invalid ID";
                 labelStatus.ForeColor = Color.Red;
-                inputNovelTitle.Text = "";
+                novelTitle = "";
                 validSource = false;
             }
             networkTimeoutTimer.Stop();

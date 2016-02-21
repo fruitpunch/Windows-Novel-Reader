@@ -82,6 +82,12 @@
     <Compile Include="AddNovelForm.Designer.cs">
       <DependentUpon>AddNovelForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AddSourceController.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AddSourceController.Designer.cs">
+      <DependentUpon>AddSourceController.cs</DependentUpon>
+    </Compile>
     <Compile Include="BackgroundService.cs" />
     <Compile Include="Chapter.cs" />
     <Compile Include="Configuration.cs" />
@@ -148,6 +154,9 @@
     <Compile Include="Util.cs" />
     <EmbeddedResource Include="AddNovelForm.resx">
       <DependentUpon>AddNovelForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddSourceController.resx">
+      <DependentUpon>AddSourceController.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ApplicationForm.resx">
       <DependentUpon>ApplicationForm.cs</DependentUpon>

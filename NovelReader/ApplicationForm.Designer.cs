@@ -48,7 +48,7 @@
             this.buttonContainerPanel.Controls.Add(this.btnTTSList);
             this.buttonContainerPanel.Location = new System.Drawing.Point(5, 5);
             this.buttonContainerPanel.Name = "buttonContainerPanel";
-            this.buttonContainerPanel.Size = new System.Drawing.Size(200, 688);
+            this.buttonContainerPanel.Size = new System.Drawing.Size(200, 650);
             this.buttonContainerPanel.TabIndex = 0;
             // 
             // btnNovelTileView
@@ -120,7 +120,7 @@
             this.controlContainerPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.controlContainerPanel.Location = new System.Drawing.Point(210, 5);
             this.controlContainerPanel.Name = "controlContainerPanel";
-            this.controlContainerPanel.Size = new System.Drawing.Size(910, 688);
+            this.controlContainerPanel.Size = new System.Drawing.Size(910, 650);
             this.controlContainerPanel.TabIndex = 1;
             // 
             // ApplicationForm
@@ -128,10 +128,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SlateGray;
-            this.ClientSize = new System.Drawing.Size(1127, 700);
+            this.ClientSize = new System.Drawing.Size(1127, 661);
             this.Controls.Add(this.controlContainerPanel);
             this.Controls.Add(this.buttonContainerPanel);
-            this.MinimumSize = new System.Drawing.Size(1143, 300);
+            this.MaximumSize = new System.Drawing.Size(1143, 6000);
+            this.MinimumSize = new System.Drawing.Size(1143, 500);
             this.Name = "ApplicationForm";
             this.Text = "Novel Reader (Pre Alpha)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ApplicationForm_FormClosing);
