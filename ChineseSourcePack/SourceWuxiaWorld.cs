@@ -8,17 +8,12 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public class SourceWuxiaWorld : INovelSource
+    public class SourceWuxiaWorld : ISource
     {
-        public string BaseURL = "http://www.wuxiaworld.com";
-        string _novelTitle;
-        string _novelID;
-        CultureInfo cultureInfo;
-
-        public SourceLocation SourceLocation
-        {
-            get { return SourceLocation.WebWuxiaWorld; }
-        }
+        private string BaseURL = "http://www.wuxiaworld.com";
+        private string _novelTitle;
+        private string _novelID;
+        private CultureInfo cultureInfo;
 
         public string NovelID
         {
@@ -34,6 +29,16 @@ namespace Source
         public string NovelLanguage
         {
             get { return "en-US"; }
+        }
+
+        public string Url
+        {
+            get { return BaseURL; }
+        }
+
+        public string SourceNovelLocation
+        {
+            get { return this.GetType().FullName; }
         }
 
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()

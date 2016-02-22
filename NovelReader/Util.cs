@@ -1,13 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Speech.Synthesis;
+using Source;
 //using Microsoft.Speech.Synthesis;
 
 namespace NovelReader
@@ -19,6 +14,8 @@ namespace NovelReader
 
         public static void LoadComponents()
         {
+            SourceManager.LoadSourcePack();
+            
             Configuration.LoadConfiguration();
             NovelLibrary.Instance.LoadNovelLibrary();
             BackgroundService.Instance.StartService();

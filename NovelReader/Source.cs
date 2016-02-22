@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace NovelReader
 {
-    public partial class Source : INovelSource
+    public partial class Source : ISource
     {
-        private INovelSource source = null;
+        private ISource source = null;
 
         public string NovelID
         {
@@ -29,12 +29,13 @@ namespace NovelReader
             }
         }
 
-        public SourceLocation SourceLocation
+        public string Url
         {
-            get{
+            get
+            {
                 if (source == null)
                     source = SourceManager.GetSource(SourceNovelLocation, SourceNovelID);
-                return source.SourceLocation;
+                return source.Url;
             }
         }
 

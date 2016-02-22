@@ -35,7 +35,7 @@ namespace NovelReader
         private bool isDirty = true;
         private BindingList<Chapter> chapterList = null;
         private Dictionary<string, Chapter> chapterDictionary = null;
-        private Dictionary<string, INovelSource> sourceDictionary = null;
+        private Dictionary<string, ISource> sourceDictionary = null;
         UpdateStates _updateState { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
 
@@ -734,12 +734,12 @@ namespace NovelReader
             }
         }
 
-        public bool AddSource(INovelSource newSource, bool mirror, out string message)
+        public bool AddSource(ISource newSource, bool mirror, out string message)
         {
-            message = newSource.SourceLocation.ToString() + " successfully added.";
-            if (Sources.Where(source => source.SourceNovelLocation == newSource.SourceLocation.ToString()).Any())
+            message = newSource + " successfully added.";
+            if (Sources.Where(source => source.SourceNovelLocation == newSource.SourceNovelLocation).Any())
             {
-                message = "Duplicate Source Location \"" + newSource.SourceLocation.ToString() + "\" found for novel " + NovelTitle;
+                message = "Duplicate Source Location \"" + newSource.SourceNovelLocation.ToString() + "\" found for novel " + NovelTitle;
                 return false;
             }
                 
@@ -749,7 +749,7 @@ namespace NovelReader
                 return false;
             }
             Source s = new Source();
-            s.SourceNovelLocation = newSource.SourceLocation.ToString();
+            s.SourceNovelLocation = newSource.SourceNovelLocation;
             s.SourceNovelID = newSource.NovelID;
             s.NovelTitle = NovelTitle;
             s.Mirror = Sources.Count > 1;

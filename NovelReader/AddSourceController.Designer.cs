@@ -48,10 +48,10 @@
             // 
             this.sourceSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.sourceSelector.FormattingEnabled = true;
-            this.sourceSelector.Location = new System.Drawing.Point(78, 8);
+            this.sourceSelector.Location = new System.Drawing.Point(97, 8);
             this.sourceSelector.Margin = new System.Windows.Forms.Padding(4);
             this.sourceSelector.Name = "sourceSelector";
-            this.sourceSelector.Size = new System.Drawing.Size(130, 21);
+            this.sourceSelector.Size = new System.Drawing.Size(344, 21);
             this.sourceSelector.TabIndex = 9;
             this.sourceSelector.SelectionChangeCommitted += new System.EventHandler(this.sourceSelector_SelectionChangeCommitted);
             // 
@@ -62,7 +62,7 @@
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnCancel.Location = new System.Drawing.Point(223, 60);
+            this.btnCancel.Location = new System.Drawing.Point(222, 80);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(223, 50);
@@ -78,7 +78,7 @@
             this.btnConfirm.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnConfirm.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnConfirm.Location = new System.Drawing.Point(0, 60);
+            this.btnConfirm.Location = new System.Drawing.Point(0, 80);
             this.btnConfirm.Margin = new System.Windows.Forms.Padding(4);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(223, 50);
@@ -101,10 +101,10 @@
             // 
             // inputSourceID
             // 
-            this.inputSourceID.Location = new System.Drawing.Point(300, 9);
+            this.inputSourceID.Location = new System.Drawing.Point(97, 59);
             this.inputSourceID.Margin = new System.Windows.Forms.Padding(4);
             this.inputSourceID.Name = "inputSourceID";
-            this.inputSourceID.Size = new System.Drawing.Size(130, 20);
+            this.inputSourceID.Size = new System.Drawing.Size(344, 20);
             this.inputSourceID.TabIndex = 12;
             this.inputSourceID.TextChanged += new System.EventHandler(this.inputSourceID_TextChanged);
             // 
@@ -113,7 +113,7 @@
             this.labelSourceID.AutoSize = true;
             this.labelSourceID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelSourceID.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.labelSourceID.Location = new System.Drawing.Point(216, 9);
+            this.labelSourceID.Location = new System.Drawing.Point(13, 60);
             this.labelSourceID.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelSourceID.Name = "labelSourceID";
             this.labelSourceID.Size = new System.Drawing.Size(76, 16);
@@ -141,9 +141,9 @@
             this.btnSourceLink.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSourceLink.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSourceLink.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnSourceLink.Location = new System.Drawing.Point(78, 28);
+            this.btnSourceLink.Location = new System.Drawing.Point(97, 29);
             this.btnSourceLink.Name = "btnSourceLink";
-            this.btnSourceLink.Size = new System.Drawing.Size(130, 23);
+            this.btnSourceLink.Size = new System.Drawing.Size(344, 23);
             this.btnSourceLink.TabIndex = 19;
             this.btnSourceLink.Text = "Source Link";
             this.btnSourceLink.UseVisualStyleBackColor = false;
@@ -171,7 +171,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(445, 60);
+            this.panel1.Size = new System.Drawing.Size(445, 81);
             this.panel1.TabIndex = 23;
             // 
             // AddSourceController
@@ -180,10 +180,10 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnConfirm);
             this.Controls.Add(this.panel1);
-            this.MaximumSize = new System.Drawing.Size(445, 110);
-            this.MinimumSize = new System.Drawing.Size(445, 110);
+            this.MaximumSize = new System.Drawing.Size(445, 130);
+            this.MinimumSize = new System.Drawing.Size(445, 130);
             this.Name = "AddSourceController";
-            this.Size = new System.Drawing.Size(445, 110);
+            this.Size = new System.Drawing.Size(445, 130);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);

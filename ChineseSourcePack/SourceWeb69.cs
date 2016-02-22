@@ -1,25 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Source;
 
-namespace Source
+namespace ChineseSourcePack
 {
-    public class SourceWeb69 : INovelSource
+    public class SourceWeb69 : ISource
     {
-        public string BaseURL = "http://www.69shu.com";
-        string _novelTitle;
-        string _novelID;
-        //Regex linkParser;
-        CultureInfo cultureInfo;
+        private string BaseURL = "http://www.69shu.com";
+        private string _novelTitle;
+        private string _novelID;
+        private CultureInfo cultureInfo;
 
-        public SourceLocation SourceLocation
-        {
-            get { return SourceLocation.Web69; }
-        }
 
         public string NovelID
         {
@@ -35,6 +28,16 @@ namespace Source
         public string NovelLanguage
         {
             get { return "zh-CN"; }
+        }
+
+        public string Url
+        {
+            get { return BaseURL; }
+        }
+
+        public string SourceNovelLocation
+        {
+            get{ return this.GetType().FullName; }
         }
 
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
@@ -57,12 +60,12 @@ namespace Source
             string url = BaseURL + "/" + _novelID.ToString() + "/";
             string[] lines = WebUtil.GetUrlContents(url);
             if (lines == null)
-                return new Tuple<bool, string>(false, "");
+                return new Tuple<bool, string>(false, "line is null");
             string title = null;
             foreach (string line in lines)
             {
                 if (line.Contains("69书吧_404"))
-                    return new Tuple<bool, string>(false, null);
+                    return new Tuple<bool, string>(false, "");
             }
             foreach (string line in lines)
             {

@@ -54,7 +54,7 @@
             this.sourceSelector.Location = new System.Drawing.Point(150, 16);
             this.sourceSelector.Margin = new System.Windows.Forms.Padding(4);
             this.sourceSelector.Name = "sourceSelector";
-            this.sourceSelector.Size = new System.Drawing.Size(132, 24);
+            this.sourceSelector.Size = new System.Drawing.Size(245, 24);
             this.sourceSelector.TabIndex = 9;
             this.sourceSelector.SelectionChangeCommitted += new System.EventHandler(this.sourceSelector_SelectionChangeCommitted);
             // 
@@ -65,10 +65,10 @@
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnCancel.Location = new System.Drawing.Point(160, 200);
+            this.btnCancel.Location = new System.Drawing.Point(220, 200);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(150, 50);
+            this.btnCancel.Size = new System.Drawing.Size(200, 50);
             this.btnCancel.TabIndex = 15;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = false;
@@ -84,7 +84,7 @@
             this.btnConfirm.Location = new System.Drawing.Point(10, 200);
             this.btnConfirm.Margin = new System.Windows.Forms.Padding(4);
             this.btnConfirm.Name = "btnConfirm";
-            this.btnConfirm.Size = new System.Drawing.Size(150, 50);
+            this.btnConfirm.Size = new System.Drawing.Size(210, 50);
             this.btnConfirm.TabIndex = 14;
             this.btnConfirm.Text = "Confirm";
             this.btnConfirm.UseVisualStyleBackColor = false;
@@ -107,7 +107,7 @@
             this.inputSourceID.Location = new System.Drawing.Point(150, 85);
             this.inputSourceID.Margin = new System.Windows.Forms.Padding(4);
             this.inputSourceID.Name = "inputSourceID";
-            this.inputSourceID.Size = new System.Drawing.Size(132, 22);
+            this.inputSourceID.Size = new System.Drawing.Size(245, 22);
             this.inputSourceID.TabIndex = 12;
             this.inputSourceID.TextChanged += new System.EventHandler(this.inputSourceID_TextChanged);
             // 
@@ -140,7 +140,7 @@
             this.inputNovelTitle.Location = new System.Drawing.Point(150, 144);
             this.inputNovelTitle.Margin = new System.Windows.Forms.Padding(4);
             this.inputNovelTitle.Name = "inputNovelTitle";
-            this.inputNovelTitle.Size = new System.Drawing.Size(132, 22);
+            this.inputNovelTitle.Size = new System.Drawing.Size(245, 22);
             this.inputNovelTitle.TabIndex = 16;
             // 
             // sourceChecker
@@ -176,7 +176,7 @@
             this.btnSourceLink.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.btnSourceLink.Location = new System.Drawing.Point(150, 47);
             this.btnSourceLink.Name = "btnSourceLink";
-            this.btnSourceLink.Size = new System.Drawing.Size(132, 23);
+            this.btnSourceLink.Size = new System.Drawing.Size(245, 23);
             this.btnSourceLink.TabIndex = 19;
             this.btnSourceLink.Text = "Source Link";
             this.btnSourceLink.UseVisualStyleBackColor = false;
@@ -196,7 +196,7 @@
             this.panel1.Controls.Add(this.labelSourceID);
             this.panel1.Location = new System.Drawing.Point(10, 10);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(300, 190);
+            this.panel1.Size = new System.Drawing.Size(410, 190);
             this.panel1.TabIndex = 20;
             // 
             // label1
@@ -216,7 +216,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(322, 261);
+            this.ClientSize = new System.Drawing.Size(432, 265);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnConfirm);

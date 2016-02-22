@@ -14,10 +14,10 @@ namespace NovelReader
     public partial class AddSourceController : UserControl
     {
 
-        private SourceLocation sourceLocation;
+        private string sourceLocation;
         private string sourceID;
         private string novelTitle;
-        private INovelSource source;
+        private ISource source;
         private bool validSource = false;
         private Novel novel = null;
 
@@ -25,7 +25,7 @@ namespace NovelReader
         {
             InitializeComponent();
             this.novel = novel;
-            sourceSelector.DataSource = Enum.GetValues(typeof(SourceLocation));
+            sourceSelector.DataSource = SourceManager.SourceLocation;
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
@@ -133,7 +133,7 @@ namespace NovelReader
 
         private void btnSourceLink_Click(object sender, EventArgs e)
         {
-            sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
+            sourceLocation = sourceSelector.SelectedItem.ToString();
             string url = SourceManager.GetSourceURL(sourceLocation);
             if (url != null)
             {
@@ -153,7 +153,7 @@ namespace NovelReader
 
             if (!sourceChecker.IsBusy)
             {
-                sourceLocation = (SourceLocation)Enum.Parse(typeof(SourceLocation), sourceSelector.SelectedItem.ToString());
+                sourceLocation = sourceSelector.SelectedItem.ToString();
                 sourceID = inputSourceID.Text;
                 labelStatus.Text = "Checking Source ID.....";
                 labelStatus.ForeColor = Color.Black;

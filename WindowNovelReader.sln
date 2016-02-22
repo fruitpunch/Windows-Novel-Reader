@@ -1,14 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovelReader", "NovelReader\NovelReader.csproj", "{DD969677-CC67-428A-8F72-3A9EE8086756}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6BF1F142-8343-4BF4-A953-F59B45A25F70} = {6BF1F142-8343-4BF4-A953-F59B45A25F70}
+		{A02974BD-427B-4E60-8CCE-176E14D176A1} = {A02974BD-427B-4E60-8CCE-176E14D176A1}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Source", "Source\Source.csproj", "{6BF1F142-8343-4BF4-A953-F59B45A25F70}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTS", "TTS\TTS.csproj", "{D101E74B-42EA-45ED-92C4-FAF1130A6D2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChineseSourcePack", "ChineseSourcePack\ChineseSourcePack.csproj", "{A02974BD-427B-4E60-8CCE-176E14D176A1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6BF1F142-8343-4BF4-A953-F59B45A25F70} = {6BF1F142-8343-4BF4-A953-F59B45A25F70}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +36,10 @@ Global
 		{D101E74B-42EA-45ED-92C4-FAF1130A6D2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D101E74B-42EA-45ED-92C4-FAF1130A6D2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D101E74B-42EA-45ED-92C4-FAF1130A6D2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A02974BD-427B-4E60-8CCE-176E14D176A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A02974BD-427B-4E60-8CCE-176E14D176A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A02974BD-427B-4E60-8CCE-176E14D176A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A02974BD-427B-4E60-8CCE-176E14D176A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

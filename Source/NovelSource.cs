@@ -43,13 +43,9 @@ namespace Source
 
     }
 
-    public interface INovelSource
+    public interface ISource
     {
-        //Returns the SourceLocation of the type extending this class.
-        SourceLocation SourceLocation
-        {
-            get;
-        }
+
         //Returns the novel ID.
         string NovelID
         {
@@ -62,6 +58,15 @@ namespace Source
             set;
         }
         string NovelLanguage
+        {
+            get;
+        }
+        string Url
+        {
+            get;
+        }
+
+        string SourceNovelLocation
         {
             get;
         }

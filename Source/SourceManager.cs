@@ -8,85 +8,98 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public enum SourceLocation { Web17k, Web69, WebPiaoTian, WebWuxiaWorld };
-    /*
-    public class PlugInFactory<T>
+
+    struct SourceInfo
     {
-        public T CreatePlugin(string path)
+        private Type _type { get; set; }
+        private string _name { get; set; }
+        private string _fullName { get; set; }
+        private ISource _source { get; set; }
+
+        public Type Type
         {
-            foreach(string file in Directory.GetFiles(path, "*.dll"))
-            {
-                foreach (Type assemblyType in Assembly.LoadFrom(file).GetTypes())
-                {
-                    Type interfaceType = assemblyType.GetInterface(typeof(T).FullName);
-                    if (interfaceType != null)
-                    {
-                        Console.WriteLine("Interface: " + assemblyType.FullName);
-                        return (T)Activator.CreateInstance(assemblyType);
-                    }
-                }
-            }
-            return default(T);
+            get { return _type; }
+        }
+        public string Name
+        {
+            get { return _name; }
+        }
+
+        public string FullName
+        {
+            get { return _fullName; }
+        }
+
+        public ISource Source
+        {
+            get { return _source; }
+        }
+
+        public SourceInfo(Type type)
+        {
+            this._type = type;
+            this._name = type.Name;
+            this._fullName = type.FullName;
+            this._source = Activator.CreateInstance(type, new object[] { null, null}) as ISource;
         }
     }
-    */
+
     public class SourceManager
     {
-        /*
-        //public static List<string> locations;
 
-        public static void LoadSources()
+        private static Dictionary<string, SourceInfo> sourceDictionary { get; set; }
+
+        public static List<string> _sourceLocation { get; set; }
+
+        public static List<string> SourceLocation
         {
-            //locations = new List<string>();
-            //PlugInFactory<NovelSource> loader = new PlugInFactory<NovelSource>();
-            //NovelSource instance = loader.CreatePlugin(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SourceDLL"));
+            get { return _sourceLocation; }
         }
-        */
-        public static INovelSource GetSource(SourceLocation s, string sourceID, string title = null)
+
+
+        public static bool LoadSourcePack()
         {
-            switch (s)
+            sourceDictionary = new Dictionary<string, SourceInfo>();
+            _sourceLocation = new List<string>();
+            string location = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "SourcePack", "ChineseSourcePack.dll");
+            var assembly = Assembly.LoadFrom(location);
+            if (assembly == null)
             {
-                case SourceLocation.Web17k:
-                    return new Source17k(sourceID, title);
-                case SourceLocation.Web69:
-                    return new SourceWeb69(sourceID, title);
-                case SourceLocation.WebPiaoTian:
-                    return new SourcePiaoTian(sourceID, title);
-                case SourceLocation.WebWuxiaWorld:
-                    return new SourceWuxiaWorld(sourceID, title);
-                default:
-                    return null;
+                Console.WriteLine("Invalido");
+                return false;
             }
-        }
-
-        public static INovelSource GetSource(string s, string sourceID, string title = null)
-        {
-            if (s.Equals(SourceLocation.Web17k.ToString()))
-                return new Source17k(sourceID, title);
-            else if (s.Equals(SourceLocation.Web69.ToString()))
-                return new SourceWeb69(sourceID, title);
-            else if (s.Equals(SourceLocation.WebPiaoTian.ToString()))
-                return new SourcePiaoTian(sourceID, title);
-            else if (s.Equals(SourceLocation.WebWuxiaWorld.ToString()))
-                return new SourceWuxiaWorld(sourceID, title);
-            else return null;
-        }
-
-        public static string GetSourceURL(SourceLocation s)
-        {
-            switch (s)
+            foreach (Type type in assembly.GetTypes())
             {
-                case SourceLocation.Web17k:
-                    return new Source17k(null, null).BaseURL;
-                case SourceLocation.Web69:
-                    return new SourceWeb69(null, null).BaseURL;
-                case SourceLocation.WebPiaoTian:
-                    return new SourcePiaoTian(null, null).BaseURL;
-                case SourceLocation.WebWuxiaWorld:
-                    return new SourceWuxiaWorld(null, null).BaseURL;
-                default:
-                    return null;
+                if (typeof(ISource).IsAssignableFrom(type))
+                    sourceDictionary[type.FullName] = new SourceInfo(type);
+
             }
+            foreach(KeyValuePair<string, SourceInfo> kvp in sourceDictionary)
+            {
+                Console.WriteLine(kvp.Value.GetType().FullName);
+                SourceLocation.Add(kvp.Key);
+            }
+            return true;
+        }
+
+
+        public static ISource GetSource(string sourceLocation, string sourceID)
+        {
+            if (sourceDictionary.ContainsKey(sourceLocation))
+            {
+                object[] args = new object[] { sourceID, null };
+                return Activator.CreateInstance(sourceDictionary[sourceLocation].Type, args) as ISource;
+            }
+            return null;
+        }
+
+        public static string GetSourceURL(string sourceLocation)
+        {
+            if (sourceDictionary.ContainsKey(sourceLocation))
+            {
+                return sourceDictionary[sourceLocation].Source.Url;
+            }
+            return null;
         }
     }
 }
