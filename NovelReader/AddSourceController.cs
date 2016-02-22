@@ -17,7 +17,7 @@ namespace NovelReader
         private SourceLocation sourceLocation;
         private string sourceID;
         private string novelTitle;
-        private NovelSource source;
+        private INovelSource source;
         private bool validSource = false;
         private Novel novel = null;
 

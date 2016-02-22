@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public class SourceWuxiaWorld : NovelSource
+    public class SourceWuxiaWorld : INovelSource
     {
         public string BaseURL = "http://www.wuxiaworld.com";
         string _novelTitle;

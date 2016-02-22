@@ -35,7 +35,7 @@ namespace NovelReader
         private bool isDirty = true;
         private BindingList<Chapter> chapterList = null;
         private Dictionary<string, Chapter> chapterDictionary = null;
-        private Dictionary<string, NovelSource> sourceDictionary = null;
+        private Dictionary<string, INovelSource> sourceDictionary = null;
         UpdateStates _updateState { get; set; }
         private Tuple<int, string> _updateProgress { get; set; }
 
@@ -417,10 +417,9 @@ namespace NovelReader
         {
             
             SetUpdateProgress(0, 0, UpdateStates.Syncing);
-            NovelSource originSource = GetNovelSourceFromSource(OriginSource);
-            if (originSource == null)
+            if (OriginSource == null)
                 return false;
-            ChapterSource[] menuItems = originSource.GetMenuURLs();
+            ChapterSource[] menuItems = OriginSource.GetMenuURLs();
             if (menuItems == null)
             {
                 SetUpdateProgress(0, 0, UpdateStates.Error);
@@ -501,11 +500,12 @@ namespace NovelReader
             Source[] sources = OrderedSources;
             Dictionary<string, Chapter> chapters = ChapterDictionary;
             ChapterSource[] menuItems;
+            SetUpdateProgress(0, 0, UpdateStates.Checking);
             foreach (Source source in sources)
             {
                 if (source == null || !source.Valid ||source.ID == OriginSource.ID)
                     continue;
-                menuItems = GetNovelSourceFromSource(source).GetMenuURLs();
+                menuItems = source.GetMenuURLs();
                 if (menuItems == null)
                     continue;
                 HashSet<string> usedTitle = new HashSet<string>();
@@ -548,8 +548,11 @@ namespace NovelReader
                 SetUpdateProgress(0, 0, UpdateStates.Error);
                 return false;
             }
-            
-            var result = downloadChapter.ChapterUrls;
+
+            if (UpdateState == UpdateStates.Syncing || UpdateState == UpdateStates.Checking)
+                return false;
+
+                var result = downloadChapter.ChapterUrls;
             if (!result.Any())
             {
                 SetUpdateProgress(0, 0, UpdateStates.Error);
@@ -566,7 +569,7 @@ namespace NovelReader
                 if (source == null)
                     continue;
                 
-                string[] novelContent = GetNovelSourceFromSource(source).GetChapterContent(downloadChapter.ChapterTitle, url.Url);
+                string[] novelContent = source.GetChapterContent(downloadChapter.ChapterTitle, url.Url);
                 if (novelContent == null)
                     continue;
                 System.IO.File.WriteAllLines(downloadChapter.GetTextFileLocation(), novelContent);
@@ -581,6 +584,8 @@ namespace NovelReader
             if (chapter == null)
                 return false;
 
+            
+
             ChapterUrl[] urls = chapter.ChapterUrls.ToArray<ChapterUrl>();
             if (urls == null)
                 return false;
@@ -591,7 +596,7 @@ namespace NovelReader
                 Source source = url.Source;
                 if (source == null)
                     continue;
-                string[] novelContent = GetNovelSourceFromSource(source).GetChapterContent(chapter.ChapterTitle, url.Url);
+                string[] novelContent = source.GetChapterContent(chapter.ChapterTitle, url.Url);
                 if (novelContent == null)
                     continue;
                 System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
@@ -729,7 +734,7 @@ namespace NovelReader
             }
         }
 
-        public bool AddSource(NovelSource newSource, bool mirror, out string message)
+        public bool AddSource(INovelSource newSource, bool mirror, out string message)
         {
             message = newSource.SourceLocation.ToString() + " successfully added.";
             if (Sources.Where(source => source.SourceNovelLocation == newSource.SourceLocation.ToString()).Any())
@@ -1076,7 +1081,7 @@ namespace NovelReader
 
 
         }
-
+        /*
         private NovelSource GetNovelSourceFromSource(Source s)
         {
             if (sourceDictionary == null)
@@ -1092,5 +1097,6 @@ namespace NovelReader
             }
             
         }
+        */
     }
 }

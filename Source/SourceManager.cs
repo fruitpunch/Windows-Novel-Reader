@@ -42,7 +42,7 @@ namespace Source
             //NovelSource instance = loader.CreatePlugin(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SourceDLL"));
         }
         */
-        public static NovelSource GetSource(SourceLocation s, string sourceID, string title = null)
+        public static INovelSource GetSource(SourceLocation s, string sourceID, string title = null)
         {
             switch (s)
             {
@@ -57,6 +57,19 @@ namespace Source
                 default:
                     return null;
             }
+        }
+
+        public static INovelSource GetSource(string s, string sourceID, string title = null)
+        {
+            if (s.Equals(SourceLocation.Web17k.ToString()))
+                return new Source17k(sourceID, title);
+            else if (s.Equals(SourceLocation.Web69.ToString()))
+                return new SourceWeb69(sourceID, title);
+            else if (s.Equals(SourceLocation.WebPiaoTian.ToString()))
+                return new SourcePiaoTian(sourceID, title);
+            else if (s.Equals(SourceLocation.WebWuxiaWorld.ToString()))
+                return new SourceWuxiaWorld(sourceID, title);
+            else return null;
         }
 
         public static string GetSourceURL(SourceLocation s)

@@ -235,14 +235,14 @@ namespace NovelReader
             
             if (!result)
                 return false;
-                
+            
 
             var chapters = updateNovel.NovelChapters;
             List<Chapter> downloadChapters = new List<Chapter>();
             foreach (Chapter c in chapters)
                 if (!c.HasText)
                     downloadChapters.Add(c);
-            Console.WriteLine(downloadChapters.Count);
+
             int downloadCount = 0;
             bool success;
             for (int i = 0; i < downloadChapters.Count && !shutDown && updateNovel != null; i++)

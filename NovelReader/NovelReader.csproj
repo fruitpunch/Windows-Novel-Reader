@@ -136,6 +136,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source.cs" />
     <Compile Include="TTSScheduler.cs" />
     <Compile Include="SettingController.cs">
       <SubType>UserControl</SubType>

@@ -43,7 +43,7 @@ namespace Source
 
     }
 
-    public interface NovelSource
+    public interface INovelSource
     {
         //Returns the SourceLocation of the type extending this class.
         SourceLocation SourceLocation
