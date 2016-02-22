@@ -503,7 +503,7 @@ namespace NovelReader
             ChapterSource[] menuItems;
             foreach (Source source in sources)
             {
-                if (source == null || source.ID == OriginSource.ID)
+                if (source == null || !source.Valid ||source.ID == OriginSource.ID)
                     continue;
                 menuItems = GetNovelSourceFromSource(source).GetMenuURLs();
                 if (menuItems == null)
@@ -625,7 +625,10 @@ namespace NovelReader
             if (chapterIndex < 0 || chapterIndex >= Chapters.Count )
                 return null;
 
-            return Chapters.Where(chapter => chapter.Index == chapterIndex).First<Chapter>();
+            var result = Chapters.Where(chapter => chapter.Index == chapterIndex);
+            if(result != null && result.Any())
+                return result.First<Chapter>();
+            return null;
         }
 
         public void StartReading()
@@ -768,11 +771,99 @@ namespace NovelReader
                 message = "Novel is currently updating. Please wait until finish before making changes to novel source.";
                 return false;
             }
+
+            if(!deleteSource.Mirror)
+            {
+                message = "Cannot delete novel's origin source.";
+                return false;
+            }
                 
             NovelLibrary.libraryData.ChapterUrls.DeleteAllOnSubmit(deleteSource.ChapterUrls);
             NovelLibrary.libraryData.Sources.DeleteOnSubmit(deleteSource);
             NovelLibrary.libraryData.SubmitChanges();
             return true;
+        }
+
+        public bool RankUpSource(Source source, out string message)
+        {
+            message = "";
+            if (!Sources.Contains(source))
+            {
+                message = "Invalid source";
+                return false;
+            }
+
+            if (UpdateState == UpdateStates.Syncing || UpdateState == UpdateStates.Checking || UpdateState == UpdateStates.Fetching)
+            {
+                message = "Novel is currently updating. Please wait until finish before making changes to novel source.";
+                return false;
+            }
+
+            if (!source.Mirror)
+            {
+                message = "Cannot change priority of origin source.";
+                return false;
+            }
+
+            if (source.Priority < 2)
+            {
+                message = "Cannot give higher prioirty than origin source.";
+                return false;
+            }
+                
+            List<Source> sourceList = (from sources in Sources
+                                       orderby sources.Priority ascending
+                                       select sources).ToList<Source>();
+
+            sourceList.RemoveAt(source.Priority);
+            sourceList.Insert(source.Priority - 1, source);
+            RefreshSourcePriority(sourceList.ToArray());
+            return true;
+        }
+
+        public bool RankDownSource(Source source, out string message)
+        {
+            message = "";
+            if (!Sources.Contains(source))
+            {
+                message = "Invalid source";
+                return false;
+            }
+
+            if (UpdateState == UpdateStates.Syncing || UpdateState == UpdateStates.Checking || UpdateState == UpdateStates.Fetching)
+            {
+                message = "Novel is currently updating. Please wait until finish before making changes to novel source.";
+                return false;
+            }
+
+            if (!source.Mirror)
+            {
+                message = "Cannot change priority of origin source.";
+                return false;
+            }
+
+            if (source.Priority == Sources.Count - 1)
+            {
+                return false;
+            }
+
+            List<Source> sourceList = (from sources in Sources
+                                       orderby sources.Priority ascending
+                                       select sources).ToList<Source>();
+
+            sourceList.RemoveAt(source.Priority);
+            sourceList.Insert(source.Priority + 1, source);
+            RefreshSourcePriority(sourceList.ToArray());
+            return true;
+        }
+
+        private void RefreshSourcePriority(Source[] sources)
+        {
+            for(int i = 1; i < sources.Length; i++)
+            {
+                sources[i].Priority = i;
+            }
+            NovelLibrary.libraryData.SubmitChanges();
         }
 
         //Set the progress to be displayed in NovelListControl.
