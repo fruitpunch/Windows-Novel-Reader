@@ -61,22 +61,33 @@ namespace Source
         {
             sourceDictionary = new Dictionary<string, SourceInfo>();
             _sourceLocation = new List<string>();
-            string location = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "SourcePack", "ChineseSourcePack.dll");
-            var assembly = Assembly.LoadFrom(location);
-            if (assembly == null)
+            string sourcePackLocation = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "SourcePack");
+            string[] sourcePackDLLs = Directory.GetFiles(sourcePackLocation, "*.dll");
+            foreach(string dllName in sourcePackDLLs)
             {
-                Console.WriteLine("Invalido");
-                return false;
-            }
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (typeof(ISource).IsAssignableFrom(type))
-                    sourceDictionary[type.FullName] = new SourceInfo(type);
+                
+                string location = Path.Combine(sourcePackLocation, dllName);
+                //Console.WriteLine(dllName);
+                var assembly = Assembly.LoadFrom(dllName);
+                //var assembly = Assembly.LoadFrom(@"D:\Dev\Project\CS\WindowNovelReader\NovelReader\bin\Debug\SourcePack\ChineseSourcePack.dll");
+            
+                if (assembly == null)
+                {
+                    Console.WriteLine("Invalido");
+                    continue;
+                }
+                foreach (Type type in assembly.GetTypes())
+                {
+                    //Console.WriteLine(type.FullName);
+                    if (typeof(ISource).IsAssignableFrom(type))
+                        sourceDictionary[type.FullName] = new SourceInfo(type);
 
+                }
+                Console.WriteLine("dictionary size " + sourceDictionary.Count);
             }
-            foreach(KeyValuePair<string, SourceInfo> kvp in sourceDictionary)
+            foreach (KeyValuePair<string, SourceInfo> kvp in sourceDictionary)
             {
-                Console.WriteLine(kvp.Value.GetType().FullName);
+                Console.WriteLine(kvp.Key);
                 SourceLocation.Add(kvp.Key);
             }
             return true;

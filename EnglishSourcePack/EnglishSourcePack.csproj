@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A02974BD-427B-4E60-8CCE-176E14D176A1}</ProjectGuid>
+    <ProjectGuid>{13125E7D-A472-4FE5-97A8-05927D2F166C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ChineseSourcePack</RootNamespace>
-    <AssemblyName>ChineseSourcePack</AssemblyName>
+    <RootNamespace>EnglishSourcePack</RootNamespace>
+    <AssemblyName>EnglishSourcePack</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,17 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source17k.cs" />
-    <Compile Include="SourcePiaoTian.cs" />
-    <Compile Include="SourceWeb69.cs" />
+    <Compile Include="SourceWuxiaWorld.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "D:\Dev\Project\CS\WindowNovelReader\ChineseSourcePack\bin\Debug\ChineseSourcePack.dll" "D:\Dev\Project\CS\WindowNovelReader\NovelReader\SourcePack" /Y /E /D
-xcopy "D:\Dev\Project\CS\WindowNovelReader\ChineseSourcePack\bin\Debug\Source.dll" "D:\Dev\Project\CS\WindowNovelReader\NovelReader\SourcePack" /Y /E /D</PostBuildEvent>
+    <PostBuildEvent>xcopy "D:\Dev\Project\CS\WindowNovelReader\EnglishSourcePack\bin\Debug\EnglishSourcePack.dll" "D:\Dev\Project\CS\WindowNovelReader\NovelReader\SourcePack" /Y /E /D</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

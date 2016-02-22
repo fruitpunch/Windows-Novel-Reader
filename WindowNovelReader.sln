@@ -18,6 +18,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChineseSourcePack", "Chines
 		{6BF1F142-8343-4BF4-A953-F59B45A25F70} = {6BF1F142-8343-4BF4-A953-F59B45A25F70}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishSourcePack", "EnglishSourcePack\EnglishSourcePack.csproj", "{13125E7D-A472-4FE5-97A8-05927D2F166C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6BF1F142-8343-4BF4-A953-F59B45A25F70} = {6BF1F142-8343-4BF4-A953-F59B45A25F70}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +45,10 @@ Global
 		{A02974BD-427B-4E60-8CCE-176E14D176A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A02974BD-427B-4E60-8CCE-176E14D176A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A02974BD-427B-4E60-8CCE-176E14D176A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13125E7D-A472-4FE5-97A8-05927D2F166C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13125E7D-A472-4FE5-97A8-05927D2F166C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13125E7D-A472-4FE5-97A8-05927D2F166C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13125E7D-A472-4FE5-97A8-05927D2F166C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
