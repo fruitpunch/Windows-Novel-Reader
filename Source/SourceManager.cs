@@ -61,33 +61,27 @@ namespace Source
         {
             sourceDictionary = new Dictionary<string, SourceInfo>();
             _sourceLocation = new List<string>();
-            string sourcePackLocation = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "SourcePack");
-            string[] sourcePackDLLs = Directory.GetFiles(sourcePackLocation, "*.dll");
+            string[] sourcePackDLLs = Directory.GetFiles(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "SourcePack"), "*.dll");
+
             foreach(string dllName in sourcePackDLLs)
             {
                 
-                string location = Path.Combine(sourcePackLocation, dllName);
-                //Console.WriteLine(dllName);
                 var assembly = Assembly.LoadFrom(dllName);
-                //var assembly = Assembly.LoadFrom(@"D:\Dev\Project\CS\WindowNovelReader\NovelReader\bin\Debug\SourcePack\ChineseSourcePack.dll");
             
                 if (assembly == null)
                 {
-                    Console.WriteLine("Invalido");
+                    Console.WriteLine("Invalid dll");
                     continue;
                 }
                 foreach (Type type in assembly.GetTypes())
                 {
-                    //Console.WriteLine(type.FullName);
                     if (typeof(ISource).IsAssignableFrom(type))
                         sourceDictionary[type.FullName] = new SourceInfo(type);
 
                 }
-                Console.WriteLine("dictionary size " + sourceDictionary.Count);
             }
             foreach (KeyValuePair<string, SourceInfo> kvp in sourceDictionary)
             {
-                Console.WriteLine(kvp.Key);
                 SourceLocation.Add(kvp.Key);
             }
             return true;

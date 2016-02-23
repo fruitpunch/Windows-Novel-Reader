@@ -263,7 +263,7 @@ namespace NovelReader
             return System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle);
         }
 
-        public Request GetTTSRequest(int speed)
+        public Request GetTTSRequest(int speed, bool immediate = false)
         {
             List<Chapter> chapters = NovelChapters.ToList();
             if (chapters == null)
@@ -277,7 +277,10 @@ namespace NovelReader
                 {
                     if (!queuedTTSChapters.ContainsKey(c))
                     {
-                        request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
+                        if(immediate)
+                            request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, BackgroundService.Instance.ttsScheduler.GetHighestPriority());
+                        else
+                            request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
                         queuedTTSChapters.Add(c, request);
                         break;
                     }
@@ -541,7 +544,7 @@ namespace NovelReader
             return true;
         }
 
-        public bool DownloadChapter(Chapter downloadChapter)
+        public bool DownloadChapter(Chapter downloadChapter, Source specificSource = null)
         {
             if (downloadChapter == null)
             {
@@ -552,12 +555,30 @@ namespace NovelReader
             if (UpdateState == UpdateStates.Syncing || UpdateState == UpdateStates.Checking)
                 return false;
 
-                var result = downloadChapter.ChapterUrls;
+            var result = downloadChapter.ChapterUrls;
             if (!result.Any())
             {
                 SetUpdateProgress(0, 0, UpdateStates.Error);
                 return false;
             }
+
+            if(specificSource != null)
+            {
+                if (!Sources.Contains(specificSource))
+                    return false;
+                var urlResult = (from url in downloadChapter.ChapterUrls
+                                  where url.Source.ID == specificSource.ID
+                                  select url);
+                if (!urlResult.Any())
+                    return false;
+                ChapterUrl specificUrl = urlResult.First<ChapterUrl>();
+                string[] novelContent = specificSource.GetChapterContent(downloadChapter.ChapterTitle, specificUrl.Url);
+                if (novelContent == null)
+                    return false;
+                System.IO.File.WriteAllLines(downloadChapter.GetTextFileLocation(), novelContent);
+                return true;
+            }
+
             ChapterUrl[] urls = result.ToArray<ChapterUrl>();
             foreach (ChapterUrl url in urls)
             {
@@ -577,33 +598,6 @@ namespace NovelReader
             }
 
             return false;
-        }
-
-        public bool DownloadChapterContent(Chapter chapter)
-        {
-            if (chapter == null)
-                return false;
-
-            
-
-            ChapterUrl[] urls = chapter.ChapterUrls.ToArray<ChapterUrl>();
-            if (urls == null)
-                return false;
-            foreach(ChapterUrl url in urls)
-            {
-                if (url == null || url.Vip || !url.Valid)
-                    continue;
-                Source source = url.Source;
-                if (source == null)
-                    continue;
-                string[] novelContent = source.GetChapterContent(chapter.ChapterTitle, url.Url);
-                if (novelContent == null)
-                    continue;
-                System.IO.File.WriteAllLines(chapter.GetTextFileLocation(), novelContent);
-                return true;
-            }
-            
-            return true;
         }
 
         //Change the index of the chapter and change the file name of the text and audio file.
@@ -681,6 +675,15 @@ namespace NovelReader
             isDirty = true;
             NotifyPropertyChanged("ChapterCountStatus");
             return newChapter;
+        }
+
+        public void DeleteAllChapter(Chapter[] deleteChapters, bool blackList)
+        {
+            foreach (Chapter deleteChapter in deleteChapters)
+                DeleteChapter(deleteChapter, blackList, false);
+
+            VeryifyAndCorrectChapterIndexing(NovelChapters.ToArray<Chapter>());
+            RefreshCacheData();
         }
 
         public void DeleteChapter(Chapter deleteChapter, bool blackList, bool verifyData = true)

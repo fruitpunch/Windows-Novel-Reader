@@ -160,6 +160,15 @@ namespace NovelReader
             mre.Set();
         }
 
+        public void PerformImmediateTTS(Chapter[] chapters)
+        {
+            foreach(Chapter chapter in chapters)
+            {
+                Request request = chapter.Novel.GetTTSRequest(Configuration.Instance.TTSSpeed, true);
+                ttsScheduler.AddRequest(request);
+            }
+        }
+
         /*============Private Function======*/
 
         private void Update()

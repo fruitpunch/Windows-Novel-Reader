@@ -28,8 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NovelReaderForm));
             this.dgvChapterList = new System.Windows.Forms.DataGridView();
+            this.chapterContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.setReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setNotReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remakeAudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteChapterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rtbChapterTextBox = new System.Windows.Forms.RichTextBox();
             this.btnNext = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
@@ -37,14 +45,13 @@
             this.cbAutoPlay = new System.Windows.Forms.CheckBox();
             this.labelTitle = new System.Windows.Forms.Label();
             this.btnPrevious = new System.Windows.Forms.Button();
-            this.btnRedownload = new System.Windows.Forms.Button();
-            this.btnDeleteChapter = new System.Windows.Forms.Button();
             this.btnFinishReading = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.mp3Player = new AxWMPLib.AxWindowsMediaPlayer();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
+            this.chapterContextMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -55,11 +62,21 @@
             // 
             this.dgvChapterList.AllowUserToAddRows = false;
             this.dgvChapterList.AllowUserToDeleteRows = false;
+            this.dgvChapterList.AllowUserToResizeRows = false;
             this.dgvChapterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.dgvChapterList.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvChapterList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvChapterList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvChapterList.ContextMenuStrip = this.chapterContextMenuStrip;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.DodgerBlue;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvChapterList.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvChapterList.Location = new System.Drawing.Point(5, 5);
             this.dgvChapterList.Name = "dgvChapterList";
             this.dgvChapterList.RowHeadersVisible = false;
@@ -70,6 +87,49 @@
             this.dgvChapterList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvChapterList_CellFormatting);
             this.dgvChapterList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvChapterList_CellValueChanged);
             this.dgvChapterList.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvChapterList_CurrentCellDirtyStateChanged);
+            this.dgvChapterList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dgvChapterList_MouseDown);
+            // 
+            // chapterContextMenuStrip
+            // 
+            this.chapterContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setReadToolStripMenuItem,
+            this.setNotReadToolStripMenuItem,
+            this.setDownloadToolStripMenuItem,
+            this.remakeAudioToolStripMenuItem,
+            this.deleteChapterToolStripMenuItem});
+            this.chapterContextMenuStrip.Name = "chapterContextMenuStrip";
+            this.chapterContextMenuStrip.Size = new System.Drawing.Size(158, 136);
+            this.chapterContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.chapterContextMenuStrip_ItemClicked);
+            // 
+            // setReadToolStripMenuItem
+            // 
+            this.setReadToolStripMenuItem.Name = "setReadToolStripMenuItem";
+            this.setReadToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.setReadToolStripMenuItem.Text = "Set Read";
+            // 
+            // setNotReadToolStripMenuItem
+            // 
+            this.setNotReadToolStripMenuItem.Name = "setNotReadToolStripMenuItem";
+            this.setNotReadToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.setNotReadToolStripMenuItem.Text = "Set Not Read";
+            // 
+            // setDownloadToolStripMenuItem
+            // 
+            this.setDownloadToolStripMenuItem.Name = "setDownloadToolStripMenuItem";
+            this.setDownloadToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.setDownloadToolStripMenuItem.Text = "Redownload";
+            // 
+            // remakeAudioToolStripMenuItem
+            // 
+            this.remakeAudioToolStripMenuItem.Name = "remakeAudioToolStripMenuItem";
+            this.remakeAudioToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.remakeAudioToolStripMenuItem.Text = "Remake Audio";
+            // 
+            // deleteChapterToolStripMenuItem
+            // 
+            this.deleteChapterToolStripMenuItem.Name = "deleteChapterToolStripMenuItem";
+            this.deleteChapterToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.deleteChapterToolStripMenuItem.Text = "Delete Chapters";
             // 
             // rtbChapterTextBox
             // 
@@ -113,7 +173,7 @@
             this.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.btnEdit.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnEdit.Location = new System.Drawing.Point(500, 0);
+            this.btnEdit.Location = new System.Drawing.Point(790, 0);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(130, 45);
             this.btnEdit.TabIndex = 4;
@@ -184,40 +244,6 @@
             this.btnPrevious.UseVisualStyleBackColor = false;
             this.btnPrevious.Click += new System.EventHandler(this.btnPrevious_Click);
             // 
-            // btnRedownload
-            // 
-            this.btnRedownload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRedownload.BackColor = System.Drawing.Color.SteelBlue;
-            this.btnRedownload.FlatAppearance.BorderSize = 0;
-            this.btnRedownload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRedownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnRedownload.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnRedownload.Location = new System.Drawing.Point(630, 0);
-            this.btnRedownload.Name = "btnRedownload";
-            this.btnRedownload.Size = new System.Drawing.Size(150, 45);
-            this.btnRedownload.TabIndex = 10;
-            this.btnRedownload.Text = "Download Chapter";
-            this.btnRedownload.UseVisualStyleBackColor = false;
-            this.btnRedownload.Click += new System.EventHandler(this.btnRedownload_Click);
-            // 
-            // btnDeleteChapter
-            // 
-            this.btnDeleteChapter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteChapter.BackColor = System.Drawing.Color.SteelBlue;
-            this.btnDeleteChapter.FlatAppearance.BorderSize = 0;
-            this.btnDeleteChapter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDeleteChapter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnDeleteChapter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnDeleteChapter.Location = new System.Drawing.Point(780, 0);
-            this.btnDeleteChapter.Name = "btnDeleteChapter";
-            this.btnDeleteChapter.Size = new System.Drawing.Size(140, 45);
-            this.btnDeleteChapter.TabIndex = 11;
-            this.btnDeleteChapter.Text = "Delete Chapter";
-            this.btnDeleteChapter.UseVisualStyleBackColor = false;
-            this.btnDeleteChapter.Click += new System.EventHandler(this.btnDeleteChapter_Click);
-            // 
             // btnFinishReading
             // 
             this.btnFinishReading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -242,8 +268,6 @@
             this.panel1.BackColor = System.Drawing.Color.SteelBlue;
             this.panel1.Controls.Add(this.labelTitle);
             this.panel1.Controls.Add(this.btnEdit);
-            this.panel1.Controls.Add(this.btnRedownload);
-            this.panel1.Controls.Add(this.btnDeleteChapter);
             this.panel1.Location = new System.Drawing.Point(360, 5);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(920, 45);
@@ -304,6 +328,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NovelReaderForm_FormClosing);
             this.Load += new System.EventHandler(this.NovelReaderForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).EndInit();
+            this.chapterContextMenuStrip.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -324,12 +349,16 @@
         private System.Windows.Forms.CheckBox cbAutoPlay;
         private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.Button btnPrevious;
-        private System.Windows.Forms.Button btnRedownload;
-        private System.Windows.Forms.Button btnDeleteChapter;
         private System.Windows.Forms.Button btnFinishReading;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private AxWMPLib.AxWindowsMediaPlayer mp3Player;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.ContextMenuStrip chapterContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem setReadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setNotReadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setDownloadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem remakeAudioToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteChapterToolStripMenuItem;
     }
 }

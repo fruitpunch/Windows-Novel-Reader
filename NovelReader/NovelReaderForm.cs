@@ -23,6 +23,10 @@ namespace NovelReader
         private bool currentChapterDirty;
         private FileSystemWatcher novelDirectoryWatcher;
 
+        private Font readingFont;
+        private Font selectedFont;
+        private Font regularFont;
+
         public NovelReaderForm()
         {
             
@@ -32,6 +36,8 @@ namespace NovelReader
             this.editModeOn = false;
             this.currentChapterDirty = false;
             this.rtbChapterTextBox.BackColor = Color.AliceBlue;
+            this.readingFont = new Font(dgvChapterList.Font, FontStyle.Bold);
+            this.regularFont = new Font(dgvChapterList.Font, FontStyle.Regular);
             this.novelDirectoryWatcher = new FileSystemWatcher();
             this.novelDirectoryWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
             this.novelDirectoryWatcher.Created += new FileSystemEventHandler(OnFileChange);
@@ -47,9 +53,22 @@ namespace NovelReader
             this.currentReadingNovel.StartReading();
             this.Text = novel.NovelTitle;
             this.dgvChapterList.DataSource = novel.NovelChapters;
+            novel.NovelChapters.ListChanged += NovelChapters_ListChanged;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
             BackgroundService.Instance.ResetTTSList();
             this.novelDirectoryWatcher.EnableRaisingEvents = true;
+
+            Source[] novelSources = (from  s in novel.Sources
+                                     orderby s.Priority ascending
+                                     select s).ToArray();
+            foreach (Source s in novelSources)
+            {
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Text = s.SourceNovelLocation;
+                item.Click += Redownload_ItemClicked;
+                (chapterContextMenuStrip.Items[2] as ToolStripMenuItem).DropDownItems.Add(item);
+            }
+                
 
             if (novel.LastReadChapter != null)
             {
@@ -97,6 +116,8 @@ namespace NovelReader
 
         }
 
+        
+
         public bool InvokeRequiredForNovel(Novel n)
         {
             if (currentReadingNovel != null && currentReadingNovel.NovelTitle == n.NovelTitle)
@@ -119,6 +140,12 @@ namespace NovelReader
         private void NovelReaderForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+
+        private void NovelChapters_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            dgvChapterList.InvalidateRow(e.NewIndex);
         }
 
         private void cbAutoPlay_CheckedChanged(object sender, EventArgs e)
@@ -158,7 +185,8 @@ namespace NovelReader
 
         private void dgvChapterList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            ReadChapter(currentReadingNovel.NovelChapters[e.RowIndex]);
+            if(e.RowIndex >= 0)
+                ReadChapter(currentReadingNovel.NovelChapters[e.RowIndex]);
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -228,14 +256,14 @@ namespace NovelReader
 
         private void dgvChapterList_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
-            if (dgvChapterList.IsCurrentCellDirty && dgvChapterList.CurrentCell.ColumnIndex == dgvChapterList.Columns["Read"].Index)
+            if (dgvChapterList.IsCurrentCellDirty && dgvChapterList.CurrentCell.ColumnIndex == dgvChapterList.Columns["SelectColumn"].Index)
                dgvChapterList.CommitEdit(DataGridViewDataErrorContexts.Commit);
         }
 
         private void dgvChapterList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if(dgvChapterList.Columns[e.ColumnIndex].Name.Equals("Read"))
-                ModifyCellStyle(e.RowIndex);
+            //if(dgvChapterList.Columns[e.ColumnIndex].Name.Equals("SelectColumn"))
+            ModifyCellStyle(e.RowIndex);
         }
 
         private void dgvChapterList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -244,47 +272,7 @@ namespace NovelReader
         }
 
 
-        private void btnRedownload_Click(object sender, EventArgs e)
-        {
-            if (!rtbChapterTextBox.ReadOnly && currentChapterDirty)
-            {
-                MessageBox.Show("Please finish editing first.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (currentReadingNovel != null)
-            {
-                if (currentReadingChapter != null && currentReadingChapter.ChapterUrls != null)
-                {
-                    Thread t = new Thread(new ParameterizedThreadStart(DownloadAndReadChapter));
-                    t.Start(currentReadingChapter);
-                }
-                else if (currentReadingChapter != null && currentReadingChapter.ChapterUrls == null)
-                {
-                    MessageBox.Show("This chapter does not contain a source link to download from.", "No Source Link", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
-        }
-
-
-        private void btnDeleteChapter_Click(object sender, EventArgs e)
-        {
-            if (currentReadingNovel != null && currentReadingChapter != null)
-            {
-                DialogResult deleteResult = MessageBox.Show("Are you sure you want to delete " + currentReadingChapter.ChapterTitle, "Delete Chapter", MessageBoxButtons.YesNo);
-                if (deleteResult == DialogResult.No)
-                    return;
-                int index = currentReadingChapter.Index;
-                Console.WriteLine("Before delete " + index);
-                currentReadingNovel.DeleteChapter(currentReadingChapter, true);
-                Console.WriteLine("After delete " + index);
-                Chapter chapter = currentReadingNovel.GetChapter(index);
-                ReadChapter(chapter);
-            }
-
-        }
-
-
+        
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
@@ -311,6 +299,47 @@ namespace NovelReader
         }
 
 
+        private void dgvChapterList_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                DataGridView.HitTestInfo hit = dgvChapterList.HitTest(e.X, e.Y);
+                if (hit.Type == DataGridViewHitTestType.Cell)
+                {
+                    Console.WriteLine(hit.RowIndex);
+                    if(!dgvChapterList.Rows[hit.RowIndex].Selected)
+                    {
+                        dgvChapterList.ClearSelection();
+                        dgvChapterList.Rows[hit.RowIndex].Selected = true;
+                    }
+                        
+                }
+            }
+        }
+
+        private void Redownload_ItemClicked(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            Console.WriteLine(item.Text);
+        }
+
+
+        private void chapterContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            string clickedItemName = e.ClickedItem.Text;
+            Console.WriteLine(clickedItemName);
+            if (clickedItemName == "Set Read")
+                SetReadChapters();
+            else if (clickedItemName == "Set Not Read")
+                SetNotReadChapters();
+            else if (clickedItemName == "Remake Audio")
+                RemakeAudio();
+            else if (clickedItemName == "Delete Chapters")
+                DeleteChapters();
+
+        }
+
+
         /*============PrivateFunction=======*/
 
         private void SetControl()
@@ -320,7 +349,7 @@ namespace NovelReader
 
             DataGridViewCell indexCell = new DataGridViewTextBoxCell();
             DataGridViewCell chapterTitleCell = new DataGridViewTextBoxCell();
-            DataGridViewCheckBoxCell hasReadCell = new DataGridViewCheckBoxCell();
+            DataGridViewCheckBoxCell selectCell = new DataGridViewCheckBoxCell();
 
             DataGridViewTextBoxColumn indexColumn = new DataGridViewTextBoxColumn()
             {
@@ -342,19 +371,21 @@ namespace NovelReader
                 ReadOnly = true
             };
 
-            DataGridViewCheckBoxColumn makeAudioColumn = new DataGridViewCheckBoxColumn()
+            DataGridViewCheckBoxColumn selectColumn = new DataGridViewCheckBoxColumn()
             {
-                CellTemplate = hasReadCell,
-                Name = "Read",
-                HeaderText = "Read",
-                DataPropertyName = "Read",
+                CellTemplate = selectCell,
+                Name = "SelectColumn",
+                HeaderText = "Select",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FlatStyle = FlatStyle.Popup
+                FlatStyle = FlatStyle.Popup,
+                
             };
 
             dgvChapterList.Columns.Add(titleColumn);
             dgvChapterList.Columns.Add(indexColumn);
-            dgvChapterList.Columns.Add(makeAudioColumn);
+            dgvChapterList.Columns.Add(selectColumn);
+
+
 
         }
 
@@ -421,15 +452,56 @@ namespace NovelReader
             }
         }
 
-        private void DownloadAndReadChapter(Object chapterObj)
+        private void SetReadChapters()
         {
-            Chapter chapter = (Chapter)chapterObj;
-            currentReadingNovel.DownloadChapterContent(chapter);
-            this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+            Chapter[] chapters = GetSelectedChapterItem();
+            foreach (Chapter chapter in chapters)
+                chapter.Read = true;
+        }
+
+        private void SetNotReadChapters()
+        {
+            Chapter[] chapters = GetSelectedChapterItem();
+            foreach (Chapter chapter in chapters)
+                chapter.Read = false;
+        }
+
+        private void RemakeAudio()
+        {
+            Chapter[] chapters = GetSelectedChapterItem();
+            BackgroundService.Instance.PerformImmediateTTS(chapters);
+        }
+
+        private void DeleteChapters()
+        {
+            Chapter[] chapters = GetSelectedChapterItem();
+            if(chapters.Contains(currentReadingChapter) && editModeOn)
             {
-                ReadChapter(chapter);
-            }));
-            
+                MessageBox.Show("Please finish editing first.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            new Thread(delegate ()
+            {
+                currentReadingNovel.DeleteAllChapter(chapters, true);
+            }).Start();
+
+        }
+
+        private void RedownloadChapters(object source)
+        {
+            Source s = source as Source;
+            Chapter[] chapters = GetSelectedChapterItem();
+            if (chapters.Contains(currentReadingChapter) && editModeOn)
+            {
+                MessageBox.Show("Please finish editing first.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            new Thread(delegate ()
+            {
+                foreach (Chapter chapter in chapters)
+                    currentReadingNovel.DownloadChapter(chapter, s);
+            }).Start();
         }
 
         private void StartEditing()
@@ -458,6 +530,15 @@ namespace NovelReader
             }
         }
 
+        private Chapter[] GetSelectedChapterItem()
+        {
+            List<Chapter> chapters = new List<Chapter>();
+            foreach(DataGridViewRow selectedRow in dgvChapterList.SelectedRows)
+                chapters.Add(currentReadingNovel.GetChapter(selectedRow.Index));
+
+            return chapters.ToArray();
+        }
+
         private void ModifyCellStyle(int rowIndex)
         {
             if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count || rowIndex >= currentReadingNovel.ChapterCount)
@@ -465,32 +546,36 @@ namespace NovelReader
             
             DataGridViewRow row = dgvChapterList.Rows[rowIndex];
             Chapter chapter = currentReadingNovel.NovelChapters[rowIndex];
-            row.DefaultCellStyle.SelectionForeColor = Color.DimGray;
-            if (chapter.Equals(currentReadingChapter))
-            {
-                row.DefaultCellStyle.BackColor = Color.Orange;
-                row.DefaultCellStyle.SelectionBackColor = Color.Orange;
-            }
-            else if (!chapter.HasText)
-            {
-                row.DefaultCellStyle.BackColor = Color.LightPink;
-                row.DefaultCellStyle.SelectionBackColor = Color.LightPink;
-            }
-            else if (!chapter.Read && chapter.HasText && chapter.HasAudio)
-            {
-                row.DefaultCellStyle.BackColor = Color.LightBlue;
-                row.DefaultCellStyle.SelectionBackColor = Color.LightBlue;
-            }
-            else if (!chapter.Read && chapter.HasText && !chapter.HasAudio)
-            {
-                row.DefaultCellStyle.BackColor = Color.Cornsilk;
-                row.DefaultCellStyle.SelectionBackColor = Color.Cornsilk;
-            }
-            else if (chapter.Read && chapter.HasText)
+            bool read = chapter.Read;
+            bool hasText = chapter.HasText;
+            bool hasAudio = chapter.HasAudio;
+            
+            if (currentReadingChapter != null && chapter.ID == currentReadingChapter.ID)
+                row.DefaultCellStyle.Font = readingFont;
+            else
+                row.DefaultCellStyle.Font = regularFont;
+
+            if(read)
             {
                 row.DefaultCellStyle.BackColor = Color.LightGreen;
                 row.DefaultCellStyle.SelectionBackColor = Color.LightGreen;
             }
+            else if(!hasText)
+            {
+                row.DefaultCellStyle.BackColor = Color.LightPink;
+                row.DefaultCellStyle.SelectionBackColor = Color.LightPink;
+            }
+            else if(hasText && !hasAudio)
+            {
+                row.DefaultCellStyle.BackColor = Color.Cornsilk;
+                row.DefaultCellStyle.SelectionBackColor = Color.Cornsilk;
+            }
+            else if (hasText && hasAudio)
+            {
+                row.DefaultCellStyle.BackColor = Color.LightBlue;
+                row.DefaultCellStyle.SelectionBackColor = Color.LightBlue;
+            }
+            
         }
 
     }
