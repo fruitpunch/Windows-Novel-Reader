@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Source
 {
@@ -58,6 +59,32 @@ namespace Source
                 return null;
             }
             return lines.ToArray();
+        }
+
+        public static bool DownloadImage(string url, string destination)
+        {
+            using (WebClient client = new WebClient())
+            {
+                try
+                {
+                    byte[] data = client.DownloadData(url);
+                    using (MemoryStream mem = new MemoryStream(data))
+                    {
+                        using (var image = Image.FromStream(mem))
+                        {
+                            image.Save(destination, ImageFormat.Png);
+                        }
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error getting URL: " + url);
+                    Console.WriteLine(e.ToString());
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

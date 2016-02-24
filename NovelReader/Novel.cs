@@ -256,6 +256,11 @@ namespace NovelReader
             return null;
         }
 
+        public string GetNovelCoverImageLocation()
+        {
+            return System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "Cover.jpg");
+        }
+
         /*============Public Function=======*/
 
         public string GetNovelDirectory()
@@ -420,6 +425,8 @@ namespace NovelReader
             if (OriginSource == null)
                 return false;
             ChapterSource[] menuItems = OriginSource.GetMenuURLs();
+            if(!File.Exists(GetNovelCoverImageLocation()))
+                OriginSource.DownloadNovelCoverImage(GetNovelCoverImageLocation());
             if (menuItems == null)
             {
                 SetUpdateProgress(0, 0, UpdateStates.Error);

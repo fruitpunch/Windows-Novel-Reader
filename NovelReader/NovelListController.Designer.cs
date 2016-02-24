@@ -42,9 +42,15 @@
             this.btnDeleteNovel = new System.Windows.Forms.Button();
             this.topPanel = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
+            this.chapterListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNovelList)).BeginInit();
             this.bottomPanel.SuspendLayout();
             this.topPanel.SuspendLayout();
+            this.chapterListContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // refreshUpdateLabelTimer
@@ -73,6 +79,7 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvNovelList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvNovelList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvNovelList.ContextMenuStrip = this.chapterListContextMenuStrip;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -239,6 +246,40 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "Novel List";
             // 
+            // chapterListContextMenuStrip
+            // 
+            this.chapterListContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.updateToolStripMenuItem,
+            this.deleteToolStripMenuItem,
+            this.editSourceToolStripMenuItem,
+            this.deleteToolStripMenuItem1});
+            this.chapterListContextMenuStrip.Name = "chapterListContextMenuStrip";
+            this.chapterListContextMenuStrip.Size = new System.Drawing.Size(153, 114);
+            // 
+            // updateToolStripMenuItem
+            // 
+            this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.updateToolStripMenuItem.Text = "Read";
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem.Text = "Update";
+            // 
+            // editSourceToolStripMenuItem
+            // 
+            this.editSourceToolStripMenuItem.Name = "editSourceToolStripMenuItem";
+            this.editSourceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editSourceToolStripMenuItem.Text = "Edit Source";
+            // 
+            // deleteToolStripMenuItem1
+            // 
+            this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
+            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem1.Text = "Delete";
+            // 
             // NovelListController
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -255,6 +296,7 @@
             this.bottomPanel.ResumeLayout(false);
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
+            this.chapterListContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -272,5 +314,10 @@
         private System.Windows.Forms.Panel topPanel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnDeleteNovel;
+        private System.Windows.Forms.ContextMenuStrip chapterListContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem updateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editSourceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
     }
 }

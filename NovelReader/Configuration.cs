@@ -17,7 +17,7 @@ namespace NovelReader
         public event PropertyChangedEventHandler PropertyChanged;
 
         private static Configuration instance;
-        private readonly static string configLocation = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "NovelReader", "novel_reader.config");
+        private readonly static string configLocation = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "NovelReader", "novel_reader_test.config");
 
         private string _novelFolderLocation { get; set; }
         private string _metaFileLocation { get; set; }

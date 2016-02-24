@@ -221,9 +221,14 @@ namespace NovelReader
             bool newUpdate = false;
             foreach(Novel updateNovel in updateNovels)
             {
-                bool result = UpdateNovel(updateNovel);
-                if (result)
-                    newUpdate = true;
+                new Thread(delegate ()
+                {
+                    bool result = UpdateNovel(updateNovel);
+                    if (result)
+                        newUpdate = true;
+                }).Start();
+                Thread.Sleep(500);
+                
             }
             Configuration.Instance.LastFullUpdateTime = DateTime.Now;
             if (newUpdate)
@@ -232,9 +237,11 @@ namespace NovelReader
 
         private bool UpdateNovel(Object input)
         {
+            
             if (!(input is Novel))
                 return false;
             Novel updateNovel = input as Novel;
+            Console.WriteLine(updateNovel.NovelTitle);
             if (updateNovel == null || updateNovel.UpdateState == Novel.UpdateStates.Checking || updateNovel.UpdateState == Novel.UpdateStates.Fetching || updateNovel.UpdateState == Novel.UpdateStates.Syncing)
                 return false;
             updateNovel.SyncToOrigin();

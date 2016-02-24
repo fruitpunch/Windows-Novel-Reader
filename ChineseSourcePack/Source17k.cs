@@ -12,6 +12,7 @@ namespace ChineseSourcePack
         private string _novelTitle;
         private string _novelID;
         private CultureInfo cultureInfo;
+        private static volatile object resourceLock;
 
         public string NovelID
         {
@@ -39,9 +40,35 @@ namespace ChineseSourcePack
             get { return this.GetType().FullName; }
         }
 
+        public void DownloadNovelCoverImage(string destination)
+        {
+            string url = BaseURL + "/book/" + NovelID + ".html";
+            string[] lines = WebUtil.GetUrlContentsUTF8(url);
+            if (lines == null)
+                return;
+            
+            foreach (string line in lines)
+            {
+                if (line.Contains("<img itemprop=\"image\" src="))
+                {
+                    MatchCollection imageLineMatch = Regex.Matches(line, "\"([^\"]*)\"");
+                    if (imageLineMatch.Count != 5)
+                        continue;
+                    string imageUrl = imageLineMatch[3].ToString();
+                    if(imageUrl.Contains(NovelID))
+                    {
+                        imageUrl = imageUrl.Replace("\"", "");
+                        WebUtil.DownloadImage(imageUrl, destination);
+                    }
+                        
+                    break;
+                }
+            }
+        }
+
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
             {
-
+                {"<br>", "\n"}
             };
 
         public Source17k(string novelID, string novelTitle)
@@ -49,6 +76,8 @@ namespace ChineseSourcePack
             this._novelID = novelID;
             this._novelTitle = novelTitle;
             cultureInfo = new CultureInfo("zh-CN", false);
+            if (resourceLock == null)
+                resourceLock = new object();
         }
 
         public Tuple<bool, string> VerifySource()
@@ -88,9 +117,9 @@ namespace ChineseSourcePack
 
             string chapterMatchingSubstring = "href=\"/chapter/" + _novelID.ToString() + "/";
             string title, chURL;
+            int currentLineNumber = 0;
             foreach (string line in lines)
             {
-                
                 if (line.Contains(chapterMatchingSubstring))
                 {
                     MatchCollection matches = Regex.Matches(line, "\"([^\"]*)\"");
@@ -98,25 +127,39 @@ namespace ChineseSourcePack
                     chURL = matches[5].ToString();
                     title = title.Replace("\"", "");
                     chURL = chURL.Replace("\"", "");
-                    chapterURLs.Add(new ChapterSource(chURL, title, true));
+                    if(lines[currentLineNumber-1].Contains("VIP"))
+                        chapterURLs.Add(new ChapterSource(chURL, title, true));
+                    else
+                        chapterURLs.Add(new ChapterSource(chURL, title, false));
                 }
+                currentLineNumber++;
             }
             return chapterURLs.ToArray();
         }
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
-            string[] lines = WebUtil.GetUrlContentsUTF8(BaseURL + url);
+            string[] lines;
+            lock (resourceLock)
+            {
+                lines = WebUtil.GetUrlContentsUTF8(BaseURL + url);
+            }
             if (lines == null)
                 return null;
 
             List<string> novelContent = new List<string>();
             novelContent.Add(chapterTitle);
             novelContent.Add("\n\n");
+            int currentLineNumber = 0;
             foreach (string line in lines)
             {
-                if (line.Contains("&nbsp;"))
-                    novelContent.Add(NovelContentCleanup(line));
+                if (line.Contains("<div id=\"chapterContentWapper\">"))
+                {
+                    novelContent.Add(NovelContentCleanup(lines[currentLineNumber+1]));
+                    break;
+                }
+                    
+                currentLineNumber++;
             }
             return novelContent.ToArray();
         }

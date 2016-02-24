@@ -359,7 +359,6 @@ namespace NovelReader
 
             DataGridViewCell indexCell = new DataGridViewTextBoxCell();
             DataGridViewCell chapterTitleCell = new DataGridViewTextBoxCell();
-            DataGridViewCheckBoxCell selectCell = new DataGridViewCheckBoxCell();
 
             DataGridViewTextBoxColumn indexColumn = new DataGridViewTextBoxColumn()
             {
@@ -368,7 +367,8 @@ namespace NovelReader
                 HeaderText = "Index",
                 DataPropertyName = "Index",
                 Width = 50,
-                ReadOnly = true
+                ReadOnly = true,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells 
             };
 
             DataGridViewTextBoxColumn titleColumn = new DataGridViewTextBoxColumn()
@@ -378,23 +378,13 @@ namespace NovelReader
                 HeaderText = "Chapter Title",
                 DataPropertyName = "ChapterTitle",
                 Width = 200,
-                ReadOnly = true
+                ReadOnly = true,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             };
 
-            DataGridViewCheckBoxColumn selectColumn = new DataGridViewCheckBoxColumn()
-            {
-                CellTemplate = selectCell,
-                Name = "SelectColumn",
-                HeaderText = "Select",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FlatStyle = FlatStyle.Popup,
-                
-            };
 
             dgvChapterList.Columns.Add(titleColumn);
             dgvChapterList.Columns.Add(indexColumn);
-            dgvChapterList.Columns.Add(selectColumn);
-
 
 
         }
@@ -423,7 +413,7 @@ namespace NovelReader
                         rtbChapterTextBox.ScrollToCaret();
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     rtbChapterTextBox.Text = "Please Reload.";
                 }
@@ -492,19 +482,18 @@ namespace NovelReader
                 MessageBox.Show("Please finish editing first.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            string deleteMessage = chapters.Count() > 1 ? "Are you sure you want to delete these " + chapters.Count() + " items?" : chapters[0].ChapterTitle;
+            string deleteMessage = chapters.Count() > 1 ? "Are you sure you want to delete these " + chapters.Count() + " items?" : "Are you sure you want to delete " + chapters[0].ChapterTitle;
             DialogResult dialogResult = MessageBox.Show(deleteMessage, "Delete Chapters", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.No)
                 return;
 
-            Thread t = new Thread(delegate ()
+            new Thread(delegate ()
             {
                 this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
                     currentReadingNovel.DeleteAllChapter(chapters, true);
                 }));
-            });
-            t.Start();
+            }).Start();
             
         }
 

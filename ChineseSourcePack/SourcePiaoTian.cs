@@ -13,6 +13,7 @@ namespace ChineseSourcePack
         string _novelTitle;
         string _novelID;
         private CultureInfo cultureInfo;
+        private static volatile object resourceLock;
 
         public string NovelID
         {
@@ -40,6 +41,11 @@ namespace ChineseSourcePack
             get { return this.GetType().FullName; }
         }
 
+        public void DownloadNovelCoverImage(string destination)
+        {
+            
+        }
+
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
             {
                 {"<script>txttopshow7();</script><!--章节内容结束-->", ""},
@@ -53,6 +59,8 @@ namespace ChineseSourcePack
             this._novelID = novelID;
             this._novelTitle = novelTitle;
             this.cultureInfo = new CultureInfo("en-US", false);
+            if (resourceLock == null)
+                resourceLock = new object();
         }
 
         public Tuple<bool, string> VerifySource()
@@ -110,7 +118,11 @@ namespace ChineseSourcePack
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
-            string[] lines = WebUtil.GetUrlContents(BaseURL + url);
+            string[] lines;
+            lock (resourceLock)
+            {
+                lines = WebUtil.GetUrlContents(BaseURL + url);
+            }
             if (lines == null)
                 return null;
 

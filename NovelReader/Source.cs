@@ -39,6 +39,13 @@ namespace NovelReader
             }
         }
 
+        public void DownloadNovelCoverImage(string destination)
+        {
+            if (source == null)
+                source = SourceManager.GetSource(SourceNovelLocation, SourceNovelID);
+            source.DownloadNovelCoverImage(destination);
+        }
+
         public string[] GetChapterContent(string chapterTitle, string url)
         {
             if (source == null)

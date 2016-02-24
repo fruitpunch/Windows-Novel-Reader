@@ -13,6 +13,7 @@ namespace EnglishSourcePack
         private string _novelTitle;
         private string _novelID;
         private CultureInfo cultureInfo;
+        private volatile object resourceLock;
 
         public string NovelID
         {
@@ -40,6 +41,11 @@ namespace EnglishSourcePack
             get { return this.GetType().FullName; }
         }
 
+        public void DownloadNovelCoverImage(string destination)
+        {
+            
+        }
+
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
             {
                 {"</strong>", ""},
@@ -56,6 +62,8 @@ namespace EnglishSourcePack
             this._novelID = novelID;
             this._novelTitle = novelTitle;
             this.cultureInfo = new CultureInfo("en-US", false);
+            if (resourceLock == null)
+                resourceLock = new object();
         }
 
         public Tuple<bool, string> VerifySource()
@@ -118,7 +126,6 @@ namespace EnglishSourcePack
 
                             title = chURL.Split('/').Last();
                             chURL = chURL.Replace("http://www.wuxiaworld.com", "");
-                            //Console.WriteLine(match.ToString().Replace("\"", "") + "  |  " + chURL + "  |  " + title);
                             chapterURLs.Add(new ChapterSource(chURL, title, false));
                         }
                     }
@@ -130,7 +137,11 @@ namespace EnglishSourcePack
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
-            string[] lines = WebUtil.GetUrlContentsUTF8(BaseURL + url);
+            string[] lines;
+            lock (resourceLock)
+            {
+                lines = WebUtil.GetUrlContents(BaseURL + url);
+            }
             if (lines == null)
                 return null;
             Console.WriteLine(chapterTitle + " " + url);
