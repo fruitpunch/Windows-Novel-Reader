@@ -110,9 +110,9 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Novel AddNovel(string novelTitle, out string message)
+        public Novel AddNovel(string novelTitle, ISource source, out string message)
         {
-            return NovelLibrary.Instance.AddNovel(novelTitle, out message);
+            return NovelLibrary.Instance.AddNovel(novelTitle, source, out message);
         }
 
 
@@ -162,11 +162,9 @@ namespace NovelReader
 
         public void PerformImmediateTTS(Chapter[] chapters)
         {
-            foreach(Chapter chapter in chapters)
-            {
-                Request request = chapter.Novel.GetTTSRequest(Configuration.Instance.TTSSpeed, true);
-                ttsScheduler.AddRequest(request);
-            }
+            double priority = (ttsScheduler.GetHighestPriority() > 1000) ? ttsScheduler.GetHighestPriority() : 1000;
+            foreach (Chapter chapter in chapters)
+                ttsScheduler.AddRequest(new Request("VW Hui", chapter, chapter.Novel.GetReplaceSpecificationLocation(), chapter.Novel.GetDeleteSpecificationLocation(), Configuration.Instance.TTSSpeed, priority));
         }
 
         /*============Private Function======*/

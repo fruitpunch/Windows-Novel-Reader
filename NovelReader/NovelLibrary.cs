@@ -160,7 +160,7 @@ namespace NovelReader
 
         /*============Public Function=======*/
 
-        public Novel AddNovel(string novelTitle, out string message)
+        public Novel AddNovel(string novelTitle, ISource source, out string message)
         {
             foreach (Novel n in _novelList)
             {
@@ -208,9 +208,10 @@ namespace NovelReader
                     libraryData.Novels.InsertOnSubmit(newNovel);
                     libraryData.SubmitChanges();
                     newNovel.Initiate();
-
                     _novelList.Insert(GetNonDroppedNovelCount(), newNovel);
                     UpdateNovelRanking();
+                    string msg;
+                    newNovel.AddSource(source, false, out msg);
                     transaction.Complete();
                 }
                 catch(Exception e)

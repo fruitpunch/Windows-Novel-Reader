@@ -99,6 +99,7 @@
             this.deleteChapterToolStripMenuItem});
             this.chapterContextMenuStrip.Name = "chapterContextMenuStrip";
             this.chapterContextMenuStrip.Size = new System.Drawing.Size(158, 136);
+            this.chapterContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.chapterContextMenuStrip_Opening);
             this.chapterContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.chapterContextMenuStrip_ItemClicked);
             // 
             // setReadToolStripMenuItem

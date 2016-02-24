@@ -62,7 +62,7 @@
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnCancel.Location = new System.Drawing.Point(222, 80);
+            this.btnCancel.Location = new System.Drawing.Point(222, 100);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(223, 50);
@@ -78,7 +78,7 @@
             this.btnConfirm.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnConfirm.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnConfirm.Location = new System.Drawing.Point(0, 80);
+            this.btnConfirm.Location = new System.Drawing.Point(0, 100);
             this.btnConfirm.Margin = new System.Windows.Forms.Padding(4);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(223, 50);
@@ -154,7 +154,7 @@
             this.labelStatus.AutoSize = true;
             this.labelStatus.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStatus.Location = new System.Drawing.Point(220, 35);
+            this.labelStatus.Location = new System.Drawing.Point(109, 85);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(0, 16);
             this.labelStatus.TabIndex = 17;
@@ -171,7 +171,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(445, 81);
+            this.panel1.Size = new System.Drawing.Size(445, 101);
             this.panel1.TabIndex = 23;
             // 
             // AddSourceController
@@ -180,10 +180,10 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnConfirm);
             this.Controls.Add(this.panel1);
-            this.MaximumSize = new System.Drawing.Size(445, 130);
-            this.MinimumSize = new System.Drawing.Size(445, 130);
+            this.MaximumSize = new System.Drawing.Size(445, 150);
+            this.MinimumSize = new System.Drawing.Size(445, 150);
             this.Name = "AddSourceController";
-            this.Size = new System.Drawing.Size(445, 130);
+            this.Size = new System.Drawing.Size(445, 150);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);

@@ -263,7 +263,7 @@ namespace NovelReader
             return System.IO.Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle);
         }
 
-        public Request GetTTSRequest(int speed, bool immediate = false)
+        public Request GetTTSRequest(int speed)
         {
             List<Chapter> chapters = NovelChapters.ToList();
             if (chapters == null)
@@ -277,10 +277,7 @@ namespace NovelReader
                 {
                     if (!queuedTTSChapters.ContainsKey(c))
                     {
-                        if(immediate)
-                            request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, BackgroundService.Instance.ttsScheduler.GetHighestPriority());
-                        else
-                            request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
+                        request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
                         queuedTTSChapters.Add(c, request);
                         break;
                     }
@@ -680,7 +677,7 @@ namespace NovelReader
         public void DeleteAllChapter(Chapter[] deleteChapters, bool blackList)
         {
             foreach (Chapter deleteChapter in deleteChapters)
-                DeleteChapter(deleteChapter, blackList, false);
+                DeleteChapter(deleteChapter, blackList, true);
 
             VeryifyAndCorrectChapterIndexing(NovelChapters.ToArray<Chapter>());
             RefreshCacheData();

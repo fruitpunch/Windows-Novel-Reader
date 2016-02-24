@@ -58,16 +58,7 @@ namespace NovelReader
             BackgroundService.Instance.ResetTTSList();
             this.novelDirectoryWatcher.EnableRaisingEvents = true;
 
-            Source[] novelSources = (from  s in novel.Sources
-                                     orderby s.Priority ascending
-                                     select s).ToArray();
-            foreach (Source s in novelSources)
-            {
-                ToolStripMenuItem item = new ToolStripMenuItem();
-                item.Text = s.SourceNovelLocation;
-                item.Click += Redownload_ItemClicked;
-                (chapterContextMenuStrip.Items[2] as ToolStripMenuItem).DropDownItems.Add(item);
-            }
+            
                 
 
             if (novel.LastReadChapter != null)
@@ -271,9 +262,6 @@ namespace NovelReader
             ModifyCellStyle(e.RowIndex);
         }
 
-
-        
-
         private void btnPlay_Click(object sender, EventArgs e)
         {
             if (currentReadingChapter != null)
@@ -299,6 +287,21 @@ namespace NovelReader
         }
 
 
+        private void chapterContextMenuStrip_Opening(object sender, CancelEventArgs e)
+        {
+            Source[] novelSources = (from s in currentReadingNovel.Sources
+                                     orderby s.Priority ascending
+                                     select s).ToArray();
+            (chapterContextMenuStrip.Items[2] as ToolStripMenuItem).DropDownItems.Clear();
+            foreach (Source s in novelSources)
+            {
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Text = s.SourceNovelLocation;
+                item.Click += Redownload_ItemClicked;
+                (chapterContextMenuStrip.Items[2] as ToolStripMenuItem).DropDownItems.Add(item);
+            }
+        }
+
         private void dgvChapterList_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -320,7 +323,14 @@ namespace NovelReader
         private void Redownload_ItemClicked(object sender, EventArgs e)
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
-            Console.WriteLine(item.Text);
+            string sourceName = item.Text;
+            var result = (from source in currentReadingNovel.Sources
+                          where source.SourceNovelLocation == sourceName
+                          select source);
+            if (!result.Any())
+                return;
+            Source s = result.First<Source>();
+            RedownloadChapters(s);
         }
 
 
@@ -484,13 +494,13 @@ namespace NovelReader
             new Thread(delegate ()
             {
                 currentReadingNovel.DeleteAllChapter(chapters, true);
+                Console.WriteLine("Finish deleting");
             }).Start();
 
         }
 
-        private void RedownloadChapters(object source)
+        private void RedownloadChapters(Source source)
         {
-            Source s = source as Source;
             Chapter[] chapters = GetSelectedChapterItem();
             if (chapters.Contains(currentReadingChapter) && editModeOn)
             {
@@ -500,7 +510,7 @@ namespace NovelReader
             new Thread(delegate ()
             {
                 foreach (Chapter chapter in chapters)
-                    currentReadingNovel.DownloadChapter(chapter, s);
+                    currentReadingNovel.DownloadChapter(chapter, source);
             }).Start();
         }
 
@@ -528,6 +538,7 @@ namespace NovelReader
                     System.IO.File.WriteAllText(currentReadingChapter.GetTextFileLocation(), text);
                 }
             }
+            editModeOn = false;
         }
 
         private Chapter[] GetSelectedChapterItem()
@@ -536,12 +547,14 @@ namespace NovelReader
             foreach(DataGridViewRow selectedRow in dgvChapterList.SelectedRows)
                 chapters.Add(currentReadingNovel.GetChapter(selectedRow.Index));
 
-            return chapters.ToArray();
+            return (from chapter in chapters
+             orderby chapter.Index ascending
+             select chapter).ToArray<Chapter>();
         }
 
         private void ModifyCellStyle(int rowIndex)
         {
-            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count || rowIndex >= currentReadingNovel.ChapterCount)
+            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count || rowIndex >= currentReadingNovel.ChapterCount || currentReadingNovel.NovelChapters[rowIndex].Index != rowIndex)
                 return;
             
             DataGridViewRow row = dgvChapterList.Rows[rowIndex];

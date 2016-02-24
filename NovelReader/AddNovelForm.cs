@@ -49,7 +49,7 @@ namespace NovelReader
 
             novelTitle = inputNovelTitle.Text;
             string message = "";
-            Novel newNovel = BackgroundService.Instance.AddNovel(novelTitle, out message);
+            Novel newNovel = BackgroundService.Instance.AddNovel(novelTitle, source, out message);
 
             if (newNovel == null)
             {
@@ -63,7 +63,7 @@ namespace NovelReader
                 return;
             }
 
-            newNovel.AddSource(source, false, out message);
+            //newNovel.AddSource(source, false, out message);
 
             this.Close();
         }

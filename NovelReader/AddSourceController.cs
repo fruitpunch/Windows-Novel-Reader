@@ -81,7 +81,6 @@ namespace NovelReader
                 textCheckerTimer.Stop();
                 labelStatus.Text = "";
             }
-            Console.WriteLine("Start timer");
         }
 
         private void sourceSelector_SelectionChangeCommitted(object sender, EventArgs e)
@@ -161,8 +160,5 @@ namespace NovelReader
                 sourceChecker.RunWorkerAsync();
             }
         }
-
-
-
     }
 }
