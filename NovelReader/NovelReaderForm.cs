@@ -485,18 +485,27 @@ namespace NovelReader
         private void DeleteChapters()
         {
             Chapter[] chapters = GetSelectedChapterItem();
-            if(chapters.Contains(currentReadingChapter) && editModeOn)
+            if (chapters.Count() == 0)
+                return;
+            if (chapters.Contains(currentReadingChapter) && editModeOn)
             {
                 MessageBox.Show("Please finish editing first.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            string deleteMessage = chapters.Count() > 1 ? "Are you sure you want to delete these " + chapters.Count() + " items?" : chapters[0].ChapterTitle;
+            DialogResult dialogResult = MessageBox.Show(deleteMessage, "Delete Chapters", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.No)
+                return;
 
-            new Thread(delegate ()
+            Thread t = new Thread(delegate ()
             {
-                currentReadingNovel.DeleteAllChapter(chapters, true);
-                Console.WriteLine("Finish deleting");
-            }).Start();
-
+                this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                {
+                    currentReadingNovel.DeleteAllChapter(chapters, true);
+                }));
+            });
+            t.Start();
+            
         }
 
         private void RedownloadChapters(Source source)
@@ -510,7 +519,17 @@ namespace NovelReader
             new Thread(delegate ()
             {
                 foreach (Chapter chapter in chapters)
+                {
                     currentReadingNovel.DownloadChapter(chapter, source);
+                    if(currentReadingChapter.ID == chapter.ID)
+                    {
+                        this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
+                        {
+                            ReadChapter(chapter);
+                        }));
+                    }
+                }
+                    
             }).Start();
         }
 

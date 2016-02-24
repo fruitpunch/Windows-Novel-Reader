@@ -677,7 +677,7 @@ namespace NovelReader
         public void DeleteAllChapter(Chapter[] deleteChapters, bool blackList)
         {
             foreach (Chapter deleteChapter in deleteChapters)
-                DeleteChapter(deleteChapter, blackList, true);
+                DeleteChapter(deleteChapter, blackList, false);
 
             VeryifyAndCorrectChapterIndexing(NovelChapters.ToArray<Chapter>());
             RefreshCacheData();
