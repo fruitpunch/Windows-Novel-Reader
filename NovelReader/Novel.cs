@@ -445,6 +445,7 @@ namespace NovelReader
                     newChapter.Read = false;
                     newChapter.Index = -1;
                     newChapter.Novel = this;
+                    newChapter.HashID = menuItems[i].UrlHash.ToString("X");
                     NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
                     NovelLibrary.libraryData.SubmitChanges();
                     chapterListing.Add(newChapter);
@@ -476,7 +477,7 @@ namespace NovelReader
                                  where chapterUrl.Url == menuItems[i].Url
                                  select chapterUrl.Chapter).First<Chapter>();
                     if (c.ChapterTitle != menuItems[i].Title)
-                        c.ChangeChapterTitle(menuItems[i].Title);
+                        c.ChapterTitle = menuItems[i].Title;
                     chapterListing.Add(c);
                 }
             }
@@ -591,7 +592,7 @@ namespace NovelReader
                     continue;
                 Source source = url.Source;
                 
-                if (source == null)
+                if (source == null || !source.Valid)
                     continue;
                 
                 string[] novelContent = source.GetChapterContent(downloadChapter.ChapterTitle, url.Url);
@@ -602,25 +603,6 @@ namespace NovelReader
             }
 
             return false;
-        }
-
-        //Change the index of the chapter and change the file name of the text and audio file.
-        public void ChangeIndex(int oldIndex, int newIndex)
-        {
-            if (oldIndex == newIndex)
-                return;
-            if (oldIndex < 0 || oldIndex >= chapterList.Count)
-                return;
-            if (newIndex < 0)
-                return;
-            if (newIndex >= chapterList.Count)
-                newIndex = chapterList.Count - 1;
-
-            Chapter tmp = chapterList[oldIndex];
-            chapterList.RemoveAt(oldIndex);
-            chapterList.Insert(newIndex, tmp);
-
-            VeryifyAndCorrectChapterIndexing(chapterList.ToArray());
         }
 
         public Chapter GetChapter(int chapterIndex = -1)
@@ -663,29 +645,38 @@ namespace NovelReader
             LastReadChapter = chapter;
         }
 
-        public Chapter AddChapter()
-        {
-            int maxIndex = (from chapter in NovelLibrary.libraryData.Chapters
-                            where chapter.NovelTitle == NovelTitle
-                            orderby chapter.Index descending
-                            select chapter.Index).First();
-            Chapter newChapter = new Chapter();
-            newChapter.NovelTitle = NovelTitle;
-            newChapter.ChapterTitle = "<Enter Chapter Title>";
-            newChapter.Read = false;
-            newChapter.Index = maxIndex + 1;
-            NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
-            NovelLibrary.libraryData.SubmitChanges();
-            isDirty = true;
-            NotifyPropertyChanged("ChapterCountStatus");
-            return newChapter;
-        }
 
         public void DeleteAllChapter(Chapter[] deleteChapters, bool blackList)
         {
             foreach (Chapter deleteChapter in deleteChapters)
+            {
+                /*
+                if (!NovelLibrary.libraryData.Chapters.Any(chapter => chapter.ID == deleteChapter.ID))
+                {
+                    continue;
+                }
+                ChapterUrl[] urls = deleteChapter.ChapterUrls.ToArray<ChapterUrl>();
+                if (urls != null)
+                {
+                    if (blackList)
+                    {
+                        deleteChapter.Index = Int32.MinValue;
+                        foreach (ChapterUrl url in urls)
+                            url.Valid = false;
+                    }
+                    else
+                    {
+                        NovelLibrary.libraryData.Chapters.DeleteOnSubmit(deleteChapter);
+                        NovelLibrary.libraryData.ChapterUrls.DeleteAllOnSubmit(deleteChapter.ChapterUrls);
+                    }
+                }
+                else
+                    NovelLibrary.libraryData.Chapters.DeleteOnSubmit(deleteChapter);
+                    */
                 DeleteChapter(deleteChapter, blackList, false);
-
+            }
+            //isDirty = true;
+            //NovelLibrary.libraryData.SubmitChanges();
             VeryifyAndCorrectChapterIndexing(NovelChapters.ToArray<Chapter>());
             RefreshCacheData();
         }
@@ -987,11 +978,11 @@ namespace NovelReader
 
         private void VeryifyAndCorrectChapterIndexing(Chapter[] chapters)
         {
+
+            
             ManualResetEvent mre = new ManualResetEvent(false);
             System.Windows.Forms.MethodInvoker method = new System.Windows.Forms.MethodInvoker(delegate
             {
-                bool result = true;
-
                 using (var transaction = new TransactionScope())
                 {
                     for (int i = 0; i < chapters.Length; i++)
@@ -999,16 +990,13 @@ namespace NovelReader
                         //Console.WriteLine(chapters[i].ChapterTitle);
                         if (chapters[i].Index != i)
                         {
-                            result = chapters[i].ChangeIndex(i);
-                            if (!result)
-                                break;
+                            chapters[i].Index = i; 
+
                         }
                     }
-                    if (result)
-                    {
-                        NovelLibrary.libraryData.SubmitChanges();
-                        transaction.Complete();
-                    }   
+
+                    NovelLibrary.libraryData.SubmitChanges();
+                    transaction.Complete();   
                 }
                 mre.Set();
             });
@@ -1028,6 +1016,7 @@ namespace NovelReader
 
         private void RefreshCacheData()
         {
+            //chapterList.
             ManualResetEvent mre = new ManualResetEvent(false);
             System.Windows.Forms.MethodInvoker method = new System.Windows.Forms.MethodInvoker(delegate
             {
@@ -1066,8 +1055,6 @@ namespace NovelReader
                         chapterTitle = c.ChapterTitle + "-duplicate x " + dupIdx;
                         dupIdx++;
                     }
-                    //if (dupIdx > 2)
-                    //    Console.WriteLine("Duplicate " + chapterTitle);
                     chapterDictionary.Add(chapterTitle, c);
                 }
 

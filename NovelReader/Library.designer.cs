@@ -354,6 +354,8 @@ namespace NovelReader
 		
 		private bool _Read;
 		
+		private string _HashID;
+		
 		private EntitySet<ChapterUrl> _ChapterUrls;
 		
 		private EntityRef<Novel> _Novel;
@@ -372,6 +374,8 @@ namespace NovelReader
     partial void OnIndexChanged();
     partial void OnReadChanging(bool value);
     partial void OnReadChanged();
+    partial void OnHashIDChanging(string value);
+    partial void OnHashIDChanged();
     #endregion
 		
 		public Chapter()
@@ -485,6 +489,26 @@ namespace NovelReader
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HashID", CanBeNull=false)]
+		public string HashID
+		{
+			get
+			{
+				return this._HashID;
+			}
+			set
+			{
+				if ((this._HashID != value))
+				{
+					this.OnHashIDChanging(value);
+					this.SendPropertyChanging();
+					this._HashID = value;
+					this.SendPropertyChanged("HashID");
+					this.OnHashIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Chapter_ChapterUrl", Storage="_ChapterUrls", ThisKey="ID", OtherKey="ChapterID")]
 		public EntitySet<ChapterUrl> ChapterUrls
 		{
@@ -583,9 +607,9 @@ namespace NovelReader
 		
 		private int _Hash;
 		
-		private EntityRef<Chapter> _Chapter;
-		
 		private EntityRef<Source> _Source;
+		
+		private EntityRef<Chapter> _Chapter;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -607,8 +631,8 @@ namespace NovelReader
 		
 		public ChapterUrl()
 		{
-			this._Chapter = default(EntityRef<Chapter>);
 			this._Source = default(EntityRef<Source>);
+			this._Chapter = default(EntityRef<Chapter>);
 			OnCreated();
 		}
 		
@@ -740,40 +764,6 @@ namespace NovelReader
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Chapter_ChapterUrl", Storage="_Chapter", ThisKey="ChapterID", OtherKey="ID", IsForeignKey=true)]
-		public Chapter Chapter
-		{
-			get
-			{
-				return this._Chapter.Entity;
-			}
-			set
-			{
-				Chapter previousValue = this._Chapter.Entity;
-				if (((previousValue != value) 
-							|| (this._Chapter.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Chapter.Entity = null;
-						previousValue.ChapterUrls.Remove(this);
-					}
-					this._Chapter.Entity = value;
-					if ((value != null))
-					{
-						value.ChapterUrls.Add(this);
-						this._ChapterID = value.ID;
-					}
-					else
-					{
-						this._ChapterID = default(int);
-					}
-					this.SendPropertyChanged("Chapter");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Source_ChapterUrl", Storage="_Source", ThisKey="SourceID", OtherKey="ID", IsForeignKey=true)]
 		public Source Source
 		{
@@ -804,6 +794,40 @@ namespace NovelReader
 						this._SourceID = default(int);
 					}
 					this.SendPropertyChanged("Source");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Chapter_ChapterUrl", Storage="_Chapter", ThisKey="ChapterID", OtherKey="ID", IsForeignKey=true)]
+		public Chapter Chapter
+		{
+			get
+			{
+				return this._Chapter.Entity;
+			}
+			set
+			{
+				Chapter previousValue = this._Chapter.Entity;
+				if (((previousValue != value) 
+							|| (this._Chapter.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Chapter.Entity = null;
+						previousValue.ChapterUrls.Remove(this);
+					}
+					this._Chapter.Entity = value;
+					if ((value != null))
+					{
+						value.ChapterUrls.Add(this);
+						this._ChapterID = value.ID;
+					}
+					else
+					{
+						this._ChapterID = default(int);
+					}
+					this.SendPropertyChanged("Chapter");
 				}
 			}
 		}

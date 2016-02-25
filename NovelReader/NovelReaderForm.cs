@@ -136,7 +136,7 @@ namespace NovelReader
 
         private void NovelChapters_ListChanged(object sender, ListChangedEventArgs e)
         {
-            dgvChapterList.InvalidateRow(e.NewIndex);
+            //dgvChapterList.InvalidateRow(e.NewIndex);
         }
 
         private void cbAutoPlay_CheckedChanged(object sender, EventArgs e)
@@ -402,7 +402,7 @@ namespace NovelReader
             {
                 try
                 {
-                    string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.GetHash().ToString() + ".txt");
+                    string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.HashID + ".txt");
                     File.Copy(chapter.GetTextFileLocation(), cacheLocation, true);
                     using (StreamReader sr = new StreamReader(cacheLocation))
                     {
@@ -444,7 +444,7 @@ namespace NovelReader
                     mp3Player.currentPlaylist.clear();
                     mp3Player.URL = null;
                 }
-                string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.GetHash().ToString() + ".mp3");
+                string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.HashID + ".mp3");
                 File.Copy(chapter.GetAudioFileLocation(), cacheLocation, true);
                 mp3Player.URL = new Uri(cacheLocation).ToString();
                 mp3Player.Ctlcontrols.play();

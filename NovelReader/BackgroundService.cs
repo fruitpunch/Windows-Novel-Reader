@@ -69,7 +69,7 @@ namespace NovelReader
             this.updateTimer.Start();
             this.scheduleTTSThread.Start();
             this.ttsScheduler.StartTTSService();
-            this.updateThread.Start();
+            //this.updateThread.Start();
         }
 
         public void CloseService()
