@@ -56,7 +56,7 @@ namespace NovelReader
             this.shutDown = false;
             this.hasTTSShutDown = true;
             this.hasUpdateShutDown = true;
-            this.updateThread = new Thread(Update);
+            this.updateThread = new Thread(UpdateAll);
             this.ttsScheduler = new TTSScheduler(Configuration.Instance.TTSThreadCount);
             this.ttsScheduler.ttsProgressEventHandler += TTSProgress;
             this.updateTimer = new System.Timers.Timer(Configuration.Instance.UpdateInterval);
@@ -94,7 +94,7 @@ namespace NovelReader
         {
             if (!updateThread.IsAlive)
             {
-                updateThread = new Thread(Update);
+                updateThread = new Thread(UpdateAll);
                 updateThread.Start();
             }
         }
@@ -136,9 +136,17 @@ namespace NovelReader
         {
             if (!updateThread.IsAlive)
             {
-                updateThread = new Thread(Update);
+                updateThread = new Thread(UpdateAll);
                 updateThread.Start();
             }
+        }
+
+        public void UpdateSingleNovel(Novel novel)
+        {
+            new Thread(delegate ()
+            {
+                UpdateNovel(novel);
+            }).Start();
         }
 
         public void UpdateTimerInterval(int minutes)
@@ -169,10 +177,10 @@ namespace NovelReader
 
         /*============Private Function======*/
 
-        private void Update()
+        private void UpdateAll()
         {
             hasUpdateShutDown = false;
-            DoUpdate();
+            DoUpdateAll();
             NovelLibrary.Instance.SaveNovelLibrary();
             hasUpdateShutDown = true;
         }
@@ -214,7 +222,7 @@ namespace NovelReader
             hasTTSShutDown = true;
         }
 
-        private void DoUpdate()
+        private void DoUpdateAll()
         {
             Novel[] updateNovels = NovelLibrary.Instance.GetUpdatingNovel();
 
@@ -241,7 +249,6 @@ namespace NovelReader
             if (!(input is Novel))
                 return false;
             Novel updateNovel = input as Novel;
-            Console.WriteLine(updateNovel.NovelTitle);
             if (updateNovel == null || updateNovel.UpdateState == Novel.UpdateStates.Checking || updateNovel.UpdateState == Novel.UpdateStates.Fetching || updateNovel.UpdateState == Novel.UpdateStates.Syncing)
                 return false;
             updateNovel.SyncToOrigin();

@@ -94,7 +94,6 @@ namespace NovelReader
             }
             else if (validRow && validCol && datagridview.Columns[e.ColumnIndex] is DataGridViewLinkColumn)
             {
-                Console.WriteLine("Link column clicked");
                 string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
                 Novel novel = NovelLibrary.Instance.GetNovel(novelTitle);
                 BackgroundService.Instance.novelSourceController.SetNovel(novel);
@@ -171,8 +170,77 @@ namespace NovelReader
                 if (deleteResult == DialogResult.No)
                     return;
 
-                DialogResult blackListResult = MessageBox.Show("Do you want to delete the data also? ", "Delete All Data", MessageBoxButtons.YesNo);
-                if (blackListResult == DialogResult.Yes)
+                DialogResult deleteDataResult = MessageBox.Show("Do you want to delete the data also? ", "Delete All Data", MessageBoxButtons.YesNo);
+                if (deleteDataResult == DialogResult.Yes)
+                    BackgroundService.Instance.DeleteNovel(novelTitle, true);
+                else
+                    BackgroundService.Instance.DeleteNovel(novelTitle, false);
+            }
+        }
+
+        private void dgvNovelList_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                DataGridView.HitTestInfo hit = dgvNovelList.HitTest(e.X, e.Y);
+                if (hit.Type == DataGridViewHitTestType.Cell)
+                {
+                    if (!dgvNovelList.Rows[hit.RowIndex].Selected)
+                    {
+                        dgvNovelList.ClearSelection();
+                        dgvNovelList.Rows[hit.RowIndex].Selected = true;
+                    }
+
+                }
+            }
+        }
+
+        private void chapterListContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (dgvNovelList.SelectedRows.Count == 0)
+                return;
+            if(e.ClickedItem.Text == "Read")
+            {
+                string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
+                Novel novel = NovelLibrary.Instance.GetNovel(novelTitle);
+
+                SetAllNovelUnread();
+                novel.Reading = true;
+
+                if (nrf == null || !nrf.Visible)
+                {
+                    nrf = new NovelReaderForm();
+                    nrf.StartPosition = FormStartPosition.Manual;
+                    nrf.DesktopBounds = Configuration.Instance.NovelReaderRect;
+                    nrf.Show();
+                }
+                nrf.SetReadingNovel(novel);
+                Console.WriteLine(novelTitle);
+            }
+            else if(e.ClickedItem.Text == "Update")
+            {
+                string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
+                Novel novel = NovelLibrary.Instance.GetNovel(novelTitle);
+                BackgroundService.Instance.UpdateSingleNovel(novel);
+                Console.WriteLine(novelTitle);
+            }
+            else if (e.ClickedItem.Text == "Edit Source")
+            {
+                string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
+                Novel novel = NovelLibrary.Instance.GetNovel(novelTitle);
+                BackgroundService.Instance.novelSourceController.SetNovel(novel);
+                this.Visible = false;
+                Console.WriteLine(novelTitle);
+            }
+            else if (e.ClickedItem.Text == "Delete")
+            {
+                string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
+                DialogResult deleteResult = MessageBox.Show("Are you sure you want to delete " + novelTitle + "?", "Delete Novel", MessageBoxButtons.YesNo);
+                if (deleteResult == DialogResult.No)
+                    return;
+
+                DialogResult deleteDataResult = MessageBox.Show("Do you want to delete the data also? ", "Delete All Data", MessageBoxButtons.YesNo);
+                if (deleteDataResult == DialogResult.Yes)
                     BackgroundService.Instance.DeleteNovel(novelTitle, true);
                 else
                     BackgroundService.Instance.DeleteNovel(novelTitle, false);

@@ -33,6 +33,11 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.refreshUpdateLabelTimer = new System.Windows.Forms.Timer(this.components);
             this.dgvNovelList = new System.Windows.Forms.DataGridView();
+            this.chapterListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnRankUp = new System.Windows.Forms.Button();
             this.btnRankDown = new System.Windows.Forms.Button();
@@ -42,15 +47,10 @@
             this.btnDeleteNovel = new System.Windows.Forms.Button();
             this.topPanel = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
-            this.chapterListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNovelList)).BeginInit();
+            this.chapterListContextMenuStrip.SuspendLayout();
             this.bottomPanel.SuspendLayout();
             this.topPanel.SuspendLayout();
-            this.chapterListContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // refreshUpdateLabelTimer
@@ -105,6 +105,42 @@
             this.dgvNovelList.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvNovelList_CurrentCellDirtyStateChanged);
             this.dgvNovelList.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgvNovelList_RowPostPaint);
             this.dgvNovelList.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dgvNovelList_MouseClick);
+            this.dgvNovelList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dgvNovelList_MouseDown);
+            // 
+            // chapterListContextMenuStrip
+            // 
+            this.chapterListContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.updateToolStripMenuItem,
+            this.deleteToolStripMenuItem,
+            this.editSourceToolStripMenuItem,
+            this.deleteToolStripMenuItem1});
+            this.chapterListContextMenuStrip.Name = "chapterListContextMenuStrip";
+            this.chapterListContextMenuStrip.Size = new System.Drawing.Size(134, 92);
+            this.chapterListContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.chapterListContextMenuStrip_ItemClicked);
+            // 
+            // updateToolStripMenuItem
+            // 
+            this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.updateToolStripMenuItem.Text = "Read";
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.deleteToolStripMenuItem.Text = "Update";
+            // 
+            // editSourceToolStripMenuItem
+            // 
+            this.editSourceToolStripMenuItem.Name = "editSourceToolStripMenuItem";
+            this.editSourceToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.editSourceToolStripMenuItem.Text = "Edit Source";
+            // 
+            // deleteToolStripMenuItem1
+            // 
+            this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
+            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(133, 22);
+            this.deleteToolStripMenuItem1.Text = "Delete";
             // 
             // btnUpdate
             // 
@@ -246,40 +282,6 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "Novel List";
             // 
-            // chapterListContextMenuStrip
-            // 
-            this.chapterListContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.updateToolStripMenuItem,
-            this.deleteToolStripMenuItem,
-            this.editSourceToolStripMenuItem,
-            this.deleteToolStripMenuItem1});
-            this.chapterListContextMenuStrip.Name = "chapterListContextMenuStrip";
-            this.chapterListContextMenuStrip.Size = new System.Drawing.Size(153, 114);
-            // 
-            // updateToolStripMenuItem
-            // 
-            this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.updateToolStripMenuItem.Text = "Read";
-            // 
-            // deleteToolStripMenuItem
-            // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.deleteToolStripMenuItem.Text = "Update";
-            // 
-            // editSourceToolStripMenuItem
-            // 
-            this.editSourceToolStripMenuItem.Name = "editSourceToolStripMenuItem";
-            this.editSourceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.editSourceToolStripMenuItem.Text = "Edit Source";
-            // 
-            // deleteToolStripMenuItem1
-            // 
-            this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
-            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.deleteToolStripMenuItem1.Text = "Delete";
-            // 
             // NovelListController
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -293,10 +295,10 @@
             this.Size = new System.Drawing.Size(910, 650);
             this.Load += new System.EventHandler(this.NovelListController_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvNovelList)).EndInit();
+            this.chapterListContextMenuStrip.ResumeLayout(false);
             this.bottomPanel.ResumeLayout(false);
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
-            this.chapterListContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

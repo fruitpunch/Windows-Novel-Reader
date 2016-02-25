@@ -736,7 +736,6 @@ namespace NovelReader
                     VeryifyAndCorrectChapterIndexing(chapters);
                     RefreshCacheData();
                 }
-                Console.WriteLine(LastReadChapterID == null);
                 NotifyPropertyChanged("ChapterCountStatus");
             }
         }

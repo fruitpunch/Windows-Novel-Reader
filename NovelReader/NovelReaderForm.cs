@@ -309,7 +309,6 @@ namespace NovelReader
                 DataGridView.HitTestInfo hit = dgvChapterList.HitTest(e.X, e.Y);
                 if (hit.Type == DataGridViewHitTestType.Cell)
                 {
-                    Console.WriteLine(hit.RowIndex);
                     if(!dgvChapterList.Rows[hit.RowIndex].Selected)
                     {
                         dgvChapterList.ClearSelection();

@@ -63,10 +63,10 @@ namespace ChineseSourcePack
 
         private Dictionary<string, string> replaceRegex = new Dictionary<string, string>()
             {
-                {" < script>txttopshow7();</script><!--章节内容结束-->", ""},
+                {"<script>txttopshow7();</script><!--章节内容结束-->", ""},
                 {"&nbsp;", ""},
                 {"<!--章节内容开始-->", ""},
-                {"<br />", "\n"}
+                {"<br />", "\n"},
             };
 
         public SourceWeb69(string novelID, string novelTitle)
