@@ -29,16 +29,21 @@ namespace NovelReader
 
         public string GetAudioFileLocation()
         {
-            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "audios", HashID + ".mp3");
+            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "audios", GetHash() + ".mp3");
         }
 
         public string GetTextFileLocation()
         {
-            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "texts", HashID + ".txt");
+            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "texts", GetHash() + ".txt");
+        }
+
+        public string GetHash()
+        {
+            return HashID.ToString("X");
         }
 
         /*============Public Function=======*/
-
+        /*
         public void NotifyPropertyChanged(string propertyName)
         {
 
@@ -60,6 +65,6 @@ namespace NovelReader
             }
             //NovelLibrary.libraryData.SubmitChanges();
         }
-
+        */
     }
 }

@@ -50,12 +50,14 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.mp3Player = new AxWMPLib.AxWindowsMediaPlayer();
+            this.chapterBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
             this.chapterContextMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mp3Player)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chapterBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // dgvChapterList
@@ -65,10 +67,12 @@
             this.dgvChapterList.AllowUserToResizeRows = false;
             this.dgvChapterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.dgvChapterList.AutoGenerateColumns = false;
             this.dgvChapterList.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvChapterList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvChapterList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvChapterList.ContextMenuStrip = this.chapterContextMenuStrip;
+            this.dgvChapterList.DataSource = this.chapterBindingSource;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -98,7 +102,7 @@
             this.remakeAudioToolStripMenuItem,
             this.deleteChapterToolStripMenuItem});
             this.chapterContextMenuStrip.Name = "chapterContextMenuStrip";
-            this.chapterContextMenuStrip.Size = new System.Drawing.Size(158, 136);
+            this.chapterContextMenuStrip.Size = new System.Drawing.Size(158, 114);
             this.chapterContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.chapterContextMenuStrip_Opening);
             this.chapterContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.chapterContextMenuStrip_ItemClicked);
             // 
@@ -309,6 +313,10 @@
             this.mp3Player.TabIndex = 14;
             this.mp3Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.mp3Player_PlayStateChange);
             // 
+            // chapterBindingSource
+            // 
+            this.chapterBindingSource.Filter = "Valid";
+            // 
             // NovelReaderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -336,6 +344,7 @@
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mp3Player)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chapterBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -361,5 +370,6 @@
         private System.Windows.Forms.ToolStripMenuItem setDownloadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem remakeAudioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteChapterToolStripMenuItem;
+        private System.Windows.Forms.BindingSource chapterBindingSource;
     }
 }

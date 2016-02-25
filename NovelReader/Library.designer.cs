@@ -354,7 +354,9 @@ namespace NovelReader
 		
 		private bool _Read;
 		
-		private string _HashID;
+		private int _HashID;
+		
+		private bool _Valid;
 		
 		private EntitySet<ChapterUrl> _ChapterUrls;
 		
@@ -374,8 +376,10 @@ namespace NovelReader
     partial void OnIndexChanged();
     partial void OnReadChanging(bool value);
     partial void OnReadChanged();
-    partial void OnHashIDChanging(string value);
+    partial void OnHashIDChanging(int value);
     partial void OnHashIDChanged();
+    partial void OnValidChanging(bool value);
+    partial void OnValidChanged();
     #endregion
 		
 		public Chapter()
@@ -489,8 +493,8 @@ namespace NovelReader
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HashID", CanBeNull=false)]
-		public string HashID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HashID")]
+		public int HashID
 		{
 			get
 			{
@@ -505,6 +509,26 @@ namespace NovelReader
 					this._HashID = value;
 					this.SendPropertyChanged("HashID");
 					this.OnHashIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Valid")]
+		public bool Valid
+		{
+			get
+			{
+				return this._Valid;
+			}
+			set
+			{
+				if ((this._Valid != value))
+				{
+					this.OnValidChanging(value);
+					this.SendPropertyChanging();
+					this._Valid = value;
+					this.SendPropertyChanged("Valid");
+					this.OnValidChanged();
 				}
 			}
 		}
@@ -597,8 +621,6 @@ namespace NovelReader
 		
 		private string _Url;
 		
-		private bool _Valid;
-		
 		private int _ChapterID;
 		
 		private int _SourceID;
@@ -617,8 +639,6 @@ namespace NovelReader
     partial void OnCreated();
     partial void OnUrlChanging(string value);
     partial void OnUrlChanged();
-    partial void OnValidChanging(bool value);
-    partial void OnValidChanged();
     partial void OnChapterIDChanging(int value);
     partial void OnChapterIDChanged();
     partial void OnSourceIDChanging(int value);
@@ -652,26 +672,6 @@ namespace NovelReader
 					this._Url = value;
 					this.SendPropertyChanged("Url");
 					this.OnUrlChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Valid")]
-		public bool Valid
-		{
-			get
-			{
-				return this._Valid;
-			}
-			set
-			{
-				if ((this._Valid != value))
-				{
-					this.OnValidChanging(value);
-					this.SendPropertyChanging();
-					this._Valid = value;
-					this.SendPropertyChanged("Valid");
-					this.OnValidChanged();
 				}
 			}
 		}

@@ -27,6 +27,8 @@ namespace NovelReader
         private Font selectedFont;
         private Font regularFont;
 
+        private CurrencyManager cm;
+
         public NovelReaderForm()
         {
             
@@ -52,14 +54,18 @@ namespace NovelReader
             this.currentReadingNovel = novel;
             this.currentReadingNovel.StartReading();
             this.Text = novel.NovelTitle;
-            this.dgvChapterList.DataSource = novel.NovelChapters;
+            this.chapterBindingSource = new BindingSource();
+
+            this.chapterBindingSource.DataSource = novel.NovelChapters;
+            this.dgvChapterList.DataSource = this.chapterBindingSource;
+            //this.dgvChapterList.DataSource = novel.ChapterCollection;
+            //cm = (CurrencyManager)BindingContext[novel.NovelChapters];
+            //(dgvChapterList.DataSource as DataTable).DefaultView.RowFilter = "Valid = false";
+            //RefreshDgv();
             novel.NovelChapters.ListChanged += NovelChapters_ListChanged;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
             BackgroundService.Instance.ResetTTSList();
             this.novelDirectoryWatcher.EnableRaisingEvents = true;
-
-            
-                
 
             if (novel.LastReadChapter != null)
             {
@@ -124,6 +130,7 @@ namespace NovelReader
                 return true;
             return false;
         }
+            
 
         /*============EventHandler==========*/
 
@@ -136,7 +143,8 @@ namespace NovelReader
 
         private void NovelChapters_ListChanged(object sender, ListChangedEventArgs e)
         {
-            //dgvChapterList.InvalidateRow(e.NewIndex);
+            if (e.NewIndex >= 0 && e.NewIndex < dgvChapterList.RowCount)
+                dgvChapterList.InvalidateRow(e.NewIndex);
         }
 
         private void cbAutoPlay_CheckedChanged(object sender, EventArgs e)
@@ -155,7 +163,8 @@ namespace NovelReader
             {
                 if (e.FullPath.Equals(currentReadingNovel.NovelChapters[fileIndex].GetAudioFileLocation()) || e.FullPath.Equals(currentReadingNovel.NovelChapters[fileIndex].GetTextFileLocation()))
                 {
-                    ModifyCellStyle(fileIndex);
+                    dgvChapterList.InvalidateRow(fileIndex);
+                    //ModifyCellStyle(fileIndex);
                     if (currentReadingChapter != null && fileIndex == currentReadingChapter.Index)
                     {
                         if (this.InvokeRequired)
@@ -358,6 +367,7 @@ namespace NovelReader
 
             DataGridViewCell indexCell = new DataGridViewTextBoxCell();
             DataGridViewCell chapterTitleCell = new DataGridViewTextBoxCell();
+            DataGridViewCheckBoxCell validCell = new DataGridViewCheckBoxCell();
 
             DataGridViewTextBoxColumn indexColumn = new DataGridViewTextBoxColumn()
             {
@@ -368,6 +378,17 @@ namespace NovelReader
                 Width = 50,
                 ReadOnly = true,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells 
+            };
+
+            DataGridViewCheckBoxColumn validColumn = new DataGridViewCheckBoxColumn()
+            {
+                CellTemplate = validCell,
+                Name = "Valid",
+                HeaderText = "Valid",
+                DataPropertyName = "Valid",
+                Width = 60,
+                ReadOnly = true,
+                Visible = true,
             };
 
             DataGridViewTextBoxColumn titleColumn = new DataGridViewTextBoxColumn()
@@ -381,9 +402,12 @@ namespace NovelReader
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             };
 
+            
+
 
             dgvChapterList.Columns.Add(titleColumn);
             dgvChapterList.Columns.Add(indexColumn);
+            dgvChapterList.Columns.Add(validColumn);
 
 
         }
@@ -402,7 +426,7 @@ namespace NovelReader
             {
                 try
                 {
-                    string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.HashID + ".txt");
+                    string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.GetHash() + ".txt");
                     File.Copy(chapter.GetTextFileLocation(), cacheLocation, true);
                     using (StreamReader sr = new StreamReader(cacheLocation))
                     {
@@ -444,7 +468,7 @@ namespace NovelReader
                     mp3Player.currentPlaylist.clear();
                     mp3Player.URL = null;
                 }
-                string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.HashID + ".mp3");
+                string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.GetHash() + ".mp3");
                 File.Copy(chapter.GetAudioFileLocation(), cacheLocation, true);
                 mp3Player.URL = new Uri(cacheLocation).ToString();
                 mp3Player.Ctlcontrols.play();
@@ -488,10 +512,13 @@ namespace NovelReader
 
             new Thread(delegate ()
             {
+                currentReadingNovel.DeleteAllChapter(chapters, true);
+                /*
                 this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
                     currentReadingNovel.DeleteAllChapter(chapters, true);
                 }));
+                */
             }).Start();
             
         }
@@ -565,7 +592,30 @@ namespace NovelReader
                 return;
             
             DataGridViewRow row = dgvChapterList.Rows[rowIndex];
+            //Console.WriteLine("Feedback");
             Chapter chapter = currentReadingNovel.NovelChapters[rowIndex];
+            bool valid = chapter.Valid;
+            /*
+            if(!valid && row.Visible)
+            {
+                Console.WriteLine("invis");
+                if(cm == null)
+                    cm = (CurrencyManager)BindingContext[dgvChapterList.DataSource];
+                cm.SuspendBinding();
+                row.Visible = false;
+                cm.ResumeBinding();
+                return;
+            }
+            else if(valid && !row.Visible)
+            {
+                Console.WriteLine("vis");
+                if (cm == null)
+                    cm = (CurrencyManager)BindingContext[dgvChapterList.DataSource];
+                cm.SuspendBinding();
+                row.Visible = false;
+                cm.ResumeBinding();
+            }
+            */
             bool read = chapter.Read;
             bool hasText = chapter.HasText;
             bool hasAudio = chapter.HasAudio;
@@ -597,6 +647,5 @@ namespace NovelReader
             }
             
         }
-
     }
 }
