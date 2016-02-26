@@ -315,7 +315,7 @@
             // 
             // chapterBindingSource
             // 
-            this.chapterBindingSource.Filter = "Valid";
+            this.chapterBindingSource.Filter = "Valid=True";
             // 
             // NovelReaderForm
             // 

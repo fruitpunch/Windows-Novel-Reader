@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using Source;
 using System.ComponentModel;
 using System.Threading;
+using System.Linq;
+using System.Timers;
 //using Microsoft.Speech.Synthesis;
 
 namespace NovelReader
@@ -124,8 +126,22 @@ namespace NovelReader
     {
         SynchronizationContext ctx = SynchronizationContext.Current;
 
-        public ThreadedBindingList(List<T> list) : base(list)
+        IQueryable<T> constrain;
+
+        public ThreadedBindingList(IQueryable<T> constrain) : base()
         {
+            this.constrain = constrain;
+        }
+
+        public void SyncBindingToConstrain()
+        {
+            base.RaiseListChangedEvents = false;
+            T[] target = constrain.ToArray<T>();
+            base.Clear();
+            foreach (T item in target)
+                base.Add(item);
+            base.RaiseListChangedEvents = true;
+            base.ResetBindings();
 
         }
 
@@ -149,9 +165,10 @@ namespace NovelReader
             base.OnAddingNew(e);
         }
 
+
         protected override void OnListChanged(ListChangedEventArgs e)
         {
-            // SynchronizationContext ctx = SynchronizationContext.Current;
+            
             if (ctx == null)
             {
                 BaseListChanged(e);
@@ -167,7 +184,16 @@ namespace NovelReader
 
         void BaseListChanged(ListChangedEventArgs e)
         {
-            base.OnListChanged(e);
+            if(e.ListChangedType == ListChangedType.ItemChanged)
+            {
+                T changedItem = base[e.NewIndex];
+                if (!constrain.Contains(changedItem))
+                    base.Remove(changedItem);
+                else
+                    base.OnListChanged(e);
+            }
+            else
+                base.OnListChanged(e);
         }
     }
 }

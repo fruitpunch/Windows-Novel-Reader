@@ -34,7 +34,7 @@ namespace NovelReader
         private Chapter _lastReadChapter { get; set; }
         private bool _isReading { get; set; }
         private bool isDirty = true;
-        private ThreadedBindingList<Chapter> chapterList = null;
+        private volatile ThreadedBindingList<Chapter> chapterList = null;
         private Dictionary<string, Chapter> chapterDictionary = null;
         private Dictionary<string, ISource> sourceDictionary = null;
         UpdateStates _updateState { get; set; }
@@ -117,7 +117,6 @@ namespace NovelReader
                 if (!isDirty && chapterList != null)
                     return chapterList;
 
-                RefreshCacheData();
                 return chapterList;
             }
         }
@@ -211,11 +210,13 @@ namespace NovelReader
             this.requestIndex = 0;
             this.queuedTTSChapters = new Dictionary<Chapter, Request>();
             var query = (from chapter in Chapters
+                         where chapter.Valid
                          orderby chapter.Index
-                         select chapter);
-            this.chapterList = new ThreadedBindingList<Chapter>(query.ToList());
+                         select chapter).AsQueryable<Chapter>();
+            //this.chapterList = new ThreadedBindingList<Chapter>(query.ToList());
+            this.chapterList = new ThreadedBindingList<Chapter>(query);
+            this.chapterList.SyncBindingToConstrain();
             SetUpdateProgress();
-            RefreshCacheData();
         }
 
         /*============Getter/Setter=========*/
@@ -429,7 +430,7 @@ namespace NovelReader
                     newChapter.HashID = menuItems[i].UrlHash;
                     NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
                     NovelLibrary.libraryData.SubmitChanges();
-                    chapterList.Insert(i, newChapter);
+                    //chapterList.Insert(i, newChapter);
                     chapterListing.Add(newChapter);
                     isDirty = true;
                     updateCount++;
@@ -459,6 +460,7 @@ namespace NovelReader
                     chapterListing.Add(c);
                 }
             }
+            chapterList.SyncBindingToConstrain();
             //Remove chapter that no longer belong in the list.
             HashSet<int> includedID = new HashSet<int>(chapterListing.Select(c => c.ID));
             Chapter[] allChapters = Chapters.ToArray();
@@ -585,6 +587,7 @@ namespace NovelReader
         {
             if (chapterIndex < 0 || chapterIndex >= Chapters.Count )
                 return null;
+            Console.WriteLine(chapterIndex);
             return chapterList[chapterIndex];
         }
 
@@ -639,20 +642,19 @@ namespace NovelReader
                     NovelLibrary.libraryData.ChapterUrls.DeleteAllOnSubmit(deleteChapter.ChapterUrls);
                     
                 }
-                if (chapterList.Contains(deleteChapter))
-                    chapterList.Remove(deleteChapter);
+                //if (chapterList.Contains(deleteChapter))
+                //    chapterList.Remove(deleteChapter);
 
                 if (deleteChapter.HasAudio)
                     File.Delete(deleteChapter.GetAudioFileLocation());
                 if (deleteChapter.HasText)
                     File.Delete(deleteChapter.GetTextFileLocation());
 
-                //DeleteChapter(deleteChapter, blackList, false);
             }
             NovelLibrary.libraryData.SubmitChanges();
+            //chapterList.SyncBindingToConstrain();
             isDirty = true;
             //NovelLibrary.libraryData.SubmitChanges();
-            RefreshCacheData();
         }
 
         public void DeleteChapter(Chapter deleteChapter, bool blackList, bool verifyData = true)
@@ -699,7 +701,6 @@ namespace NovelReader
                 if(verifyData)
                 {
                     Chapter[] chapters = NovelChapters.ToArray<Chapter>();
-                    RefreshCacheData();
                 }
                 NotifyPropertyChanged("ChapterCountStatus");
             }
@@ -958,17 +959,17 @@ namespace NovelReader
 
             chapterDictionary = new Dictionary<string, Chapter>();
 
-            foreach (Chapter c in newChapterList)
+            for (int i = 0; i < newChapterList.Count; i++)
             {
-                string chapterTitle = c.ChapterTitle;
+                string chapterTitle = newChapterList[i].ChapterTitle;
                 int dupIdx = 2;
                 //if duplicate title is found, find a unique representing string for its key.
                 while (chapterDictionary.ContainsKey(chapterTitle))
                 {
-                    chapterTitle = c.ChapterTitle + "-duplicate x " + dupIdx;
+                    chapterTitle = newChapterList[i].ChapterTitle + "-duplicate x " + dupIdx;
                     dupIdx++;
                 }
-                chapterDictionary.Add(chapterTitle, c);
+                chapterDictionary.Add(chapterTitle, newChapterList[i]);
             }
             isDirty = false;
 

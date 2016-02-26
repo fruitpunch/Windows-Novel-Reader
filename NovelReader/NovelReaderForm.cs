@@ -229,7 +229,9 @@ namespace NovelReader
                 if (mp3Player.playState == WMPLib.WMPPlayState.wmppsPlaying)
                     mp3Player.Ctlcontrols.stop();
                 currentReadingNovel.MarkOffChapter(currentReadingChapter);
+                
                 Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
+                Console.WriteLine(currentReadingChapter.Index + " " + nextChapter.Index);
                 ReadChapter(nextChapter);
             }
         }
@@ -588,38 +590,19 @@ namespace NovelReader
 
         private void ModifyCellStyle(int rowIndex)
         {
-            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count || rowIndex >= currentReadingNovel.ChapterCount || currentReadingNovel.NovelChapters[rowIndex].Index != rowIndex)
+            if (dgvChapterList == null || rowIndex >= dgvChapterList.Rows.Count || rowIndex >= currentReadingNovel.ChapterCount)
                 return;
             
             DataGridViewRow row = dgvChapterList.Rows[rowIndex];
             //Console.WriteLine("Feedback");
             Chapter chapter = currentReadingNovel.NovelChapters[rowIndex];
             bool valid = chapter.Valid;
-            /*
-            if(!valid && row.Visible)
-            {
-                Console.WriteLine("invis");
-                if(cm == null)
-                    cm = (CurrencyManager)BindingContext[dgvChapterList.DataSource];
-                cm.SuspendBinding();
-                row.Visible = false;
-                cm.ResumeBinding();
-                return;
-            }
-            else if(valid && !row.Visible)
-            {
-                Console.WriteLine("vis");
-                if (cm == null)
-                    cm = (CurrencyManager)BindingContext[dgvChapterList.DataSource];
-                cm.SuspendBinding();
-                row.Visible = false;
-                cm.ResumeBinding();
-            }
-            */
             bool read = chapter.Read;
             bool hasText = chapter.HasText;
             bool hasAudio = chapter.HasAudio;
-            
+
+            //Console.WriteLine(chapter.ChapterTitle + " " + valid + " " + read + " " + hasText + " " + hasAudio);
+
             if (currentReadingChapter != null && chapter.ID == currentReadingChapter.ID)
                 row.DefaultCellStyle.Font = readingFont;
             else
