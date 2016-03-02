@@ -29,18 +29,14 @@ namespace NovelReader
 
         public string GetAudioFileLocation()
         {
-            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "audios", GetHash() + ".mp3");
+            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "audios", HashID + ".mp3");
         }
 
         public string GetTextFileLocation()
         {
-            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "texts", GetHash() + ".txt");
+            return Path.Combine(Configuration.Instance.NovelFolderLocation, NovelTitle, "texts", HashID + ".txt");
         }
 
-        public string GetHash()
-        {
-            return HashID.ToString("X");
-        }
 
         /*============Public Function=======*/
         /*

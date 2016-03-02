@@ -18,8 +18,8 @@
       <Column Name="ChapterTitle" Type="System.String" CanBeNull="false" />
       <Column Name="Index" Type="System.Int32" CanBeNull="false" />
       <Column Name="Read" Type="System.Boolean" CanBeNull="false" />
-      <Column Member="HashID" Type="System.Int32" CanBeNull="false" />
-      <Column Member="Valid" Type="System.Boolean" CanBeNull="false" />
+      <Column Name="HashID" Type="System.String" CanBeNull="false" />
+      <Column Name="Valid" Type="System.Boolean" CanBeNull="false" />
       <Association Name="Chapter_ChapterUrl" Member="ChapterUrls" ThisKey="ID" OtherKey="ChapterID" Type="ChapterUrl" />
       <Association Name="Novel_Chapter" Member="Novel" ThisKey="NovelTitle" OtherKey="NovelTitle" Type="Novel" IsForeignKey="true" />
     </Type>

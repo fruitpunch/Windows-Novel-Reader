@@ -55,13 +55,8 @@ namespace NovelReader
             this.currentReadingNovel.StartReading();
             this.Text = novel.NovelTitle;
             this.chapterBindingSource = new BindingSource();
-
             this.chapterBindingSource.DataSource = novel.NovelChapters;
             this.dgvChapterList.DataSource = this.chapterBindingSource;
-            //this.dgvChapterList.DataSource = novel.ChapterCollection;
-            //cm = (CurrencyManager)BindingContext[novel.NovelChapters];
-            //(dgvChapterList.DataSource as DataTable).DefaultView.RowFilter = "Valid = false";
-            //RefreshDgv();
             novel.NovelChapters.ListChanged += NovelChapters_ListChanged;
             this.novelDirectoryWatcher.Path = Path.Combine(Configuration.Instance.NovelFolderLocation, novel.NovelTitle);
             BackgroundService.Instance.ResetTTSList();
@@ -69,42 +64,34 @@ namespace NovelReader
 
             if (novel.LastReadChapter != null)
             {
-                Chapter nextChapter = novel.GetChapter(novel.LastReadChapter.Index + 1);
-                Console.WriteLine("last read chapter " + novel.LastReadChapter.ChapterTitle);
-                //Console.WriteLine("next chapter " + nextChapter.ChapterTitle);
+                Chapter nextChapter = novel.GetChapter(GetDisplayedIndex(novel.LastReadChapter) + 1);
                 if (nextChapter != null && !nextChapter.Read)
                 {
                     ReadChapter(nextChapter);
-                    //dgvChapterList.FirstDisplayedScrollingRowIndex = nextChapter.Index;
                 }
                 else
                 {
                     ReadChapter(novel.LastReadChapter);
-                    //dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
                 }
             }
             else if (novel.LastViewedChapter != null)
             {
-                Console.WriteLine("LastViewedChapter");
                 ReadChapter(novel.LastViewedChapter);
-                //dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
             }
             else if (currentReadingNovel.ChapterCount > 0)
             {
-                Console.WriteLine("Get 0");
                 ReadChapter(novel.GetChapter(0));
-                //dgvChapterList.FirstDisplayedScrollingRowIndex = 0;
             }
             else
             {
                 rtbChapterTextBox.Text = "No chapters available";
             }
 
-            if (currentReadingChapter != null && dgvChapterList.Rows.Count > currentReadingChapter.Index && 0 <= currentReadingChapter.Index)
+            if (currentReadingChapter != null && dgvChapterList.Rows.Count > GetDisplayedIndex(currentReadingChapter) && 0 <= GetDisplayedIndex(currentReadingChapter))
             {
                 try
                 {
-                    dgvChapterList.FirstDisplayedScrollingRowIndex = currentReadingChapter.Index;
+                    dgvChapterList.FirstDisplayedScrollingRowIndex = GetDisplayedIndex(currentReadingChapter);
                 }
                 catch (Exception)
                 {
@@ -112,8 +99,6 @@ namespace NovelReader
             }
 
         }
-
-        
 
         public bool InvokeRequiredForNovel(Novel n)
         {
@@ -154,29 +139,27 @@ namespace NovelReader
 
         private void OnFileChange(object source, FileSystemEventArgs e)
         {
-            int fileIndex = -1;
-            string[] parts = Path.GetFileName(e.Name).Split('_');
-                
-            if (parts.Length != 2)
-                return;
-            if (Int32.TryParse(parts[0], out fileIndex) && fileIndex >= 0 && fileIndex < currentReadingNovel.ChapterCount)
+            
+            string fileName = Path.GetFileNameWithoutExtension(e.Name);
+            var result = currentReadingNovel.Chapters.Where(c => c.HashID == fileName);
+            Console.WriteLine(fileName + " " + e.Name);
+            if (result.Any())
             {
-                if (e.FullPath.Equals(currentReadingNovel.NovelChapters[fileIndex].GetAudioFileLocation()) || e.FullPath.Equals(currentReadingNovel.NovelChapters[fileIndex].GetTextFileLocation()))
+                int fileIndex = GetDisplayedIndex(result.First<Chapter>());
+                Console.WriteLine(fileIndex);
+                dgvChapterList.InvalidateRow(fileIndex);
+                //ModifyCellStyle(fileIndex);
+                if (currentReadingChapter != null && fileIndex == currentReadingChapter.Index)
                 {
-                    dgvChapterList.InvalidateRow(fileIndex);
-                    //ModifyCellStyle(fileIndex);
-                    if (currentReadingChapter != null && fileIndex == currentReadingChapter.Index)
+                    if (this.InvokeRequired)
                     {
-                        if (this.InvokeRequired)
+                        this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
                         {
-                            this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                            {
-                                ReadChapter(currentReadingChapter);
-                            }));
-                        }
-                        else
                             ReadChapter(currentReadingChapter);
+                        }));
                     }
+                    else
+                        ReadChapter(currentReadingChapter);
                 }
                 
             }
@@ -203,7 +186,7 @@ namespace NovelReader
                 FinishEditing();
             if (currentReadingNovel != null && currentReadingChapter != null)
             {
-                Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
+                Chapter nextChapter = currentReadingNovel.GetChapter(GetDisplayedIndex(currentReadingChapter) + 1);
                 ReadChapter(nextChapter);
             }
         }
@@ -214,7 +197,7 @@ namespace NovelReader
                 FinishEditing();
             if (currentReadingNovel != null && currentReadingChapter != null)
             {
-                Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index - 1);
+                Chapter nextChapter = currentReadingNovel.GetChapter(GetDisplayedIndex(currentReadingChapter) - 1);
                 ReadChapter(nextChapter);
             }
         }
@@ -230,8 +213,8 @@ namespace NovelReader
                     mp3Player.Ctlcontrols.stop();
                 currentReadingNovel.MarkOffChapter(currentReadingChapter);
                 
-                Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
-                Console.WriteLine(currentReadingChapter.Index + " " + nextChapter.Index);
+                Chapter nextChapter = currentReadingNovel.GetChapter(GetDisplayedIndex(currentReadingChapter) + 1);
+                //Console.WriteLine(currentReadingChapter.Index + " " + nextChapter.Index);
                 ReadChapter(nextChapter);
             }
         }
@@ -287,7 +270,7 @@ namespace NovelReader
                 if (currentReadingNovel != null && currentReadingChapter != null)
                 {
                     currentReadingNovel.MarkOffChapter(currentReadingChapter);
-                    Chapter nextChapter = currentReadingNovel.GetChapter(currentReadingChapter.Index + 1);
+                    Chapter nextChapter = currentReadingNovel.GetChapter(GetDisplayedIndex(currentReadingChapter) + 1);
                     ReadChapter(nextChapter);
                 }
             }
@@ -428,7 +411,7 @@ namespace NovelReader
             {
                 try
                 {
-                    string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.GetHash() + ".txt");
+                    string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.HashID + ".txt");
                     File.Copy(chapter.GetTextFileLocation(), cacheLocation, true);
                     using (StreamReader sr = new StreamReader(cacheLocation))
                     {
@@ -470,7 +453,7 @@ namespace NovelReader
                     mp3Player.currentPlaylist.clear();
                     mp3Player.URL = null;
                 }
-                string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.GetHash() + ".mp3");
+                string cacheLocation = Path.Combine(Configuration.Instance.CacheFolderLocation, chapter.HashID + ".mp3");
                 File.Copy(chapter.GetAudioFileLocation(), cacheLocation, true);
                 mp3Player.URL = new Uri(cacheLocation).ToString();
                 mp3Player.Ctlcontrols.play();
@@ -515,12 +498,6 @@ namespace NovelReader
             new Thread(delegate ()
             {
                 currentReadingNovel.DeleteAllChapter(chapters, true);
-                /*
-                this.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                {
-                    currentReadingNovel.DeleteAllChapter(chapters, true);
-                }));
-                */
             }).Start();
             
         }
@@ -584,8 +561,15 @@ namespace NovelReader
                 chapters.Add(currentReadingNovel.GetChapter(selectedRow.Index));
 
             return (from chapter in chapters
-             orderby chapter.Index ascending
-             select chapter).ToArray<Chapter>();
+                    orderby chapter.Index ascending
+                    select chapter).ToArray<Chapter>();
+        }
+
+        private int GetDisplayedIndex(Chapter chapter)
+        {
+            if (currentReadingNovel != null && chapter != null)
+                return currentReadingNovel.NovelChapters.IndexOf(chapter);
+            return -1;
         }
 
         private void ModifyCellStyle(int rowIndex)

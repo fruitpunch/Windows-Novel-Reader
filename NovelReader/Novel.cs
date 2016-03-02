@@ -427,7 +427,7 @@ namespace NovelReader
                     newChapter.Index = i;
                     newChapter.Novel = this;
                     newChapter.Valid = true;
-                    newChapter.HashID = menuItems[i].UrlHash;
+                    newChapter.HashID = menuItems[i].UrlHash.ToString("X");
                     NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
                     NovelLibrary.libraryData.SubmitChanges();
                     //chapterList.Insert(i, newChapter);

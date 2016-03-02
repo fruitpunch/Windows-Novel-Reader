@@ -354,7 +354,7 @@ namespace NovelReader
 		
 		private bool _Read;
 		
-		private int _HashID;
+		private string _HashID;
 		
 		private bool _Valid;
 		
@@ -376,7 +376,7 @@ namespace NovelReader
     partial void OnIndexChanged();
     partial void OnReadChanging(bool value);
     partial void OnReadChanged();
-    partial void OnHashIDChanging(int value);
+    partial void OnHashIDChanging(string value);
     partial void OnHashIDChanged();
     partial void OnValidChanging(bool value);
     partial void OnValidChanged();
@@ -493,8 +493,8 @@ namespace NovelReader
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HashID")]
-		public int HashID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HashID", CanBeNull=false)]
+		public string HashID
 		{
 			get
 			{
