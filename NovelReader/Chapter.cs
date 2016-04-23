@@ -39,6 +39,22 @@ namespace NovelReader
 
 
         /*============Public Function=======*/
+
+        public void ExportAudio(string destinationFolder)
+        {
+            if (File.Exists(GetAudioFileLocation()) && Directory.Exists(destinationFolder))
+            {
+                File.Copy(GetAudioFileLocation(), Path.Combine(destinationFolder, Index + " - " + ChapterTitle + ".mp3"), true);
+            }
+        }
+
+        public void ExportText(string destinationFolder)
+        {
+            if (File.Exists(GetTextFileLocation()) && Directory.Exists(destinationFolder))
+            {
+                File.Copy(GetTextFileLocation(), Path.Combine(destinationFolder, Index + " - " + ChapterTitle + ".txt"), true);
+            }
+        }
         /*
         public void NotifyPropertyChanged(string propertyName)
         {

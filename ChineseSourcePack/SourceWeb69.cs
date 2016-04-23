@@ -124,6 +124,7 @@ namespace ChineseSourcePack
                     chURL = urlMatch[0].ToString();
                     title = title.Replace(">", "").Replace("<", "");
                     chURL = chURL.Replace("\"", "");
+                    Console.WriteLine(title + " " + chURL);
                     chapterURLs.Add(new ChapterSource(chURL, title, false));
                 }
             }
@@ -133,6 +134,7 @@ namespace ChineseSourcePack
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
+            Console.WriteLine("69: " + chapterTitle);
             string[] lines;
             lock (resourceLock)
             {

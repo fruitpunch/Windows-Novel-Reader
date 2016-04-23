@@ -562,7 +562,10 @@ namespace NovelReader
                 return true;
             }
 
-            ChapterUrl[] urls = result.ToArray<ChapterUrl>();
+            ChapterUrl[] urls = (from url in result
+                                 where url.Vip == false
+                                 orderby url.Source.Priority ascending
+                                 select url).ToArray<ChapterUrl>();
             foreach (ChapterUrl url in urls)
             {
                 //Console.WriteLine("Download chapter " + downloadChapter.ChapterTitle + " " + (url.Vip));

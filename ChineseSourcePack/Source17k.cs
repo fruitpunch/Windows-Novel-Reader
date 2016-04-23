@@ -115,24 +115,26 @@ namespace ChineseSourcePack
             if (lines == null)
                 return null;
 
-            string chapterMatchingSubstring = "href=\"/chapter/" + _novelID.ToString() + "/";
-            string title, chURL;
-            int currentLineNumber = 0;
-            foreach (string line in lines)
+            string chapterMatchingSubstring = "<a target=\"_blank\" href=\"/chapter/" + _novelID.ToString();
+            //Console.WriteLine(chapterMatchingSubstring);
+            string title, chURL, line;
+            MatchCollection matches;
+            for (int currentLineNumber = 0; currentLineNumber < lines.Length; currentLineNumber++)
             {
-                if (line.Contains(chapterMatchingSubstring))
+                if (lines[currentLineNumber].Contains(chapterMatchingSubstring))
                 {
-                    MatchCollection matches = Regex.Matches(line, "\"([^\"]*)\"");
-                    title = matches[2].ToString();
-                    chURL = matches[5].ToString();
-                    title = title.Replace("\"", "");
+                    matches = Regex.Matches(lines[currentLineNumber], "\"([^\"]*)\"");
+                    chURL = matches[1].ToString();
                     chURL = chURL.Replace("\"", "");
-                    if(lines[currentLineNumber-1].Contains("VIP"))
+                    matches = Regex.Matches(lines[currentLineNumber + 1], "章节名称：(.*?)&#13;");
+                    title = matches[0].ToString();
+                    title = title.Replace("章节名称：", "").Replace("&#13;", "");
+
+                    if (lines[currentLineNumber-1].Contains("icon_vip.png"))
                         chapterURLs.Add(new ChapterSource(chURL, title, true));
                     else
                         chapterURLs.Add(new ChapterSource(chURL, title, false));
                 }
-                currentLineNumber++;
             }
             return chapterURLs.ToArray();
         }

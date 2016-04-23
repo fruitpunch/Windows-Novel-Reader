@@ -51,7 +51,8 @@ namespace ChineseSourcePack
                 {"<script>txttopshow7();</script><!--章节内容结束-->", ""},
                 {"&nbsp;", ""},
                 {"<!--章节内容开始-->", ""},
-                {"<br />", "\n"}
+                {"<br />", "\n"},
+                {"&amp;", ""}
             };
 
         public SourcePiaoTian(string novelID, string novelTitle)
@@ -118,6 +119,7 @@ namespace ChineseSourcePack
 
         public string[] GetChapterContent(string chapterTitle, string url)
         {
+            Console.WriteLine("PT: " + chapterTitle);
             string[] lines;
             lock (resourceLock)
             {
@@ -133,7 +135,7 @@ namespace ChineseSourcePack
             novelContent.Add("\n\n");
             foreach (string line in lines)
             {
-                if (contentFound && line.Contains("<a href="))
+                if (contentFound && line.Contains("<a href=") && !line.Contains("&nbsp;"))
                     break;
                 if (line.Contains("&nbsp;"))
                 {
@@ -149,6 +151,9 @@ namespace ChineseSourcePack
             foreach (KeyValuePair<string, string> entry in replaceRegex)
                 content = content.Replace(entry.Key, entry.Value);
             content = Regex.Replace(content, @"<[^>]+>|&nbsp;", "");
+            content = Regex.Replace(content, @"\((.*?)\)", "");
+            content = Regex.Replace(content, @"\{(.*?)\}", "");
+            content = Regex.Replace(content, @"\（(.*?)\）", "");
             content = Regex.Replace(content, @"\b(?:https?://|www\.)\S+\b", "", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             return content;
         }

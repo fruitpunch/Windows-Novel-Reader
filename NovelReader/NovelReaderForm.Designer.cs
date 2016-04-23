@@ -38,6 +38,7 @@
             this.setDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.remakeAudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteChapterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chapterBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.rtbChapterTextBox = new System.Windows.Forms.RichTextBox();
             this.btnNext = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
@@ -50,14 +51,17 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.mp3Player = new AxWMPLib.AxWindowsMediaPlayer();
-            this.chapterBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.exportChaptersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.audioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).BeginInit();
             this.chapterContextMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chapterBindingSource)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mp3Player)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chapterBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // dgvChapterList
@@ -100,9 +104,10 @@
             this.setNotReadToolStripMenuItem,
             this.setDownloadToolStripMenuItem,
             this.remakeAudioToolStripMenuItem,
-            this.deleteChapterToolStripMenuItem});
+            this.deleteChapterToolStripMenuItem,
+            this.exportChaptersToolStripMenuItem});
             this.chapterContextMenuStrip.Name = "chapterContextMenuStrip";
-            this.chapterContextMenuStrip.Size = new System.Drawing.Size(158, 114);
+            this.chapterContextMenuStrip.Size = new System.Drawing.Size(158, 158);
             this.chapterContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.chapterContextMenuStrip_Opening);
             this.chapterContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.chapterContextMenuStrip_ItemClicked);
             // 
@@ -135,6 +140,10 @@
             this.deleteChapterToolStripMenuItem.Name = "deleteChapterToolStripMenuItem";
             this.deleteChapterToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.deleteChapterToolStripMenuItem.Text = "Delete Chapters";
+            // 
+            // chapterBindingSource
+            // 
+            this.chapterBindingSource.Filter = "Valid=True";
             // 
             // rtbChapterTextBox
             // 
@@ -313,9 +322,36 @@
             this.mp3Player.TabIndex = 14;
             this.mp3Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.mp3Player_PlayStateChange);
             // 
-            // chapterBindingSource
+            // exportChaptersToolStripMenuItem
             // 
-            this.chapterBindingSource.Filter = "Valid=True";
+            this.exportChaptersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.audioToolStripMenuItem,
+            this.textToolStripMenuItem,
+            this.bothToolStripMenuItem});
+            this.exportChaptersToolStripMenuItem.Name = "exportChaptersToolStripMenuItem";
+            this.exportChaptersToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.exportChaptersToolStripMenuItem.Text = "Export Chapters";
+            // 
+            // audioToolStripMenuItem
+            // 
+            this.audioToolStripMenuItem.Name = "audioToolStripMenuItem";
+            this.audioToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.audioToolStripMenuItem.Text = "Audio";
+            this.audioToolStripMenuItem.Click += new System.EventHandler(this.ExportItem_Click);
+            // 
+            // textToolStripMenuItem
+            // 
+            this.textToolStripMenuItem.Name = "textToolStripMenuItem";
+            this.textToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.textToolStripMenuItem.Text = "Text";
+            this.textToolStripMenuItem.Click += new System.EventHandler(this.ExportItem_Click);
+            // 
+            // bothToolStripMenuItem
+            // 
+            this.bothToolStripMenuItem.Name = "bothToolStripMenuItem";
+            this.bothToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.bothToolStripMenuItem.Text = "Audo and Text";
+            this.bothToolStripMenuItem.Click += new System.EventHandler(this.ExportItem_Click);
             // 
             // NovelReaderForm
             // 
@@ -338,13 +374,13 @@
             this.Load += new System.EventHandler(this.NovelReaderForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvChapterList)).EndInit();
             this.chapterContextMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chapterBindingSource)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mp3Player)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chapterBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -371,5 +407,9 @@
         private System.Windows.Forms.ToolStripMenuItem remakeAudioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteChapterToolStripMenuItem;
         private System.Windows.Forms.BindingSource chapterBindingSource;
+        private System.Windows.Forms.ToolStripMenuItem exportChaptersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem audioToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem textToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bothToolStripMenuItem;
     }
 }
