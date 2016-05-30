@@ -195,6 +195,57 @@ namespace NovelReader
             }
         }
 
+
+        private void chapterListContextMenuStrip_Opening(object sender, CancelEventArgs e)
+        {
+            string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
+            Novel.ExportOption exportOption = Novel.ExportOption.None;
+            if (Configuration.Instance.NovelExport.ContainsKey(novelTitle))
+            {
+                exportOption = Configuration.Instance.NovelExport[novelTitle];
+            }
+            switch (exportOption)
+            {
+                case Novel.ExportOption.None:
+                    exportOptionComboBox.SelectedItem = exportOptionComboBox.Items[0];
+                    break;
+                case Novel.ExportOption.Audio:
+                    exportOptionComboBox.SelectedItem = exportOptionComboBox.Items[1];
+                    break;
+                case Novel.ExportOption.Text:
+                    exportOptionComboBox.SelectedItem = exportOptionComboBox.Items[2];
+                    break;
+                case Novel.ExportOption.Both:
+                    exportOptionComboBox.SelectedItem = exportOptionComboBox.Items[3];
+                    break;
+
+            }
+        }
+
+
+        private void exportOptionComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            string novelTitle = dgvNovelList.SelectedRows[0].Cells["NovelTitle"].Value.ToString();
+            switch(exportOptionComboBox.SelectedIndex)
+            {
+                case 0:
+                    Configuration.Instance.NovelExport[novelTitle] = Novel.ExportOption.None;
+                    break;
+                case 1:
+                    Configuration.Instance.NovelExport[novelTitle] = Novel.ExportOption.Audio;
+                    break;
+                case 2:
+                    Configuration.Instance.NovelExport[novelTitle] = Novel.ExportOption.Text;
+                    break;
+                case 3:
+                    Configuration.Instance.NovelExport[novelTitle] = Novel.ExportOption.Both;
+                    break;
+            }
+            
+
+        }
+
         private void chapterListContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             if (dgvNovelList.SelectedRows.Count == 0)

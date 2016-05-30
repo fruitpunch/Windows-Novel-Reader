@@ -279,7 +279,6 @@ namespace NovelReader
             }
         }
 
-
         private void chapterContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             Source[] novelSources = (from s in currentReadingNovel.Sources
@@ -612,11 +611,13 @@ namespace NovelReader
 
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-            string destinationFolder = dialog.SelectedPath;
+            string destinationFolder = Path.Combine(dialog.SelectedPath, currentReadingNovel.NovelTitle);
+            if (!Directory.Exists(destinationFolder))
+                Directory.CreateDirectory(destinationFolder);
             Console.WriteLine(destinationFolder);
             new Thread(delegate ()
             {
-                if (sender.ToString() == "Text")
+                if (sender.ToString() == "Audio")
                 {
                     foreach(Chapter chapter in chapters)
                     {
@@ -624,7 +625,7 @@ namespace NovelReader
                     }
                 }
 
-                else if (sender.ToString() == "Audio")
+                else if (sender.ToString() == "Text")
                 {
                     foreach (Chapter chapter in chapters)
                     {

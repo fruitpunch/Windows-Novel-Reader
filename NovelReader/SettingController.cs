@@ -22,6 +22,9 @@ namespace NovelReader
 
         private void SetControl()
         {
+            audioExportLocationLabel.Text = Configuration.Instance.AudioExportLocation;
+            textExportLocationLabel.Text = Configuration.Instance.TextExportLocation;
+
             dgvLanguageSelector.AutoGenerateColumns = false;
             Tuple<List<string>, List<string>> languageVoiceData = Util.GetLanguageVoice();
             List<string> languageList = languageVoiceData.Item1;
@@ -122,6 +125,24 @@ namespace NovelReader
         {
             int updateInterval = Configuration.Instance.UpdateInterval;
             upUpdateFreq.Value = updateInterval / (1000 * 60);
+        }
+
+        private void audioExportBrowseButton_Click(object sender, EventArgs e)
+        {
+            if(exportFolderBrowser.ShowDialog() == DialogResult.OK)
+            {
+                Configuration.Instance.AudioExportLocation = exportFolderBrowser.SelectedPath;
+                audioExportLocationLabel.Text = Configuration.Instance.AudioExportLocation;
+            }
+        }
+
+        private void textExportBrowseButton_Click(object sender, EventArgs e)
+        {
+            if (exportFolderBrowser.ShowDialog() == DialogResult.OK)
+            {
+                Configuration.Instance.TextExportLocation = exportFolderBrowser.SelectedPath;
+                textExportLocationLabel.Text = Configuration.Instance.TextExportLocation;
+            }
         }
     }
 }

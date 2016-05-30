@@ -38,6 +38,7 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportOptionComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnRankUp = new System.Windows.Forms.Button();
             this.btnRankDown = new System.Windows.Forms.Button();
@@ -113,34 +114,48 @@
             this.updateToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.editSourceToolStripMenuItem,
-            this.deleteToolStripMenuItem1});
+            this.deleteToolStripMenuItem1,
+            this.exportOptionComboBox});
             this.chapterListContextMenuStrip.Name = "chapterListContextMenuStrip";
-            this.chapterListContextMenuStrip.Size = new System.Drawing.Size(134, 92);
+            this.chapterListContextMenuStrip.Size = new System.Drawing.Size(212, 141);
+            this.chapterListContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.chapterListContextMenuStrip_Opening);
             this.chapterListContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.chapterListContextMenuStrip_ItemClicked);
             // 
             // updateToolStripMenuItem
             // 
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            this.updateToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.updateToolStripMenuItem.Text = "Read";
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.deleteToolStripMenuItem.Text = "Update";
             // 
             // editSourceToolStripMenuItem
             // 
             this.editSourceToolStripMenuItem.Name = "editSourceToolStripMenuItem";
-            this.editSourceToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.editSourceToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.editSourceToolStripMenuItem.Text = "Edit Source";
             // 
             // deleteToolStripMenuItem1
             // 
             this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
-            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(133, 22);
+            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(211, 22);
             this.deleteToolStripMenuItem1.Text = "Delete";
+            // 
+            // exportOptionComboBox
+            // 
+            this.exportOptionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.exportOptionComboBox.Items.AddRange(new object[] {
+            "Export - None",
+            "Export - Audio",
+            "Export - Text",
+            "Export - Audio & Text"});
+            this.exportOptionComboBox.Name = "exportOptionComboBox";
+            this.exportOptionComboBox.Size = new System.Drawing.Size(151, 23);
+            this.exportOptionComboBox.SelectedIndexChanged += new System.EventHandler(this.exportOptionComboBox_SelectedIndexChanged);
             // 
             // btnUpdate
             // 
@@ -321,5 +336,6 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editSourceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripComboBox exportOptionComboBox;
     }
 }

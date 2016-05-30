@@ -28,6 +28,8 @@ namespace NovelReader
 
         public enum UpdateStates { Default, Waiting, Syncing, Checking, UpdateAvailable, Fetching, UpToDate, Inactive, Completed, Dropped, Error };
 
+        public enum ExportOption { None, Audio, Text, Both };
+
         //public event PropertyChangedEventHandler PropertyChanged;
 
         private Chapter _lastViewedChapter { get; set; }
@@ -420,31 +422,38 @@ namespace NovelReader
                 //add new chapter if url does not exist in database
                 if (!OriginSource.ChapterUrls.Where(originUrl => originUrl.Hash == menuItems[i].UrlHash).Any())
                 {
-                    Chapter newChapter = new Chapter();
-                    newChapter.ChapterTitle = menuItems[i].Title;
-                    newChapter.NovelTitle = NovelTitle;
-                    newChapter.Read = false;
-                    newChapter.Index = i;
-                    newChapter.Novel = this;
-                    newChapter.Valid = true;
-                    newChapter.HashID = menuItems[i].UrlHash.ToString("X");
-                    NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
-                    NovelLibrary.libraryData.SubmitChanges();
-                    //chapterList.Insert(i, newChapter);
-                    chapterListing.Add(newChapter);
-                    isDirty = true;
-                    updateCount++;
+                    try
+                    {
+                        Chapter newChapter = new Chapter();
+                        newChapter.ChapterTitle = menuItems[i].Title;
+                        newChapter.NovelTitle = NovelTitle;
+                        newChapter.Read = false;
+                        newChapter.Index = i;
+                        newChapter.Novel = this;
+                        newChapter.Valid = true;
+                        newChapter.HashID = menuItems[i].UrlHash.ToString("X");
+                        NovelLibrary.libraryData.Chapters.InsertOnSubmit(newChapter);
+                        NovelLibrary.libraryData.SubmitChanges();
+                        //chapterList.Insert(i, newChapter);
+                        chapterListing.Add(newChapter);
+                        isDirty = true;
+                        updateCount++;
 
-                    ChapterUrl newChapterUrl = new ChapterUrl();
-                    newChapterUrl.ChapterID = newChapter.ID;
-                    newChapterUrl.Url = menuItems[i].Url;
-                    newChapterUrl.Hash = menuItems[i].UrlHash;
-                    newChapterUrl.Vip = menuItems[i].Vip;
-                    newChapterUrl.SourceID = OriginSource.ID;
-                    newChapterUrl.Source = OriginSource;
-                    newChapterUrl.Chapter = newChapter;
-                    NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
-                    NovelLibrary.libraryData.SubmitChanges();
+                        ChapterUrl newChapterUrl = new ChapterUrl();
+                        newChapterUrl.ChapterID = newChapter.ID;
+                        newChapterUrl.Url = menuItems[i].Url;
+                        newChapterUrl.Hash = menuItems[i].UrlHash;
+                        newChapterUrl.Vip = menuItems[i].Vip;
+                        newChapterUrl.SourceID = OriginSource.ID;
+                        newChapterUrl.Source = OriginSource;
+                        newChapterUrl.Chapter = newChapter;
+                        NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
+                        NovelLibrary.libraryData.SubmitChanges();
+                    }
+                    catch(Exception e)
+                    {
+                        return false;
+                    }
 
                 }
                 //chapter already exist within database.
@@ -566,6 +575,7 @@ namespace NovelReader
                                  where url.Vip == false
                                  orderby url.Source.Priority ascending
                                  select url).ToArray<ChapterUrl>();
+
             foreach (ChapterUrl url in urls)
             {
                 //Console.WriteLine("Download chapter " + downloadChapter.ChapterTitle + " " + (url.Vip));
@@ -580,6 +590,19 @@ namespace NovelReader
                 if (novelContent == null)
                     continue;
                 System.IO.File.WriteAllLines(downloadChapter.GetTextFileLocation(), novelContent);
+
+                string exportFolderLocation = Path.Combine(Configuration.Instance.TextExportLocation, NovelTitle);
+
+                if (!Directory.Exists(exportFolderLocation))
+                    Directory.CreateDirectory(exportFolderLocation);
+
+                if (Configuration.Instance.NovelExport.ContainsKey(NovelTitle))
+                {
+                    ExportOption exportOption = Configuration.Instance.NovelExport[NovelTitle];
+                    if (exportOption == ExportOption.Both || exportOption == ExportOption.Text)
+                        downloadChapter.ExportText(exportFolderLocation); 
+                }
+
                 return true;
             }
 

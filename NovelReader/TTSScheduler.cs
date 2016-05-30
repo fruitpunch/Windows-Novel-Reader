@@ -108,6 +108,7 @@ namespace NovelReader
             set { this._pos = value; }
         }
 
+
         public Chapter Chapter
         {
             get { return this._chapter; }
@@ -445,6 +446,19 @@ namespace NovelReader
             //For if user rename file while the process is running
             if (!specifiedOutputAudioLocation.Equals(request.OutputAudioFile))
                 File.Move(specifiedOutputAudioLocation, request.OutputAudioFile);
+
+            string exportFolderLocation = Path.Combine(Configuration.Instance.AudioExportLocation, request.NovelTitle);
+
+            if (!Directory.Exists(exportFolderLocation))
+                Directory.CreateDirectory(exportFolderLocation);
+
+            if (Configuration.Instance.NovelExport.ContainsKey(request.Chapter.Novel.NovelTitle))
+            {
+                Novel.ExportOption exportOption = Configuration.Instance.NovelExport[request.NovelTitle];
+                if (exportOption == Novel.ExportOption.Both || exportOption == Novel.ExportOption.Audio)
+                    request.Chapter.ExportAudio(exportFolderLocation);
+            }
+
         }
 
         //Update the TTS progress.

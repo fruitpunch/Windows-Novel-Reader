@@ -21,6 +21,8 @@ namespace NovelReader
 
         private string _novelFolderLocation { get; set; }
         private string _metaFileLocation { get; set; }
+        private string _audioExportLocation { get; set; }
+        private string _textExportLocation { get; set; }
         private int _ttsThreadCount { get; set; }
         private int _updateInterval;
         private int _ttsSpeed { get; set; }
@@ -28,6 +30,7 @@ namespace NovelReader
         private bool _makeTTSForChaptersAlreadyRead { get; set; }
         private DateTime _lastFullUpdateTime { get; set; }
         private Dictionary<string, string> _langaugeVoiceDictionary { get; set; }
+        private Dictionary<string, Novel.ExportOption> _novelExport { get; set; }
 
         private Rectangle _novelReaderFormRect { get; set; }
         private bool _novelReaderMaximized { get; set; }
@@ -60,6 +63,18 @@ namespace NovelReader
         {
             get { return this._metaFileLocation; }
             set { this._metaFileLocation = value; }
+        }
+
+        public string AudioExportLocation
+        {
+            get { return this._audioExportLocation; }
+            set { this._audioExportLocation = value; }
+        }
+
+        public string TextExportLocation
+        {
+            get { return this._textExportLocation; }
+            set { this._textExportLocation = value; }
         }
 
         public string CacheFolderLocation
@@ -101,6 +116,15 @@ namespace NovelReader
         {
             get { return this._langaugeVoiceDictionary; }
             set { this._langaugeVoiceDictionary = value; }
+        }
+
+        public Dictionary<string, Novel.ExportOption> NovelExport
+        {
+            get {
+                if (this._novelExport == null)
+                    this._novelExport = new Dictionary<string, Novel.ExportOption>();
+                return this._novelExport;
+            }
         }
 
         public bool MakeTTSForChapterAlreadyRead
