@@ -445,7 +445,7 @@ namespace NovelReader
             p.WaitForExit();
             //For if user rename file while the process is running
             if (!specifiedOutputAudioLocation.Equals(request.OutputAudioFile))
-                File.Move(specifiedOutputAudioLocation, request.OutputAudioFile);
+                File.Copy(specifiedOutputAudioLocation, request.OutputAudioFile);
 
             string exportFolderLocation = Path.Combine(Configuration.Instance.AudioExportLocation, request.NovelTitle);
 

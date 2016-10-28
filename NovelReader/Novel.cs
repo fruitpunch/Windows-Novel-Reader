@@ -419,11 +419,12 @@ namespace NovelReader
             int updateCount = 0;
             for (int i = 0; i < menuItems.Length; i++)
             {
-                //add new chapter if url does not exist in database
-                if (!OriginSource.ChapterUrls.Where(originUrl => originUrl.Hash == menuItems[i].UrlHash).Any())
+                try
                 {
-                    try
+                    //add new chapter if url does not exist in database
+                    if (!OriginSource.ChapterUrls.Where(originUrl => originUrl.Hash == menuItems[i].UrlHash).Any())
                     {
+                    
                         Chapter newChapter = new Chapter();
                         newChapter.ChapterTitle = menuItems[i].Title;
                         newChapter.NovelTitle = NovelTitle;
@@ -450,23 +451,23 @@ namespace NovelReader
                         NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
                         NovelLibrary.libraryData.SubmitChanges();
                     }
-                    catch(Exception e)
+                    //chapter already exist within database.
+                    else
                     {
-                        return false;
+                        Chapter c = (from chapterUrl in OriginSource.ChapterUrls
+                                     where chapterUrl.Url == menuItems[i].Url
+                                     select chapterUrl.Chapter).First<Chapter>();
+                        if (c.ChapterTitle != menuItems[i].Title)
+                            c.ChapterTitle = menuItems[i].Title;
+                        if (c.Index != i)
+                            c.Index = i;
+                        chapterListing.Add(c);
                     }
-
                 }
-                //chapter already exist within database.
-                else
+                catch (Exception e)
                 {
-                    Chapter c = (from chapterUrl in OriginSource.ChapterUrls
-                                 where chapterUrl.Url == menuItems[i].Url
-                                 select chapterUrl.Chapter).First<Chapter>();
-                    if (c.ChapterTitle != menuItems[i].Title)
-                        c.ChapterTitle = menuItems[i].Title;
-                    if (c.Index != i)
-                        c.Index = i;
-                    chapterListing.Add(c);
+                    Console.WriteLine(e);
+                    return false;
                 }
             }
             chapterList.SyncBindingToConstrain();
@@ -497,42 +498,49 @@ namespace NovelReader
             Dictionary<string, Chapter> chapters = ChapterDictionary;
             ChapterSource[] menuItems;
             SetUpdateProgress(0, 0, UpdateStates.Checking);
-            foreach (Source source in sources)
+            try
             {
-                if (source == null || !source.Valid ||source.ID == OriginSource.ID)
-                    continue;
-                menuItems = source.GetMenuURLs();
-                if (menuItems == null)
-                    continue;
-                HashSet<string> usedTitle = new HashSet<string>();
-                for (int i = 0; i < menuItems.Length; i++)
+                foreach (Source source in sources)
                 {
-                    //Check for duplicate chapter titles and changes the name of it so it will not conflict.
-                    string chapterTitle = menuItems[i].Title;
-                    int dupIdx = 2;
-                    while (usedTitle.Contains(chapterTitle))
+                    if (source == null || !source.Valid || source.ID == OriginSource.ID)
+                        continue;
+                    menuItems = source.GetMenuURLs();
+                    if (menuItems == null)
+                        continue;
+                    HashSet<string> usedTitle = new HashSet<string>();
+                    for (int i = 0; i < menuItems.Length; i++)
                     {
-                        chapterTitle = menuItems[i].Title + "-duplicate x " + dupIdx;
-                        dupIdx++;
-                    }
-                    usedTitle.Add(chapterTitle);
+                        //Check for duplicate chapter titles and changes the name of it so it will not conflict.
+                        string chapterTitle = menuItems[i].Title;
+                        int dupIdx = 2;
+                        while (usedTitle.Contains(chapterTitle))
+                        {
+                            chapterTitle = menuItems[i].Title + "-duplicate x " + dupIdx;
+                            dupIdx++;
+                        }
+                        usedTitle.Add(chapterTitle);
 
-                    if (chapters.Keys.Contains(chapterTitle) && !NovelLibrary.libraryData.ChapterUrls.Where(url => url.Hash == menuItems[i].UrlHash).Any())
-                    {
-                        ChapterUrl newChapterUrl = new ChapterUrl();
-                        newChapterUrl.ChapterID = chapters[chapterTitle].ID;
-                        newChapterUrl.Url = menuItems[i].Url;
-                        newChapterUrl.Hash = menuItems[i].UrlHash;
-                        newChapterUrl.Vip = menuItems[i].Vip;
-                        newChapterUrl.SourceID = source.ID;
-                        newChapterUrl.Source = source;
-                        newChapterUrl.Chapter = chapters[chapterTitle];
-                        NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
-                        NovelLibrary.libraryData.SubmitChanges();
+                        if (chapters.Keys.Contains(chapterTitle) && !NovelLibrary.libraryData.ChapterUrls.Where(url => url.Hash == menuItems[i].UrlHash).Any())
+                        {
+                            ChapterUrl newChapterUrl = new ChapterUrl();
+                            newChapterUrl.ChapterID = chapters[chapterTitle].ID;
+                            newChapterUrl.Url = menuItems[i].Url;
+                            newChapterUrl.Hash = menuItems[i].UrlHash;
+                            newChapterUrl.Vip = menuItems[i].Vip;
+                            newChapterUrl.SourceID = source.ID;
+                            newChapterUrl.Source = source;
+                            newChapterUrl.Chapter = chapters[chapterTitle];
+                            NovelLibrary.libraryData.ChapterUrls.InsertOnSubmit(newChapterUrl);
+                            NovelLibrary.libraryData.SubmitChanges();
+                        }
                     }
+
                 }
-
+            }catch(Exception e)
+            {
+                return false;
             }
+            
             return true;
         }
 

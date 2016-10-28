@@ -225,17 +225,26 @@ namespace NovelReader
 
         private void NovelReaderForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Configuration.Instance.NovelReaderRect = this.DesktopBounds;
-            if (this.WindowState == FormWindowState.Maximized)
-                Configuration.Instance.NovelReaderMaximized = true;
-            else
-                Configuration.Instance.NovelReaderMaximized = false;
-            if (currentReadingNovel != null)
-                currentReadingNovel.StopReading();
-            mp3Player.Ctlcontrols.stop();
-            mp3Player.close();
-            mp3Player = null;
-            BackgroundService.Instance.novelReaderForm = null;
+            try
+            {
+                Configuration.Instance.NovelReaderRect = this.DesktopBounds;
+                if (this.WindowState == FormWindowState.Maximized)
+                    Configuration.Instance.NovelReaderMaximized = true;
+                else
+                    Configuration.Instance.NovelReaderMaximized = false;
+                if (currentReadingNovel != null)
+                    currentReadingNovel.StopReading();
+                mp3Player.Ctlcontrols.stop();
+                mp3Player.close();
+                mp3Player = null;
+                BackgroundService.Instance.novelReaderForm = null;
+                //BackgroundService.Instance.CloseService();
+            }
+            catch(Exception exception)
+            {
+
+            }
+            
         }
 
         private void dgvChapterList_CurrentCellDirtyStateChanged(object sender, EventArgs e)
@@ -313,7 +322,7 @@ namespace NovelReader
 
         private void Redownload_ItemClicked(object sender, EventArgs e)
         {
-
+            Console.WriteLine("Redownload " + sender.ToString());
         }
 
 

@@ -65,12 +65,20 @@ namespace NovelReader
 
         private void ApplicationForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Configuration.Instance.ApplicationRect = this.DesktopBounds;
-            if (this.WindowState == FormWindowState.Maximized)
-                Configuration.Instance.ApplicationMaximized = true;
-            else
-                Configuration.Instance.ApplicationMaximized = false;
-            Util.SaveComponents();
+            try
+            {
+                Configuration.Instance.ApplicationRect = this.DesktopBounds;
+                if (this.WindowState == FormWindowState.Maximized)
+                    Configuration.Instance.ApplicationMaximized = true;
+                else
+                    Configuration.Instance.ApplicationMaximized = false;
+                Util.SaveComponents();
+            }
+            catch(Exception ex)
+            {
+
+            }
+            
         }
 
         private void btnNovelList_Click(object sender, EventArgs e)

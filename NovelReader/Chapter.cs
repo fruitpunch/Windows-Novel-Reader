@@ -42,41 +42,32 @@ namespace NovelReader
 
         public void ExportAudio(string destinationFolder)
         {
+            string validChapterTitle = ChapterTitle;
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+            foreach (char invalidChar in invalidChars)
+            {
+                validChapterTitle = validChapterTitle.Replace(invalidChar, 'X');
+            }
+
             if (File.Exists(GetAudioFileLocation()) && Directory.Exists(destinationFolder))
             {
-                File.Copy(GetAudioFileLocation(), Path.Combine(destinationFolder, Index + " - " + ChapterTitle + ".mp3"), true);
+                File.Copy(GetAudioFileLocation(), Path.Combine(destinationFolder, Index + " - " + validChapterTitle + ".mp3"), true);
             }
         }
 
         public void ExportText(string destinationFolder)
         {
+            string validChapterTitle = ChapterTitle;
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+            foreach (char invalidChar in invalidChars)
+            {
+                validChapterTitle = validChapterTitle.Replace(invalidChar, 'X');
+            }
+
             if (File.Exists(GetTextFileLocation()) && Directory.Exists(destinationFolder))
             {
-                File.Copy(GetTextFileLocation(), Path.Combine(destinationFolder, Index + " - " + ChapterTitle + ".txt"), true);
+                File.Copy(GetTextFileLocation(), Path.Combine(destinationFolder, Index + " - " + validChapterTitle + ".txt"), true);
             }
         }
-        /*
-        public void NotifyPropertyChanged(string propertyName)
-        {
-
-            if (PropertyChanged != null)
-            {
-                
-                if (BackgroundService.Instance.novelReaderForm != null && BackgroundService.Instance.novelReaderForm.InvokeRequiredForNovel(Novel))
-                {
-                    BackgroundService.Instance.novelReaderForm.BeginInvoke(new System.Windows.Forms.MethodInvoker(delegate
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                    }));
-                }
-                else
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                }
-                
-            }
-            //NovelLibrary.libraryData.SubmitChanges();
-        }
-        */
     }
 }
