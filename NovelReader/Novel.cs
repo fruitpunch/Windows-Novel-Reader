@@ -599,18 +599,20 @@ namespace NovelReader
                     continue;
                 System.IO.File.WriteAllLines(downloadChapter.GetTextFileLocation(), novelContent);
 
-                string exportFolderLocation = Path.Combine(Configuration.Instance.TextExportLocation, NovelTitle);
-
-                if (!Directory.Exists(exportFolderLocation))
-                    Directory.CreateDirectory(exportFolderLocation);
-
-                if (Configuration.Instance.NovelExport.ContainsKey(NovelTitle))
+                if(Configuration.Instance.TextExportLocation != null)
                 {
-                    ExportOption exportOption = Configuration.Instance.NovelExport[NovelTitle];
-                    if (exportOption == ExportOption.Both || exportOption == ExportOption.Text)
-                        downloadChapter.ExportText(exportFolderLocation); 
-                }
+                    string exportFolderLocation = Path.Combine(Configuration.Instance.TextExportLocation, NovelTitle);
 
+                    if (!Directory.Exists(exportFolderLocation))
+                        Directory.CreateDirectory(exportFolderLocation);
+
+                    if (Configuration.Instance.NovelExport.ContainsKey(NovelTitle))
+                    {
+                        ExportOption exportOption = Configuration.Instance.NovelExport[NovelTitle];
+                        if (exportOption == ExportOption.Both || exportOption == ExportOption.Text)
+                            downloadChapter.ExportText(exportFolderLocation);
+                    }
+                }
                 return true;
             }
 

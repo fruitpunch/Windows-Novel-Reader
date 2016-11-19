@@ -158,7 +158,7 @@ namespace NovelReader
         private ManualResetEvent idleMRE;
         private bool shutDown;
         public static readonly int MAX_THREAD_COUNT = 4;
-        public static readonly int MAX_REQUEST_COUNT = 50;
+        public static readonly int MAX_REQUEST_COUNT = 10000;
 
         public BindingList<Request> RequestList
         {
@@ -447,18 +447,20 @@ namespace NovelReader
             if (!specifiedOutputAudioLocation.Equals(request.OutputAudioFile))
                 File.Copy(specifiedOutputAudioLocation, request.OutputAudioFile);
 
-            string exportFolderLocation = Path.Combine(Configuration.Instance.AudioExportLocation, request.NovelTitle);
-
-            if (!Directory.Exists(exportFolderLocation))
-                Directory.CreateDirectory(exportFolderLocation);
-
-            if (Configuration.Instance.NovelExport.ContainsKey(request.Chapter.Novel.NovelTitle))
+            if(Configuration.Instance.AudioExportLocation != null)
             {
-                Novel.ExportOption exportOption = Configuration.Instance.NovelExport[request.NovelTitle];
-                if (exportOption == Novel.ExportOption.Both || exportOption == Novel.ExportOption.Audio)
-                    request.Chapter.ExportAudio(exportFolderLocation);
-            }
+                string exportFolderLocation = Path.Combine(Configuration.Instance.AudioExportLocation, request.NovelTitle);
 
+                if (!Directory.Exists(exportFolderLocation))
+                    Directory.CreateDirectory(exportFolderLocation);
+
+                if (Configuration.Instance.NovelExport.ContainsKey(request.Chapter.Novel.NovelTitle))
+                {
+                    Novel.ExportOption exportOption = Configuration.Instance.NovelExport[request.NovelTitle];
+                    if (exportOption == Novel.ExportOption.Both || exportOption == Novel.ExportOption.Audio)
+                        request.Chapter.ExportAudio(exportFolderLocation);
+                }
+            }
         }
 
         //Update the TTS progress.

@@ -322,7 +322,8 @@ namespace NovelReader
 
         private void Redownload_ItemClicked(object sender, EventArgs e)
         {
-            Console.WriteLine("Redownload " + sender.ToString());
+            Source downloadFromSource = currentReadingNovel.Sources.Where(source => source.SourceNovelLocation == sender.ToString()).FirstOrDefault<Source>();
+            RedownloadChapters(downloadFromSource);
         }
 
 
