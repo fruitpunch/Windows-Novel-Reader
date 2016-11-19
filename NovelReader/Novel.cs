@@ -258,6 +258,9 @@ namespace NovelReader
                 return null;
             Request request = null;
             Chapter c = null;
+            string ttsVoice = Configuration.Instance.LanguageVoiceDictionary[OriginSource.NovelLanguage];
+            if (ttsVoice == "No Voice Selected")
+                return request;
             for (requestIndex = 0; requestIndex < chapters.Count; requestIndex++)
             {
                 c = chapters[requestIndex];
@@ -265,7 +268,7 @@ namespace NovelReader
                 {
                     if (!queuedTTSChapters.ContainsKey(c))
                     {
-                        request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
+                        request = new Request(ttsVoice, c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
                         queuedTTSChapters.Add(c, request);
                         break;
                     }
@@ -282,7 +285,8 @@ namespace NovelReader
                         if (!queuedTTSChapters.ContainsKey(c))
                         {
                             //request = new Request(Configuration.Instance.LanguageVoiceDictionary[NovelSource.NovelLanguage], c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
-                            request = new Request("VW Hui", c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
+                            
+                            request = new Request(ttsVoice, c, GetReplaceSpecificationLocation(), GetDeleteSpecificationLocation(), speed, GetTTSPriority(c));
                             queuedTTSChapters.Add(c, request);
                             break;
                         }

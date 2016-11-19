@@ -170,9 +170,14 @@ namespace NovelReader
 
         public void PerformImmediateTTS(Chapter[] chapters)
         {
+            if (chapters.Length == 0)
+                return;
             double priority = (ttsScheduler.GetHighestPriority() > 1000) ? ttsScheduler.GetHighestPriority() : 1000;
+            string ttsVoice = Configuration.Instance.LanguageVoiceDictionary[chapters[0].Novel.OriginSource.NovelLanguage];
+            if (ttsVoice == "No Voice Selected")
+                return;
             foreach (Chapter chapter in chapters)
-                ttsScheduler.AddRequest(new Request("VW Hui", chapter, chapter.Novel.GetReplaceSpecificationLocation(), chapter.Novel.GetDeleteSpecificationLocation(), Configuration.Instance.TTSSpeed, priority));
+                ttsScheduler.AddRequest(new Request(ttsVoice, chapter, chapter.Novel.GetReplaceSpecificationLocation(), chapter.Novel.GetDeleteSpecificationLocation(), Configuration.Instance.TTSSpeed, priority));
         }
 
         /*============Private Function======*/
